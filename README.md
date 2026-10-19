@@ -28,7 +28,7 @@ The needed parts of Chronux 2.12 are included in `external/`.
 |---|---|---|---|
 | 01 | `analyses/primary/01_subject_spectra` | per-subject F3 spectrum + bootstrap | ✅ tested |
 | 02 | `02_cohort` | power tables, final cohort | ✅ tested |
-| 03 | `03_power_spectra` | group spectra (Figs 1–2) | ⏳ |
+| 03 | `03_power_spectra` | group spectra (Figs 1–2) | ✅ tested |
 | 04 | `04_age_trajectories` | alpha power vs age (Figs 3–4) | ⏳ |
 | 05 | `05_coherence` | F3–F4 coherence | ⏳ |
 | 06 | `06_state_space_model` | SSM age trajectories | ⏳ |
