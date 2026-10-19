@@ -14,4 +14,8 @@ function local = config_template()
     % Optional. Folder with previously saved outputs to compare against in
     % tests/. Leave empty if you don't have one; those tests are then skipped.
     local.referenceOutputsDir = '';
+
+    % Optional. The original StateSpaceAlpha folder (power tables, SSM fits),
+    % compared against by tests/ from stage 02 on.
+    local.referenceStateSpaceDir = '';
 end

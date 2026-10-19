@@ -5,7 +5,8 @@ function paths = project_paths()
 %     dataDir    - input data (Patients.xlsx + *_focus.mat), from config_local.m
 %     outputsDir - where all results go (repoRoot/outputs, not committed)
 %     figuresDir - final publication figures (outputsDir/figures)
-%     referenceOutputsDir - optional older outputs used by tests/
+%     referenceOutputsDir    - optional original multitaper folder, used by tests/
+%     referenceStateSpaceDir - optional original StateSpaceAlpha folder, used by tests/
 %
 %   This is the only place paths are defined. Every script calls this
 %   instead of hardcoding a location, so the repo runs on any computer.
@@ -34,5 +35,9 @@ function paths = project_paths()
     paths.referenceOutputsDir = '';
     if isfield(local, 'referenceOutputsDir')
         paths.referenceOutputsDir = local.referenceOutputsDir;
+    end
+    paths.referenceStateSpaceDir = '';
+    if isfield(local, 'referenceStateSpaceDir')
+        paths.referenceStateSpaceDir = local.referenceStateSpaceDir;
     end
 end
