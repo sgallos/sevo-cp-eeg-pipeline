@@ -16,3 +16,6 @@ notes/
 *.asv
 *.m~
 .DS_Store
+
+# Personal Claude Code settings (session-start cohort check)
+.claude/settings.local.json

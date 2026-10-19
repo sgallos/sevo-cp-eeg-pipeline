@@ -5,13 +5,22 @@ ages 10–16. F3 multitaper power with a frequency-domain bootstrap (MFDB),
 F3–F4 coherence, and a state-space model of the age trajectory.
 
 ## Running
-- MATLAB R2024a: `/Applications/MATLAB_R2024a.app/bin/matlab -batch "..."` from the repo root.
+- Run MATLAB with `tools/matlab_batch.sh "<command>"` from the repo root. It retries when
+  R2024a crashes in a background thread (frequent on macOS 26; not our code).
 - Everything starts with `setup_project()` (adds paths, checks toolboxes, returns `paths`).
 - `run_all.m` runs every stage; each `%%` section also runs alone.
 - Tests: `matlab -batch "runtests('tests')"`. Stage tests compare against
   `referenceOutputsDir` (the original analysis folder) and skip without it.
 
+## Cohort (user rule: always use every eligible subject)
+- The ONLY definition of who is analysed: `shared/cohort_criteria.m`, applied by `get_cohort()`.
+  Every stage takes its subjects from `get_cohort()`; never hardcode ages or subject lists.
+- `check_cohort()` runs at session start (hook in `.claude/settings.local.json`). Read its
+  output: report new eligible subjects, or any "CHECK" exclusions, to the user.
+
 ## Rules
+- We reproduce AND verify. Reproduce the original first (tests), then check the method is
+  right. Flag problems in `notes/` and as a draft in `notes/emails_to_collaborators.md`.
 - No hardcoded paths. Inputs come from `project_paths().dataDir`; outputs go to `outputs/`.
 - Analysis parameters live in `shared/mfdb_config.m` or at the top of each stage script.
   Don't change a parameter without saying so; results must match the original analysis.

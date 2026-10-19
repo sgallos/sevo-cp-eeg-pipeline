@@ -1,7 +1,7 @@
 function tests = test_03_power_spectra
 %TEST_03_POWER_SPECTRA Stage 03 (group MFDB, Figs 1-2), compared with saved outputs.
-%   Feeds the ORIGINAL stage 01 validation registry and stage 02 cohort table
-%   into the group bootstrap, so this tests stage 03 on its own.
+%   Feeds the ORIGINAL stage 01 validation registry into the group bootstrap
+%   (cohort from get_cohort()), so this tests stage 03 on its own.
 %   - Group medians of the original spectra have no randomness: exact match.
 %   - Bootstrap CIs and the significance mask: must differ from the original
 %     no more than two of our own seeds differ from each other.
@@ -17,10 +17,8 @@ function setupOnce(testCase)
         'group_mfdb_bootstrap_results.mat');
     opts.validationFile = fullfile(paths.referenceOutputsDir, 'outputs', 'mfdb_validation', ...
         'mfdb_validation_results.mat');
-    opts.stateSpaceCohortFile = fullfile(paths.referenceStateSpaceDir, 'outputs', ...
-        'power_table_for_ssm_subepochs_collapsed.csv');
-    assumeTrue(testCase, isfile(refGroupFile) && isfile(opts.validationFile) && ...
-        isfile(opts.stateSpaceCohortFile), 'Reference outputs not configured; skipped.');
+    assumeTrue(testCase, isfile(refGroupFile) && isfile(opts.validationFile), ...
+        'Reference outputs not configured; skipped.');
 
     opts.groupOutDir = tempname;
     testCase.addTeardown(@() rmdir(opts.groupOutDir, 's'));

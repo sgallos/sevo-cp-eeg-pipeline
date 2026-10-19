@@ -12,9 +12,8 @@ function T = extract_band_power_subepochs(subepochRoot, outDir)
 %   outputs/power_table_for_ssm_subepochs.csv
 %   outputs/power_table_for_ssm_subepochs.mat
 %
-% The subject list is discovered from the saved F3 sub-epoch files rather
-% than the original validation registry, so newly generated eligible
-% subjects are included automatically.
+% Subjects: every saved F3 sub-epoch file whose subject is in get_cohort()
+% (the shared inclusion rules in shared/cohort_criteria.m).
 %
 % Optional inputs (used by tests/ to read the original stage 01 outputs):
 %   subepochRoot - folder of sub-epoch MFDB files (default: stage 01 output)
@@ -41,6 +40,8 @@ bands = struct( ...
     'lowHz', {1, 4, 8}, ...
     'highHz', {4, 8, 12});
 
+cohort = get_cohort();   % who is eligible: see shared/cohort_criteria.m
+cohortIDs = cohort.subjectID;
 subepochFiles = find_subepoch_files(subepochRoot);
 nSubjects = numel(subepochFiles);
 nExpectedRows = nSubjects * 4;
@@ -59,8 +60,8 @@ for subjectIdx = 1:nSubjects
     S = load(subepochFile, 'subEpochResults', 'groupLabel', 'ageYears', 'subjectID');
     subjectID = string(S.subjectID);
 
-    if ~isfinite(double(S.ageYears)) || double(S.ageYears) < 10 || double(S.ageYears) > 16
-        warning('Skipping %s: age %.4f is outside 10-16 years.', subjectID, double(S.ageYears));
+    if ~ismember(subjectID, cohortIDs)
+        fprintf('Skipping %s: not in get_cohort() (see check_cohort for the reason).\n', subjectID);
         continue;
     end
 

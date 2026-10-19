@@ -23,13 +23,21 @@ The needed parts of Chronux 2.12 are included in `external/`.
    results = runtests('tests/test_00_setup.m')   % checks your setup
    ```
 
+## Who is analysed
+Every stage uses the same cohort: whoever in the data folder meets the rules in
+`shared/cohort_criteria.m` (sevoflurane, ages 10–16, F3 present, ≥ 120 s of EEG).
+To see who is in, who isn't, and why:
+```matlab
+check_cohort
+```
+
 ## Pipeline stages
 | Stage | Folder | Produces | Status |
 |---|---|---|---|
 | 01 | `analyses/primary/01_subject_spectra` | per-subject F3 spectrum + bootstrap | ✅ tested |
 | 02 | `02_cohort` | power tables, final cohort | ✅ tested |
 | 03 | `03_power_spectra` | group spectra (Figs 1–2) | ✅ tested |
-| 04 | `04_age_trajectories` | alpha power vs age (Figs 3–4) | ⏳ |
+| 04 | `04_age_trajectories` | alpha power vs age (Figs 3–4) | ✅ tested (CI bug fixed) |
 | 05 | `05_coherence` | F3–F4 coherence | ⏳ |
 | 06 | `06_state_space_model` | SSM age trajectories | ⏳ |
 | 07 | `07_age_varying_spectrogram` | age-varying spectrograms | ⏳ |

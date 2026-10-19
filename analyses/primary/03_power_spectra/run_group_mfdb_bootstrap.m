@@ -3,7 +3,7 @@ function groupOutFile = run_group_mfdb_bootstrap(opts)
 %   groupOutFile = RUN_GROUP_MFDB_BOOTSTRAP() uses this repo's outputs.
 %   Optional opts fields (used by tests/ to read the original outputs):
 %     validationFile       - stage 01 validation results (.mat)
-%     stateSpaceCohortFile - stage 02 collapsed power table (defines the cohort)
+%     subjectIDs           - cohort to analyse (default: get_cohort())
 %     groupOutDir          - where to save group_mfdb_bootstrap_results.mat
 %     randomSeed           - bootstrap seed (default: cfg.randomSeed)
 
@@ -18,9 +18,8 @@ if ~exist(groupOutDir, 'dir')
 end
 
 groupOutFile = fullfile(groupOutDir, 'group_mfdb_bootstrap_results.mat');
-useStateSpaceCohort = true;
-stateSpaceCohortFile = get_opt(opts, 'stateSpaceCohortFile', ...
-    fullfile(state_space_outputs_dir(), 'power_table_for_ssm_subepochs_collapsed.csv'));
+cohort = get_cohort();   % who is eligible: see shared/cohort_criteria.m
+cohortSubjectIDs = string(get_opt(opts, 'subjectIDs', cohort.subjectID));
 
 if ~isfile(validationFile)
     error('Validation file not found: %s', validationFile);
@@ -37,24 +36,14 @@ end
 
 registry = V.includedAfterValidation;
 
-if useStateSpaceCohort
-    if ~isfile(stateSpaceCohortFile)
-        error('State-space cohort file not found: %s', stateSpaceCohortFile);
-    end
-
-    cohortTable = readtable(stateSpaceCohortFile, 'TextType', 'string');
-    cohortSubjectIDs = string(cohortTable.subjectID);
-    missingFromValidation = setdiff(cohortSubjectIDs, string(registry.subjectID));
-    if ~isempty(missingFromValidation)
-        error('State-space cohort subjects missing from MFDB validation: %s', ...
-            strjoin(missingFromValidation, ', '));
-    end
-
-    registry = registry(ismember(string(registry.subjectID), cohortSubjectIDs), :);
-    registry = sortrows(registry, {'groupLabel', 'ageYears', 'subjectID'});
-    fprintf('Filtered to StateSpaceAlpha cohort: %d subjects from %s\n', ...
-        height(registry), stateSpaceCohortFile);
+missingFromValidation = setdiff(cohortSubjectIDs, string(registry.subjectID));
+if ~isempty(missingFromValidation)
+    error('Cohort subjects missing from MFDB validation (run stage 01 for them): %s', ...
+        strjoin(missingFromValidation, ', '));
 end
+registry = registry(ismember(string(registry.subjectID), cohortSubjectIDs), :);
+registry = sortrows(registry, {'groupLabel', 'ageYears', 'subjectID'});
+fprintf('Cohort: %d subjects\n', height(registry));
 
 cpMask = strcmpi(registry.groupLabel, 'CP');
 controlMask = strcmpi(registry.groupLabel, 'Control');
@@ -139,8 +128,8 @@ metadata.fpass = [unique(registry.fpassLow), unique(registry.fpassHigh)];
 metadata.electrodeLabel = cfg.electrodeLabel;
 metadata.f3OnlyAnalysis = true;
 metadata.validationFile = validationFile;
-metadata.useStateSpaceCohort = useStateSpaceCohort;
-metadata.stateSpaceCohortFile = stateSpaceCohortFile;
+metadata.cohortSubjectIDs = cohortSubjectIDs;
+metadata.cohortCriteria = cohort_criteria();
 metadata.excludedSubjects = V.registry(V.registry.excluded, {'subjectID', 'groupLabel', 'exclusionReason'});
 metadata.frequencyAlignment = [cpAlignment; controlAlignment];
 
