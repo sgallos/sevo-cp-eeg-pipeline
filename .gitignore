@@ -1,0 +1,18 @@
+# Machine-specific settings (copy config_template.m to make your own)
+config_local.m
+
+# Everything the pipeline generates; rebuilt by run_all.m
+outputs/
+
+# Private notes live in their own repository
+notes/
+
+# Data never belongs in this repo
+*.mat
+*.xlsx
+*.edf
+
+# MATLAB and OS clutter
+*.asv
+*.m~
+.DS_Store
