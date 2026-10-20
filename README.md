@@ -5,7 +5,6 @@ and neurotypical controls, ages 10–16: F3 multitaper power spectra with a
 frequency-domain bootstrap, F3–F4 coherence, and a state-space model of how the
 CP–control difference changes with age.
 
-> 🚧 Work in progress: stages are being added and tested one at a time.
 
 ## Requirements
 - MATLAB R2024a or newer
@@ -21,7 +20,7 @@ The needed parts of Chronux 2.12 are included in `external/`.
 3. In MATLAB, from this folder:
    ```matlab
    results = runtests('tests/test_00_setup.m')   % checks your setup
-   run_all                                       % rebuilds every result (about 15 min)
+   run_all                                       % rebuilds every result and figure (about 15 min)
    ```
    Each `%%` section of `run_all.m` can also be run on its own (Cmd/Ctrl+Enter).
 
@@ -42,7 +41,7 @@ check_cohort
 | 04 | `04_age_trajectories` | alpha power vs age (Figs 3–4) | ✅ tested (CI bug fixed) |
 | 05 | `05_coherence` | F3–F4 coherence (Fig 07) | ✅ tested |
 | 06 | `06_state_space_model` | SSM age trajectories (Figs 05–06) | ✅ tested |
-| 07 | `07_age_varying_spectrogram` | age-varying spectrograms | ⏳ |
+| 07 | `07_age_varying_spectrogram` | age-varying spectrograms (Figs 02–03) | ✅ tested |
 
 ## Additional analyses
 Analyses beyond the published figures live in [`analyses/additional/`](analyses/additional/).

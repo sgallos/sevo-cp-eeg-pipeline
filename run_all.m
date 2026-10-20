@@ -83,7 +83,9 @@ export_fixed_heuristic_power_ssm_publication_figures();
 close all;
 
 %% 7. Stage 07: age-varying spectrograms (Figs 02-03)
-% Not yet moved into this repo.
+% Each child's time-averaged F3 spectrogram, averaged within sliding age windows.
+plot_age_varying_f3_time_averaged_spectrogram();
+close all;
 
 %% Done
-fprintf('\nAll available stages finished. Results are in %s\n', paths.outputsDir);
+fprintf('\nAll stages finished. Results are in %s\n', paths.outputsDir);
