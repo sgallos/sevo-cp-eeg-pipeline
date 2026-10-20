@@ -5,6 +5,7 @@ and neurotypical controls, ages 10–16: F3 multitaper power spectra with a
 frequency-domain bootstrap, F3–F4 coherence, and a state-space model of how the
 CP–control difference changes with age.
 
+Every figure at a glance: **[figure gallery](docs/figures.md)**.
 
 ## Requirements
 - MATLAB R2024a or newer
@@ -34,7 +35,7 @@ check_cohort
 
 ## Pipeline stages
 Each stage's method, parameters and equations, with figures and test results, is written up in
-[`docs/`](docs/README.md) (renders on GitHub). Every figure at a glance: **[figure gallery](docs/figures.md)**.
+[`docs/`](docs/README.md) (renders on GitHub).
 
 | Stage | Folder | Produces | Status | How it works |
 |---|---|---|---|---|
