@@ -1,3 +1,3 @@
 # age_trajectories
 
-Planned. See ../README.md.
+See ../README.md. Entry point: `run_subject_level_age_trajectories.m`.

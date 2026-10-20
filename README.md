@@ -21,7 +21,9 @@ The needed parts of Chronux 2.12 are included in `external/`.
 3. In MATLAB, from this folder:
    ```matlab
    results = runtests('tests/test_00_setup.m')   % checks your setup
+   run_all                                       % rebuilds every result (about 15 min)
    ```
+   Each `%%` section of `run_all.m` can also be run on its own (Cmd/Ctrl+Enter).
 
 ## Who is analysed
 Every stage uses the same cohort: whoever in the data folder meets the rules in

@@ -18,4 +18,9 @@ Why: see the "Verification" sections of the stage 03, 04 and 05 notes. In short,
 current tests treat repeated measurements from one child (bootstrap draws, or 300 EEG
 windows) as if they came from different children.
 
-Status: planned. Built after Goal 1 (full reproduction) is finished.
+## Run
+After `run_all.m` (sections 1–5): `run('analyses/additional/subject_level_inference/run_subject_level_inference.m')`.
+Results: `outputs/additional/subject_level_inference/{power_spectra,age_trajectories,coherence}/`.
+
+Statistics live in `shared/stats/`: `subject_bootstrap_ci.m` and `cluster_permutation_test.m`
+(validated on simulated data in `tests/test_stats.m`).

@@ -1,13 +1,12 @@
-%% validate_group_mfdb_inputs
-% Validate subject-level MFDB outputs before group analysis.
-% Run section-by-section.
+function validationMatFile = validate_group_mfdb_inputs()
+%VALIDATE_GROUP_MFDB_INPUTS Validate subject-level MFDB outputs before group analysis.
+%   Scans outputs/mfdb_subject_level, checks every file used the same settings,
+%   and writes outputs/mfdb_validation/ (registry CSV + validation results).
 
 %% Step 1: Setup
-clear; clc;
-
 cfg = mfdb_config();
 subjectRoot = cfg.outputDir;
-validationOutDir = fullfile(cfg.scriptRoot, 'outputs', 'mfdb_validation');
+validationOutDir = fileparts(cfg.validationFile);
 if ~exist(validationOutDir, 'dir')
     mkdir(validationOutDir);
 end
@@ -178,6 +177,8 @@ save(validationMatFile, ...
 
 fprintf('\nSaved registry to %s\n', registryFile);
 fprintf('Saved validation results to %s\n', validationMatFile);
+
+end
 
 %% Local functions
 function [validation, ok] = check_scalar_match(validation, value, refValue, message)
