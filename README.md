@@ -70,7 +70,7 @@ interpretation of the results. Emily Stephen and Sebastian Gallo jointly directe
 Gallo performed all of the analyses, including their validation and the extension of the original
 methods.
 
-## Augmented, not automated
+## A note on the use of AI: A goal for augmentation, not automation
 
 This project used Claude (Anthropic), an AI model, through Claude Code. Following the principles of
 MIT's [report on AI use in teaching, learning and research training](https://aiandeducation.mit.edu/report/)
