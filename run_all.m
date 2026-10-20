@@ -70,7 +70,17 @@ export_group_f3f4_coherence_publication_svg();
 close all;
 
 %% 6. Stage 06: state-space model (Figs 05-06)
-% Not yet moved into this repo.
+% Fits Control / CP / CP-Control age trajectories for delta, theta and alpha
+% from the stage 02 power table (about 30 s per band).
+bands = state_space_bands();
+for b = 1:numel(bands)
+    run_power_ssm_scalar_r('bandName', bands(b).name, 'bandLowHz', bands(b).lowHz, ...
+        'bandHighHz', bands(b).highHz, 'inputTable', "power_table_for_ssm_subepochs_collapsed.csv", ...
+        'powerColumn', bands(b).column, 'qMode', "all", 'outputPrefix', "power_ssm_publication");
+    close all;
+end
+export_fixed_heuristic_power_ssm_publication_figures();
+close all;
 
 %% 7. Stage 07: age-varying spectrograms (Figs 02-03)
 % Not yet moved into this repo.

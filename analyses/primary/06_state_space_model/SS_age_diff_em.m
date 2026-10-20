@@ -1,0 +1,955 @@
+function results = SS_age_diff_em(subjectTable, varargin)
+%SS_AGE_DIFF_EM Estimate IWP smoothness for the age-difference SSM by EM.
+%
+% This is the Step 4 version of the StateSpaceAlpha model. It keeps the
+% Step 3 observation model:
+%
+%   x(a) = [f0(a); f0_slope(a); delta(a); delta_slope(a)]
+%   y_k  = [1 0 g_k 0] * x(a_k) + noise_k
+%
+% where g_k = 0 for controls and g_k = 1 for CP, so delta(a) is CP minus
+% Control alpha power. The EM loop estimates the two IWP process-noise
+% hyperparameters q_f0, q_delta, and an observation-noise parameter. In the
+% historical/default mode, sigmaBio is an additive between-subject
+% observation variance:
+%
+%   V_k = mfdb_var(k) + sigmaBio
+%
+% In scalar_r mode, the observation variance is a single fitted scalar and
+% MFDB variance is ignored:
+%
+%   V_k = r
+
+    parser = inputParser();
+    parser.FunctionName = 'SS_age_diff_em';
+    addParameter(parser, 'maxIter', 100, @(x) isnumeric(x) && isscalar(x) && x >= 1);
+    addParameter(parser, 'tolerance', 1e-5, @(x) isnumeric(x) && isscalar(x) && x > 0);
+    addParameter(parser, 'qInitMultipliers', [0.01 0.1 1 10 100], ...
+        @(x) isnumeric(x) && isvector(x) && all(isfinite(x)) && all(x > 0));
+    addParameter(parser, 'initialProcessNoiseQF0', [], ...
+        @(x) isempty(x) || (isnumeric(x) && isscalar(x) && isfinite(x) && x > 0));
+    addParameter(parser, 'initialProcessNoiseQDelta', [], ...
+        @(x) isempty(x) || (isnumeric(x) && isscalar(x) && isfinite(x) && x > 0));
+    addParameter(parser, 'qFloor', 1e-8, @(x) isnumeric(x) && isscalar(x) && x > 0);
+    addParameter(parser, 'qCeiling', 1e6, @(x) isnumeric(x) && isscalar(x) && x > 0);
+    addParameter(parser, 'initialSigmaBio', [], ...
+        @(x) isempty(x) || (isnumeric(x) && isscalar(x) && isfinite(x) && x >= 0));
+    addParameter(parser, 'sigmaBioFloor', 1e-6, @(x) isnumeric(x) && isscalar(x) && x >= 0);
+    addParameter(parser, 'sigmaBioCeiling', 100, @(x) isnumeric(x) && isscalar(x) && x > 0);
+    addParameter(parser, 'observationVarianceMode', 'mfdb_plus_bio', ...
+        @(x) ismember(string(x), ["mfdb_plus_bio", "scalar_r"]));
+    addParameter(parser, 'initialR', [], ...
+        @(x) isempty(x) || (isnumeric(x) && isscalar(x) && isfinite(x) && x > 0));
+    addParameter(parser, 'rFloor', 1e-4, @(x) isnumeric(x) && isscalar(x) && x > 0);
+    addParameter(parser, 'rCeiling', 1e4, @(x) isnumeric(x) && isscalar(x) && x > 0);
+    addParameter(parser, 'fixQ', false, @(x) islogical(x) || isnumeric(x));
+    addParameter(parser, 'fixSigmaBio', false, @(x) islogical(x) || isnumeric(x));
+    addParameter(parser, 'fixR', false, @(x) islogical(x) || isnumeric(x));
+    addParameter(parser, 'initialCovarianceScale', 100, @(x) isnumeric(x) && isscalar(x) && x > 0);
+    addParameter(parser, 'minObservationVariance', 1e-6, @(x) isnumeric(x) && isscalar(x) && x > 0);
+    addParameter(parser, 'minAgeGapYears', 0.05, ...
+        @(x) isnumeric(x) && isscalar(x) && isfinite(x) && x >= 0);
+    addParameter(parser, 'logLikTolerance', 1e-4, ...
+        @(x) isnumeric(x) && isscalar(x) && isfinite(x) && x > 0);
+    addParameter(parser, 'logLikPatience', 3, ...
+        @(x) isnumeric(x) && isscalar(x) && isfinite(x) && x >= 1);
+    addParameter(parser, 'useApproximateMstep', false, @(x) islogical(x) || isnumeric(x));
+    addParameter(parser, 'allowRepeatedSubjectRows', false, @(x) islogical(x) || isnumeric(x));
+    addParameter(parser, 'verbose', true, @(x) islogical(x) || isnumeric(x));
+    parse(parser, varargin{:});
+    opts = parser.Results;
+    opts.observationVarianceMode = string(opts.observationVarianceMode);
+    opts.useApproximateMstep = logical(opts.useApproximateMstep);
+    opts.allowRepeatedSubjectRows = logical(opts.allowRepeatedSubjectRows);
+    opts.fixQ = logical(opts.fixQ);
+    opts.fixSigmaBio = logical(opts.fixSigmaBio);
+    opts.fixR = logical(opts.fixR);
+    opts.verbose = logical(opts.verbose);
+
+    if opts.allowRepeatedSubjectRows && ~opts.useApproximateMstep
+        warning(['Repeated-subepoch mode uses deterministic within-subject transitions. ' ...
+            'Switching to the approximate M-step because the exact joint-precision ' ...
+            'lag-one covariance path assumes positive process covariance for every transition.']);
+        opts.useApproximateMstep = true;
+    end
+
+    data = prepare_model_data(subjectTable, opts);
+    qInit = compute_q_init(data.ageYears, data.alpha_dB);
+
+    if isempty(opts.initialProcessNoiseQF0)
+        baseInitialQF0 = qInit;
+    else
+        baseInitialQF0 = opts.initialProcessNoiseQF0;
+    end
+
+    if isempty(opts.initialSigmaBio)
+        baseInitialSigmaBio = estimate_initial_sigma_bio(data);
+    else
+        baseInitialSigmaBio = opts.initialSigmaBio;
+    end
+    baseInitialSigmaBio = clamp_sigma_bio(baseInitialSigmaBio, opts);
+    if opts.observationVarianceMode == "scalar_r"
+        baseInitialSigmaBio = 0;
+    end
+
+    if isempty(opts.initialR)
+        baseInitialR = estimate_initial_r(data);
+    else
+        baseInitialR = opts.initialR;
+    end
+    baseInitialR = clamp_r(baseInitialR, opts);
+
+    if isempty(opts.initialProcessNoiseQDelta)
+        baseInitialQDelta = qInit;
+    else
+        baseInitialQDelta = opts.initialProcessNoiseQDelta;
+    end
+
+    qInitMultipliers = opts.qInitMultipliers(:);
+    startResults = cell(numel(qInitMultipliers), 1);
+    finalLogLikelihood = nan(numel(qInitMultipliers), 1);
+    converged = false(numel(qInitMultipliers), 1);
+
+    if opts.verbose
+        fprintf('SS_age_diff_em Step 4 EM setup\n');
+        fprintf('Rows: %d | Unique subjects: %d | Control rows: %d | CP rows: %d\n', ...
+            height(data), numel(unique(data.subjectID)), ...
+            sum(data.groupIndicator == 0), sum(data.groupIndicator == 1));
+        fprintf('q_init heuristic = %.6g\n', qInit);
+        fprintf('observation variance mode = %s\n', opts.observationVarianceMode);
+        if opts.observationVarianceMode == "scalar_r"
+            fprintf('initial r = %.6g dB^2\n', baseInitialR);
+        else
+            fprintf('initial sigmaBio = %.6g dB^2\n', baseInitialSigmaBio);
+        end
+        if opts.allowRepeatedSubjectRows
+            fprintf(['Repeated-subepoch mode: within-subject rows use identity transition ' ...
+                'and zero process noise; q updates use only between-subject age transitions.\n']);
+        end
+        if opts.fixSigmaBio
+            fprintf('Fixed sigmaBio mode: EM estimates q_f0 and q_delta only.\n');
+        end
+        if opts.fixR
+            fprintf('Fixed-r mode: EM does not update scalar observation variance r.\n');
+        end
+        if opts.fixQ
+            if opts.observationVarianceMode == "scalar_r"
+                fprintf('Fixed-q mode: EM estimates r only.\n');
+            else
+                fprintf('Fixed-q mode: EM estimates sigmaBio only.\n');
+            end
+        end
+        if opts.useApproximateMstep
+            fprintf('M-step mode: approximate, without lag-one covariance.\n');
+        else
+            fprintf('M-step mode: exact, lag-one covariance from joint posterior precision.\n');
+        end
+        fprintf('Minimum IWP covariance age gap = %.6g years\n', opts.minAgeGapYears);
+        fprintf('Log-likelihood plateau rule: tolerance %.6g for %d iterations\n', ...
+            opts.logLikTolerance, opts.logLikPatience);
+    end
+
+    for startIdx = 1:numel(qInitMultipliers)
+        multiplier = qInitMultipliers(startIdx);
+        startQF0 = clamp_q(baseInitialQF0 * multiplier, opts);
+        startQDelta = clamp_q(baseInitialQDelta * multiplier, opts);
+        startSigmaBio = baseInitialSigmaBio;
+        startR = baseInitialR;
+
+        if opts.verbose
+            if opts.observationVarianceMode == "scalar_r"
+                fprintf('\nEM start %d/%d: q_f0 = %.6g, q_delta = %.6g, r = %.6g\n', ...
+                    startIdx, numel(qInitMultipliers), startQF0, startQDelta, startR);
+            else
+                fprintf('\nEM start %d/%d: q_f0 = %.6g, q_delta = %.6g, sigmaBio = %.6g\n', ...
+                    startIdx, numel(qInitMultipliers), startQF0, startQDelta, startSigmaBio);
+            end
+        end
+
+        startResults{startIdx} = run_single_em_start(data, startQF0, startQDelta, startSigmaBio, startR, opts);
+        finalLogLikelihood(startIdx) = startResults{startIdx}.finalLogLikelihood;
+        converged(startIdx) = startResults{startIdx}.converged;
+    end
+
+    [~, bestStartIndex] = max(finalLogLikelihood);
+    bestStart = startResults{bestStartIndex};
+
+    results = struct();
+    results.modelName = "baseline_delta_4d_iwp_em_step4";
+    results.subjectTable = data;
+    results.qInit = qInit;
+    results.qInitMultipliers = qInitMultipliers;
+    results.startResults = startResults;
+    results.bestStartIndex = bestStartIndex;
+    results.bestStart = bestStart;
+    results.trajectory = bestStart.finalFit.trajectory;
+    results.q_f0_em = bestStart.q_f0_em;
+    results.q_delta_em = bestStart.q_delta_em;
+    if opts.observationVarianceMode == "scalar_r"
+        results.r_em = bestStart.r_em;
+        results.sigmaBio_em = [];
+    else
+        results.r_em = [];
+        results.sigmaBio_em = bestStart.sigmaBio_em;
+    end
+    results.hitQFloor = bestStart.hitQFloor;
+    results.hitQCeiling = bestStart.hitQCeiling;
+    results.hitSigmaBioFloor = bestStart.hitSigmaBioFloor;
+    results.hitSigmaBioCeiling = bestStart.hitSigmaBioCeiling;
+    results.hitRFloor = bestStart.hitRFloor;
+    results.hitRCeiling = bestStart.hitRCeiling;
+    results.finalLogLikelihood = bestStart.finalLogLikelihood;
+    results.converged = bestStart.converged;
+    results.anyConverged = any(converged);
+    results.options = opts;
+
+    if opts.verbose
+        fprintf('\nBest EM start: %d\n', bestStartIndex);
+        if opts.observationVarianceMode == "scalar_r"
+            fprintf('q_f0_em = %.6g | q_delta_em = %.6g | r_em = %.6g dB^2\n', ...
+                results.q_f0_em, results.q_delta_em, results.r_em);
+        else
+            fprintf('q_f0_em = %.6g | q_delta_em = %.6g | sigmaBio_em = %.6g dB^2\n', ...
+                results.q_f0_em, results.q_delta_em, results.sigmaBio_em);
+        end
+        fprintf('Final log-likelihood = %.6f\n', results.finalLogLikelihood);
+        fprintf('Converged: %d | iterations: %d\n', ...
+            results.converged, results.bestStart.emIterations);
+        if results.hitQFloor || results.hitQCeiling || results.hitSigmaBioFloor || ...
+                results.hitSigmaBioCeiling || results.hitRFloor || results.hitRCeiling
+            warning('Best EM result hit a hyperparameter boundary. Treat the selected values cautiously.');
+        end
+    end
+end
+
+function startResult = run_single_em_start(data, qF0Start, qDeltaStart, sigmaBioStart, rStart, opts)
+    maxStoredIter = opts.maxIter + 1;
+    qHistory = nan(maxStoredIter, 2);
+    sigmaBioHistory = nan(maxStoredIter, 1);
+    rHistory = nan(maxStoredIter, 1);
+    qNewHistory = nan(opts.maxIter, 2);
+    sigmaBioNewHistory = nan(opts.maxIter, 1);
+    rNewHistory = nan(opts.maxIter, 1);
+    logLikHistory = nan(maxStoredIter, 1);
+    relativeChangeHistory = nan(opts.maxIter, 1);
+    mstepDiagnostics = cell(opts.maxIter, 1);
+
+    qF0 = qF0Start;
+    qDelta = qDeltaStart;
+    sigmaBio = sigmaBioStart;
+    r = rStart;
+    converged = false;
+    convergenceReason = "maxIter";
+    plateauCount = 0;
+
+    for iter = 1:opts.maxIter
+        fit = run_filter_smoother_4d(data, qF0, qDelta, sigmaBio, r, opts);
+        qHistory(iter, :) = [qF0 qDelta];
+        sigmaBioHistory(iter) = sigmaBio;
+        rHistory(iter) = r;
+        logLikHistory(iter) = fit.logLikelihood;
+        logLikConverged = false;
+        if iter > 1
+            logLikChange = logLikHistory(iter) - logLikHistory(iter - 1);
+            if logLikChange >= 0 && logLikChange < opts.logLikTolerance
+                plateauCount = plateauCount + 1;
+            else
+                plateauCount = 0;
+            end
+            logLikConverged = plateauCount >= opts.logLikPatience;
+        end
+
+        [qF0New, qDeltaNew, sigmaBioNew, rNew, thisMstepDiagnostics] = ...
+            update_hyperparameters_from_smoother(fit, data, opts);
+
+        if opts.fixQ
+            qF0New = qF0;
+            qDeltaNew = qDelta;
+            thisMstepDiagnostics.fixedQ = true;
+        else
+            qF0New = clamp_q(qF0New, opts);
+            qDeltaNew = clamp_q(qDeltaNew, opts);
+            thisMstepDiagnostics.fixedQ = false;
+        end
+
+        if opts.observationVarianceMode == "scalar_r"
+            sigmaBioNew = sigmaBio;
+            thisMstepDiagnostics.fixedSigmaBio = true;
+        elseif opts.fixSigmaBio
+            sigmaBioNew = sigmaBio;
+            thisMstepDiagnostics.fixedSigmaBio = true;
+        else
+            sigmaBioNew = clamp_sigma_bio(sigmaBioNew, opts);
+            thisMstepDiagnostics.fixedSigmaBio = false;
+        end
+
+        if opts.fixR
+            rNew = r;
+            thisMstepDiagnostics.fixedR = true;
+        else
+            rNew = clamp_r(rNew, opts);
+            thisMstepDiagnostics.fixedR = false;
+        end
+        qNewHistory(iter, :) = [qF0New qDeltaNew];
+        sigmaBioNewHistory(iter) = sigmaBioNew;
+        rNewHistory(iter) = rNew;
+        mstepDiagnostics{iter} = thisMstepDiagnostics;
+
+        if opts.observationVarianceMode == "scalar_r"
+            qChange = [];
+            rChange = [];
+            if ~opts.fixQ
+                denominator = max([qF0, qDelta], [opts.qFloor, opts.qFloor]);
+                qChange = max(abs([qF0New - qF0, qDeltaNew - qDelta]) ./ denominator);
+            end
+            if ~opts.fixR
+                denominator = max(r, opts.rFloor);
+                rChange = abs(rNew - r) / denominator;
+            end
+            relativeChange = max([qChange, rChange, 0]);
+        else
+            if opts.fixQ && opts.fixSigmaBio
+                relativeChange = 0;
+            elseif opts.fixQ
+                denominator = max(sigmaBio, opts.sigmaBioFloor);
+                relativeChange = abs(sigmaBioNew - sigmaBio) / denominator;
+            elseif opts.fixSigmaBio
+                denominator = max([qF0, qDelta], [opts.qFloor, opts.qFloor]);
+                relativeChange = max(abs([qF0New - qF0, qDeltaNew - qDelta]) ./ denominator);
+            else
+                denominator = max([qF0, qDelta, sigmaBio], ...
+                    [opts.qFloor, opts.qFloor, opts.sigmaBioFloor]);
+                relativeChange = max(abs([qF0New - qF0, qDeltaNew - qDelta, sigmaBioNew - sigmaBio]) ./ ...
+                    denominator);
+            end
+        end
+        relativeChangeHistory(iter) = relativeChange;
+
+        if opts.verbose
+            if opts.observationVarianceMode == "scalar_r"
+                fprintf(['  iter %02d: logLik %.6f | q_f0 %.6g -> %.6g | ' ...
+                    'q_delta %.6g -> %.6g | r %.6g -> %.6g | rel %.3g\n'], ...
+                    iter, fit.logLikelihood, qF0, qF0New, qDelta, qDeltaNew, ...
+                    r, rNew, relativeChange);
+            else
+                fprintf(['  iter %02d: logLik %.6f | q_f0 %.6g -> %.6g | ' ...
+                    'q_delta %.6g -> %.6g | sigmaBio %.6g -> %.6g | rel %.3g\n'], ...
+                    iter, fit.logLikelihood, qF0, qF0New, qDelta, qDeltaNew, ...
+                    sigmaBio, sigmaBioNew, relativeChange);
+            end
+        end
+
+        qF0 = qF0New;
+        qDelta = qDeltaNew;
+        sigmaBio = sigmaBioNew;
+        r = rNew;
+
+        parameterConverged = relativeChange < opts.tolerance;
+        if parameterConverged || logLikConverged
+            converged = true;
+            if parameterConverged
+                convergenceReason = "paramRelChange";
+            else
+                convergenceReason = "logLikPlateau";
+            end
+            break;
+        end
+    end
+
+    finalFit = run_filter_smoother_4d(data, qF0, qDelta, sigmaBio, r, opts);
+    finalIndex = min(iter + 1, maxStoredIter);
+    qHistory(finalIndex, :) = [qF0 qDelta];
+    sigmaBioHistory(finalIndex) = sigmaBio;
+    rHistory(finalIndex) = r;
+    logLikHistory(finalIndex) = finalFit.logLikelihood;
+
+    validQRows = all(isfinite(qHistory), 2);
+    validSigmaRows = isfinite(sigmaBioHistory);
+    validRRows = isfinite(rHistory);
+    validLogRows = isfinite(logLikHistory);
+    validRelativeRows = isfinite(relativeChangeHistory);
+
+    startResult = struct();
+    startResult.initialQF0 = qF0Start;
+    startResult.initialQDelta = qDeltaStart;
+    startResult.initialSigmaBio = sigmaBioStart;
+    startResult.initialR = rStart;
+    startResult.q_f0_em = qF0;
+    startResult.q_delta_em = qDelta;
+    if opts.observationVarianceMode == "scalar_r"
+        startResult.sigmaBio_em = [];
+        startResult.r_em = r;
+    else
+        startResult.sigmaBio_em = sigmaBio;
+        startResult.r_em = [];
+    end
+    startResult.hitQFloor = any(abs([qF0, qDelta] - opts.qFloor) <= eps(opts.qFloor));
+    startResult.hitQCeiling = any(abs([qF0, qDelta] - opts.qCeiling) <= eps(opts.qCeiling));
+    startResult.hitSigmaBioFloor = opts.observationVarianceMode ~= "scalar_r" && ...
+        abs(sigmaBio - opts.sigmaBioFloor) <= eps(max(opts.sigmaBioFloor, 1));
+    startResult.hitSigmaBioCeiling = opts.observationVarianceMode ~= "scalar_r" && ...
+        abs(sigmaBio - opts.sigmaBioCeiling) <= eps(opts.sigmaBioCeiling);
+    startResult.hitRFloor = opts.observationVarianceMode == "scalar_r" && ...
+        abs(r - opts.rFloor) <= eps(max(opts.rFloor, 1));
+    startResult.hitRCeiling = opts.observationVarianceMode == "scalar_r" && ...
+        abs(r - opts.rCeiling) <= eps(opts.rCeiling);
+    startResult.finalLogLikelihood = finalFit.logLikelihood;
+    startResult.finalFit = finalFit;
+    startResult.qHistory = qHistory(validQRows, :);
+    startResult.sigmaBioHistory = sigmaBioHistory(validSigmaRows);
+    startResult.rHistory = rHistory(validRRows);
+    startResult.qNewHistory = qNewHistory(any(isfinite(qNewHistory), 2), :);
+    startResult.sigmaBioNewHistory = sigmaBioNewHistory(isfinite(sigmaBioNewHistory));
+    startResult.rNewHistory = rNewHistory(isfinite(rNewHistory));
+    startResult.logLikHistory = logLikHistory(validLogRows);
+    startResult.relativeChangeHistory = relativeChangeHistory(validRelativeRows);
+    startResult.mstepDiagnostics = mstepDiagnostics(~cellfun(@isempty, mstepDiagnostics));
+    startResult.numIterationsWithNegativeContribution = count_negative_mstep_iterations(startResult.mstepDiagnostics);
+    startResult.maxAgeGapsFloored = max_age_gaps_floored(startResult.mstepDiagnostics);
+    startResult.converged = converged;
+    startResult.convergenceReason = convergenceReason;
+    startResult.emIterations = iter;
+    startResult.logLikelihoodIsMonotone = all(diff(startResult.logLikHistory) >= -1e-7);
+
+    if opts.verbose
+        fprintf('  negative M-step contribution iterations: %d/%d | max floored age gaps: %d\n', ...
+            startResult.numIterationsWithNegativeContribution, ...
+            numel(startResult.mstepDiagnostics), startResult.maxAgeGapsFloored);
+    end
+
+    if opts.verbose && ~startResult.logLikelihoodIsMonotone
+        warning('EM log-likelihood decreased for this start. Check M-step diagnostics.');
+    end
+end
+
+function fit = run_filter_smoother_4d(data, processNoiseQF0, processNoiseQDelta, sigmaBio, r, opts)
+    ageYears = data.ageYears(:);
+    alphaDB = data.alpha_dB(:);
+    observationVariance = get_observation_variance(data, sigmaBio, r, opts);
+    groupIndicator = data.groupIndicator(:);
+
+    nSubjects = height(data);
+    stateDimension = 4;
+
+    predictedState = nan(stateDimension, nSubjects);
+    filteredState = nan(stateDimension, nSubjects);
+    smoothedState = nan(stateDimension, nSubjects);
+    predictedCovariance = nan(stateDimension, stateDimension, nSubjects);
+    filteredCovariance = nan(stateDimension, stateDimension, nSubjects);
+    smoothedCovariance = nan(stateDimension, stateDimension, nSubjects);
+    transitionMatrix = nan(stateDimension, stateDimension, max(nSubjects - 1, 1));
+    processCovariance = nan(stateDimension, stateDimension, max(nSubjects - 1, 1));
+    observationMatrix = nan(nSubjects, stateDimension);
+    kalmanGain = nan(stateDimension, nSubjects);
+    innovation = nan(nSubjects, 1);
+    innovationVariance = nan(nSubjects, 1);
+    logLikContribution = nan(nSubjects, 1);
+
+    initialState = make_initial_state(alphaDB);
+    initialCovariance = opts.initialCovarianceScale * eye(stateDimension);
+
+    for k = 1:nSubjects
+        if k == 1
+            xPrior = initialState;
+            pPrior = initialCovariance;
+        else
+            h = ageYears(k) - ageYears(k - 1);
+            if is_same_subject_transition(data, k) && opts.allowRepeatedSubjectRows
+                Ak = eye(stateDimension);
+                Qk = zeros(stateDimension);
+            else
+                Ak = make_iwp_transition_4d(h);
+                Qk = make_iwp_process_covariance_4d(h, processNoiseQF0, processNoiseQDelta, opts.minAgeGapYears);
+            end
+            transitionMatrix(:, :, k - 1) = Ak;
+            processCovariance(:, :, k - 1) = Qk;
+
+            xPrior = Ak * filteredState(:, k - 1);
+            pPrior = Ak * filteredCovariance(:, :, k - 1) * Ak' + Qk;
+            pPrior = symmetrize_covariance(pPrior);
+        end
+
+        Ck = [1 0 groupIndicator(k) 0];
+        observationMatrix(k, :) = Ck;
+        predictedState(:, k) = xPrior;
+        predictedCovariance(:, :, k) = pPrior;
+
+        innovation(k) = alphaDB(k) - Ck * xPrior;
+        innovationVariance(k) = Ck * pPrior * Ck' + observationVariance(k);
+        if innovationVariance(k) <= 0 || ~isfinite(innovationVariance(k))
+            error('Invalid innovation variance at subject %d.', k);
+        end
+
+        logLikContribution(k) = -0.5 * (log(2 * pi * innovationVariance(k)) + ...
+            innovation(k)^2 / innovationVariance(k));
+
+        thisKalmanGain = (pPrior * Ck') / innovationVariance(k);
+        xPost = xPrior + thisKalmanGain * innovation(k);
+
+        updateMatrix = eye(stateDimension) - thisKalmanGain * Ck;
+        pPost = updateMatrix * pPrior * updateMatrix' + ...
+            thisKalmanGain * observationVariance(k) * thisKalmanGain';
+
+        filteredState(:, k) = xPost;
+        filteredCovariance(:, :, k) = symmetrize_covariance(pPost);
+        kalmanGain(:, k) = thisKalmanGain;
+    end
+
+    smoothedState(:, nSubjects) = filteredState(:, nSubjects);
+    smoothedCovariance(:, :, nSubjects) = filteredCovariance(:, :, nSubjects);
+
+    for k = (nSubjects - 1):-1:1
+        Ak = transitionMatrix(:, :, k);
+        smootherGain = filteredCovariance(:, :, k) * Ak' / predictedCovariance(:, :, k + 1);
+
+        smoothedState(:, k) = filteredState(:, k) + ...
+            smootherGain * (smoothedState(:, k + 1) - predictedState(:, k + 1));
+        smoothedCovariance(:, :, k) = filteredCovariance(:, :, k) + ...
+            smootherGain * (smoothedCovariance(:, :, k + 1) - predictedCovariance(:, :, k + 1)) * smootherGain';
+        smoothedCovariance(:, :, k) = symmetrize_covariance(smoothedCovariance(:, :, k));
+    end
+
+    if opts.useApproximateMstep
+        lagOneCovariance = nan(stateDimension, stateDimension, nSubjects - 1);
+        jointMeanMaxAbsDiff = NaN;
+        jointCovMaxAbsDiff = NaN;
+    else
+        [jointMean, jointCovariance, lagOneCovariance] = ...
+            compute_joint_posterior_blocks(data, processNoiseQF0, processNoiseQDelta, ...
+            sigmaBio, r, initialState, initialCovariance, opts);
+        jointMarginalCovariance = extract_marginal_covariances(jointCovariance, stateDimension, nSubjects);
+        jointMeanMaxAbsDiff = max(abs(jointMean(:) - smoothedState(:)));
+        jointCovMaxAbsDiff = max(abs(jointMarginalCovariance(:) - smoothedCovariance(:)));
+    end
+
+    trajectory = build_trajectory_table(data, observationVariance, smoothedState, smoothedCovariance);
+
+    fit = struct();
+    fit.processNoiseQF0 = processNoiseQF0;
+    fit.processNoiseQDelta = processNoiseQDelta;
+    fit.sigmaBio = sigmaBio;
+    fit.r = r;
+    fit.observationVarianceMode = opts.observationVarianceMode;
+    fit.observationVariance = observationVariance;
+    fit.trajectory = trajectory;
+    fit.predictedState = predictedState;
+    fit.filteredState = filteredState;
+    fit.smoothedState = smoothedState;
+    fit.predictedCovariance = predictedCovariance;
+    fit.filteredCovariance = filteredCovariance;
+    fit.smoothedCovariance = smoothedCovariance;
+    fit.transitionMatrix = transitionMatrix;
+    fit.processCovariance = processCovariance;
+    fit.observationMatrix = observationMatrix;
+    fit.kalmanGain = kalmanGain;
+    fit.innovation = innovation;
+    fit.innovationVariance = innovationVariance;
+    fit.logLikContribution = logLikContribution;
+    fit.logLikelihood = sum(logLikContribution);
+    fit.lagOneCovariance = lagOneCovariance;
+    fit.jointMeanMaxAbsDiff = jointMeanMaxAbsDiff;
+    fit.jointCovMaxAbsDiff = jointCovMaxAbsDiff;
+end
+
+function [qF0New, qDeltaNew, sigmaBioNew, rNew, diagnostics] = update_hyperparameters_from_smoother(fit, data, opts)
+    nSubjects = height(data);
+    nTransitions = nSubjects - 1;
+    contributionF0 = nan(nTransitions, 1);
+    contributionDelta = nan(nTransitions, 1);
+    rawTraceF0 = nan(nTransitions, 1);
+    rawTraceDelta = nan(nTransitions, 1);
+    isAgeTransition = true(nTransitions, 1);
+    isAgeGapFloored = false(nTransitions, 1);
+
+    for k = 1:nTransitions
+        if is_same_subject_transition(data, k + 1) && opts.allowRepeatedSubjectRows
+            isAgeTransition(k) = false;
+            continue;
+        end
+
+        h = data.ageYears(k + 1) - data.ageYears(k);
+        Ak = fit.transitionMatrix(:, :, k);
+        isAgeGapFloored(k) = h < opts.minAgeGapYears;
+        baseQ = make_iwp_base_covariance(h, opts.minAgeGapYears);
+
+        Pk = fit.smoothedCovariance(:, :, k);
+        Pnext = fit.smoothedCovariance(:, :, k + 1);
+        meanInnovation = fit.smoothedState(:, k + 1) - Ak * fit.smoothedState(:, k);
+
+        if opts.useApproximateMstep
+            expectedInnovationOuter = Pnext + Ak * Pk * Ak' + ...
+                meanInnovation * meanInnovation';
+        else
+            PkNext = fit.lagOneCovariance(:, :, k);
+            expectedInnovationOuter = Pnext + Ak * Pk * Ak' - ...
+                PkNext' * Ak' - Ak * PkNext + meanInnovation * meanInnovation';
+        end
+
+        expectedInnovationOuter = symmetrize_covariance(expectedInnovationOuter);
+        S_f0 = symmetrize_covariance(expectedInnovationOuter(1:2, 1:2));
+        S_delta = symmetrize_covariance(expectedInnovationOuter(3:4, 3:4));
+
+        rawTraceF0(k) = trace(baseQ \ S_f0);
+        rawTraceDelta(k) = trace(baseQ \ S_delta);
+        contributionF0(k) = 0.5 * rawTraceF0(k);
+        contributionDelta(k) = 0.5 * rawTraceDelta(k);
+    end
+
+    nAgeTransitions = sum(isAgeTransition);
+    if nAgeTransitions < 1
+        error('No between-subject age transitions are available for q updates.');
+    end
+
+    qF0New = sum(max(contributionF0(isAgeTransition), 0)) / nAgeTransitions;
+    qDeltaNew = sum(max(contributionDelta(isAgeTransition), 0)) / nAgeTransitions;
+
+    residualVarianceTerms = nan(nSubjects, 1);
+    totalObservationVarianceTerms = nan(nSubjects, 1);
+    for k = 1:nSubjects
+        Ck = fit.observationMatrix(k, :);
+        smoothedMean = fit.smoothedState(:, k);
+        smoothedCovariance = fit.smoothedCovariance(:, :, k);
+        innovationSquared = (data.alpha_dB(k) - Ck * smoothedMean)^2;
+        smoothedObsVariance = Ck * smoothedCovariance * Ck';
+        totalObservationVarianceTerms(k) = innovationSquared + smoothedObsVariance;
+        residualVarianceTerms(k) = totalObservationVarianceTerms(k) - data.mfdb_var(k);
+    end
+    sigmaBioRaw = mean(residualVarianceTerms);
+    rRaw = mean(totalObservationVarianceTerms);
+
+    if opts.observationVarianceMode == "scalar_r"
+        sigmaBioNew = fit.sigmaBio;
+        rNew = max(rRaw, opts.rFloor);
+    else
+        sigmaBioNew = max(sigmaBioRaw, opts.sigmaBioFloor);
+        rNew = fit.r;
+    end
+
+    diagnostics = struct();
+    diagnostics.contributionF0 = contributionF0;
+    diagnostics.contributionDelta = contributionDelta;
+    diagnostics.rawTraceF0 = rawTraceF0;
+    diagnostics.rawTraceDelta = rawTraceDelta;
+    diagnostics.isAgeTransition = isAgeTransition;
+    diagnostics.isAgeGapFloored = isAgeGapFloored;
+    diagnostics.nAgeTransitions = nAgeTransitions;
+    diagnostics.nAgeGapsFloored = sum(isAgeGapFloored & isAgeTransition);
+    diagnostics.residualVarianceTerms = residualVarianceTerms;
+    diagnostics.totalObservationVarianceTerms = totalObservationVarianceTerms;
+    diagnostics.sigmaBioRaw = sigmaBioRaw;
+    diagnostics.rRaw = rRaw;
+    diagnostics.anyNegativeContribution = any(contributionF0(isAgeTransition) < -1e-8) || ...
+        any(contributionDelta(isAgeTransition) < -1e-8);
+end
+
+function [jointMean, jointCovariance, lagOneCovariance] = compute_joint_posterior_blocks( ...
+        data, processNoiseQF0, processNoiseQDelta, sigmaBio, r, initialState, initialCovariance, opts)
+    nSubjects = height(data);
+    stateDimension = 4;
+    totalDimension = stateDimension * nSubjects;
+    precisionMatrix = zeros(totalDimension, totalDimension);
+    informationVector = zeros(totalDimension, 1);
+
+    idx1 = state_index(1, stateDimension);
+    initialPrecision = initialCovariance \ eye(stateDimension);
+    precisionMatrix(idx1, idx1) = precisionMatrix(idx1, idx1) + initialPrecision;
+    informationVector(idx1) = informationVector(idx1) + initialPrecision * initialState;
+
+    for k = 1:(nSubjects - 1)
+        h = data.ageYears(k + 1) - data.ageYears(k);
+        Ak = make_iwp_transition_4d(h);
+        Qk = make_iwp_process_covariance_4d(h, processNoiseQF0, processNoiseQDelta, opts.minAgeGapYears);
+        Qinv = Qk \ eye(stateDimension);
+
+        idxK = state_index(k, stateDimension);
+        idxNext = state_index(k + 1, stateDimension);
+
+        precisionMatrix(idxK, idxK) = precisionMatrix(idxK, idxK) + Ak' * Qinv * Ak;
+        precisionMatrix(idxK, idxNext) = precisionMatrix(idxK, idxNext) - Ak' * Qinv;
+        precisionMatrix(idxNext, idxK) = precisionMatrix(idxNext, idxK) - Qinv * Ak;
+        precisionMatrix(idxNext, idxNext) = precisionMatrix(idxNext, idxNext) + Qinv;
+    end
+
+    for k = 1:nSubjects
+        Ck = [1 0 data.groupIndicator(k) 0];
+        observationVariance = get_observation_variance(data(k, :), sigmaBio, r, opts);
+        Rinv = 1 / observationVariance;
+        idxK = state_index(k, stateDimension);
+
+        precisionMatrix(idxK, idxK) = precisionMatrix(idxK, idxK) + Ck' * Rinv * Ck;
+        informationVector(idxK) = informationVector(idxK) + Ck' * Rinv * data.alpha_dB(k);
+    end
+
+    precisionMatrix = symmetrize_covariance(precisionMatrix);
+    jointMeanVector = precisionMatrix \ informationVector;
+    jointCovariance = precisionMatrix \ eye(totalDimension);
+    jointCovariance = symmetrize_covariance(jointCovariance);
+    jointMean = reshape(jointMeanVector, stateDimension, nSubjects);
+
+    lagOneCovariance = nan(stateDimension, stateDimension, nSubjects - 1);
+    for k = 1:(nSubjects - 1)
+        idxK = state_index(k, stateDimension);
+        idxNext = state_index(k + 1, stateDimension);
+        lagOneCovariance(:, :, k) = jointCovariance(idxK, idxNext);
+    end
+end
+
+function marginalCovariances = extract_marginal_covariances(jointCovariance, stateDimension, nSubjects)
+    marginalCovariances = nan(stateDimension, stateDimension, nSubjects);
+    for k = 1:nSubjects
+        idxK = state_index(k, stateDimension);
+        marginalCovariances(:, :, k) = jointCovariance(idxK, idxK);
+    end
+end
+
+function idx = state_index(k, stateDimension)
+    idx = ((k - 1) * stateDimension + 1):(k * stateDimension);
+end
+
+function trajectory = build_trajectory_table(data, observationVariance, smoothedState, smoothedCovariance)
+    baselineMean = smoothedState(1, :).';
+    deltaMean = smoothedState(3, :).';
+    cpMean = baselineMean + deltaMean;
+
+    baselineVariance = max(squeeze(smoothedCovariance(1, 1, :)), 0);
+    deltaVariance = max(squeeze(smoothedCovariance(3, 3, :)), 0);
+    cpVariance = max(squeeze(smoothedCovariance(1, 1, :) + ...
+        2 * smoothedCovariance(1, 3, :) + smoothedCovariance(3, 3, :)), 0);
+
+    baselineSD = sqrt(baselineVariance);
+    deltaSD = sqrt(deltaVariance);
+    cpSD = sqrt(cpVariance);
+
+    trajectory = table( ...
+        data.subjectID, ...
+        data.subepochIdx, ...
+        data.groupLabel, ...
+        data.groupIndicator, ...
+        data.ageYears, ...
+        data.alpha_dB, ...
+        observationVariance, ...
+        baselineMean, ...
+        baselineSD(:), ...
+        baselineMean - 1.96 * baselineSD(:), ...
+        baselineMean + 1.96 * baselineSD(:), ...
+        deltaMean, ...
+        deltaSD(:), ...
+        deltaMean - 1.96 * deltaSD(:), ...
+        deltaMean + 1.96 * deltaSD(:), ...
+        cpMean, ...
+        cpSD(:), ...
+        cpMean - 1.96 * cpSD(:), ...
+        cpMean + 1.96 * cpSD(:), ...
+        smoothedState(2, :).', ...
+        smoothedState(4, :).', ...
+        'VariableNames', {'subjectID','subepochIdx','groupLabel','groupIndicator','ageYears','alpha_dB', ...
+        'observationVariance','baselineMean_dB','baselineSD_dB','baselineCILow_dB', ...
+        'baselineCIHigh_dB','deltaMean_dB','deltaSD_dB','deltaCILow_dB', ...
+        'deltaCIHigh_dB','cpMean_dB','cpSD_dB','cpCILow_dB','cpCIHigh_dB', ...
+        'baselineSlope_dBPerYear','deltaSlope_dBPerYear'});
+end
+
+function data = prepare_model_data(subjectTable, opts)
+    data = standardize_subject_table(subjectTable);
+    validMask = isfinite(data.ageYears) & isfinite(data.alpha_dB) & isfinite(data.mfdb_var);
+    data = data(validMask, :);
+    data = sortrows(data, {'ageYears', 'subjectID', 'subepochIdx'});
+
+    if height(data) < 4
+        error('SS_age_diff_em needs at least 4 valid rows. Found %d.', height(data));
+    end
+
+    data.groupIndicator = make_group_indicator(data.groupLabel);
+
+    ageGaps = diff(data.ageYears);
+    if opts.allowRepeatedSubjectRows
+        validate_repeated_subject_rows(data);
+        for k = 2:height(data)
+            if is_same_subject_transition(data, k)
+                if abs(ageGaps(k - 1)) > 1e-10
+                    error('Repeated rows for %s do not have identical ages.', data.subjectID(k));
+                end
+            elseif ageGaps(k - 1) <= 0
+                error('Between-subject ages must be strictly increasing after sorting.');
+            end
+        end
+    elseif any(ageGaps <= 0)
+        error('Subject ages must be strictly increasing after sorting. Use allowRepeatedSubjectRows=true for sub-epoch rows.');
+    end
+
+    nCP = sum(data.groupIndicator == 1);
+    nControl = sum(data.groupIndicator == 0);
+    if nCP == 0 || nControl == 0
+        error('Both CP and Control subjects are required. Found CP=%d, Control=%d.', nCP, nControl);
+    end
+end
+
+function data = standardize_subject_table(subjectTable)
+    names = subjectTable.Properties.VariableNames;
+
+    subjectID = get_table_column(subjectTable, names, {'subjectID', 'SubjectID'});
+    subepochIdx = get_optional_table_column(subjectTable, names, {'subepochIdx', 'SubEpochIdx', 'subEpochIdx'}, ...
+        ones(height(subjectTable), 1));
+    groupLabel = get_table_column(subjectTable, names, {'groupLabel', 'Group', 'GroupLabel'});
+    ageYears = get_table_column(subjectTable, names, {'ageYears', 'AgeYears'});
+    alphaDB = get_table_column(subjectTable, names, {'alpha_dB', 'AlphaPower_dB', 'AlphaPowerDB'});
+    mfdbVar = get_table_column(subjectTable, names, {'mfdb_var', 'MFDBVar', 'MfdbVar'});
+
+    data = table( ...
+        string(subjectID(:)), ...
+        double(subepochIdx(:)), ...
+        string(groupLabel(:)), ...
+        double(ageYears(:)), ...
+        double(alphaDB(:)), ...
+        double(mfdbVar(:)), ...
+        'VariableNames', {'subjectID','subepochIdx','groupLabel','ageYears','alpha_dB','mfdb_var'});
+end
+
+function values = get_table_column(T, allNames, candidates)
+    values = [];
+    for i = 1:numel(candidates)
+        idx = find(strcmp(allNames, candidates{i}), 1, 'first');
+        if ~isempty(idx)
+            values = T.(allNames{idx});
+            return;
+        end
+    end
+    error('Missing required table variable. Tried: %s', strjoin(candidates, ', '));
+end
+
+function values = get_optional_table_column(T, allNames, candidates, defaultValues)
+    values = defaultValues;
+    for i = 1:numel(candidates)
+        idx = find(strcmp(allNames, candidates{i}), 1, 'first');
+        if ~isempty(idx)
+            values = T.(allNames{idx});
+            return;
+        end
+    end
+end
+
+function validate_repeated_subject_rows(data)
+    [G, subjectIDs] = findgroups(data.subjectID);
+    for i = 1:numel(subjectIDs)
+        rows = find(G == i);
+        if numel(unique(data.ageYears(rows))) ~= 1
+            error('Subject %s has multiple age values.', subjectIDs(i));
+        end
+        if numel(unique(data.groupLabel(rows))) ~= 1
+            error('Subject %s has multiple group labels.', subjectIDs(i));
+        end
+        if any(diff(data.subepochIdx(rows)) <= 0)
+            error('Subject %s subepochIdx values must be strictly increasing.', subjectIDs(i));
+        end
+    end
+end
+
+function tf = is_same_subject_transition(data, k)
+    tf = k > 1 && data.subjectID(k) == data.subjectID(k - 1);
+end
+
+function groupIndicator = make_group_indicator(groupLabel)
+    groupLabel = string(groupLabel(:));
+    isCP = strcmpi(groupLabel, "CP") | strcmpi(groupLabel, "Patient");
+    isControl = strcmpi(groupLabel, "Control") | strcmpi(groupLabel, "CN");
+
+    unknownMask = ~(isCP | isControl);
+    if any(unknownMask)
+        error('Unknown group labels: %s', strjoin(unique(groupLabel(unknownMask)), ', '));
+    end
+
+    groupIndicator = double(isCP);
+end
+
+function qInit = compute_q_init(ageYears, alphaDB)
+    ageSpan = max(ageYears) - min(ageYears);
+    alphaRange = max(alphaDB) - min(alphaDB);
+    qInit = (alphaRange^2) / max(ageSpan^3, eps);
+end
+
+function initialState = make_initial_state(alphaDB)
+    initialState = [median(alphaDB, 'omitnan'); 0; 0; 0];
+end
+
+function qValue = clamp_q(qValue, opts)
+    qValue = min(max(qValue, opts.qFloor), opts.qCeiling);
+end
+
+function sigmaBio = clamp_sigma_bio(sigmaBio, opts)
+    sigmaBio = min(max(sigmaBio, opts.sigmaBioFloor), opts.sigmaBioCeiling);
+end
+
+function r = clamp_r(r, opts)
+    r = min(max(r, opts.rFloor), opts.rCeiling);
+end
+
+function sigmaBio = estimate_initial_sigma_bio(data)
+    groupIndicator = make_group_indicator(data.groupLabel);
+    ageCentered = data.ageYears - mean(data.ageYears, 'omitnan');
+    designMatrix = [ones(height(data), 1), ageCentered, groupIndicator, ageCentered .* groupIndicator];
+    beta = designMatrix \ data.alpha_dB;
+    residuals = data.alpha_dB - designMatrix * beta;
+    sigmaBio = max(var(residuals, 1) - mean(data.mfdb_var, 'omitnan'), 1e-6);
+end
+
+function r = estimate_initial_r(data)
+    alphaDB = data.alpha_dB(isfinite(data.alpha_dB));
+    r = var(alphaDB, 1);
+    if ~isfinite(r) || r <= 0
+        r = 1;
+    end
+end
+
+function observationVariance = get_observation_variance(data, sigmaBio, r, opts)
+    if opts.observationVarianceMode == "scalar_r"
+        observationVariance = max(r, opts.minObservationVariance) * ones(height(data), 1);
+    else
+        observationVariance = max(data.mfdb_var(:) + sigmaBio, opts.minObservationVariance);
+    end
+end
+
+function A = make_iwp_transition_4d(ageGapYears)
+    block = [1 ageGapYears; 0 1];
+    A = blkdiag(block, block);
+end
+
+function baseQ = make_iwp_base_covariance(ageGapYears, minAgeGapYears)
+    h = max(ageGapYears, minAgeGapYears);
+    baseQ = [h^3 / 3, h^2 / 2; h^2 / 2, h];
+end
+
+function Q = make_iwp_process_covariance_4d(ageGapYears, processNoiseQF0, processNoiseQDelta, minAgeGapYears)
+    baseQ = make_iwp_base_covariance(ageGapYears, minAgeGapYears);
+    Q = blkdiag(processNoiseQF0 * baseQ, processNoiseQDelta * baseQ);
+end
+
+function P = symmetrize_covariance(P)
+    P = (P + P') / 2;
+end
+
+function nNegative = count_negative_mstep_iterations(mstepDiagnostics)
+    if isempty(mstepDiagnostics)
+        nNegative = 0;
+        return;
+    end
+    flags = cellfun(@(m) isfield(m, 'anyNegativeContribution') && ...
+        m.anyNegativeContribution, mstepDiagnostics);
+    nNegative = sum(flags);
+end
+
+function nFloored = max_age_gaps_floored(mstepDiagnostics)
+    nFloored = 0;
+    if isempty(mstepDiagnostics)
+        return;
+    end
+    counts = cellfun(@(m) get_n_age_gaps_floored(m), mstepDiagnostics);
+    nFloored = max(counts);
+end
+
+function nFloored = get_n_age_gaps_floored(mstepDiagnostic)
+    if isfield(mstepDiagnostic, 'nAgeGapsFloored')
+        nFloored = mstepDiagnostic.nAgeGapsFloored;
+    else
+        nFloored = 0;
+    end
+end
