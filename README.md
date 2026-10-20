@@ -6,9 +6,9 @@ spectra by multitaper analysis with a frequency-domain bootstrap, quantifies F3�
 models how the CP − Control difference changes with age using a state-space model.
 
 The analysis runs in seven **stages**, numbered 01–07. Each stage is one step of the analysis, with
-its own folder in `analyses/primary/`. It takes the outputs of earlier stages and produces one set of
-results, from each child's spectrum (stage 01) to the group figures. The stages are listed under
-[Analysis pipeline](#analysis-pipeline).
+its own folder in `analyses/primary/`, and produces one set of results, from each child's spectrum
+(stage 01) to the group figures. Stages 01, 05 and 07 start from the EEG recordings, and the others
+build on the outputs of earlier stages. The stages are listed under [Analysis pipeline](#analysis-pipeline).
 
 All figures, including those for publication, are shown in the **[figure gallery](docs/figures.md)**.
 
