@@ -27,8 +27,10 @@ The epoch is **120 s at Fs = 256 Hz**, so $N = 30{,}720$ samples.
 Average over $K$ tapers $h_k$:
 
 ```math
-X_k(f) = \sum_{t=1}^{N} h_k(t)\, x(t)\, e^{-i 2\pi f t / F_s},
-\qquad
+X_k(f) = \sum_{t=1}^{N} h_k(t)\, x(t)\, e^{-i 2\pi f t / F_s}
+```
+
+```math
 \hat S(f) = \frac{1}{K}\sum_{k=1}^{K} \frac{|X_k(f)|^2}{F_s}
 ```
 

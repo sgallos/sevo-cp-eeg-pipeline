@@ -27,10 +27,12 @@ $x(a) = [ f_0, f_0', \delta, \delta' ]^\top$.
 **How the curves move between neighbouring children** (age gap $h$):
 
 ```math
-x_{k} = \begin{bmatrix}1&h&0&0\\0&1&0&0\\0&0&1&h\\0&0&0&1\end{bmatrix} x_{k-1} + w_k,
-\qquad
-w_k \sim \mathcal N\!\left(0,\ \begin{bmatrix} q_{f0} B_h & 0\\ 0 & q_{\delta} B_h\end{bmatrix}\right),
-\quad B_h = \begin{bmatrix} h^3/3 & h^2/2\\ h^2/2 & h\end{bmatrix}
+x_{k} = \left[\begin{matrix}1&h&0&0\\0&1&0&0\\0&0&1&h\\0&0&0&1\end{matrix}\right] x_{k-1} + w_k
+```
+
+```math
+w_k \sim \mathcal N\left(0,\ \left[\begin{matrix} q_{f0} B_h & 0\\ 0 & q_{\delta} B_h\end{matrix}\right]\right),
+\qquad B_h = \left[\begin{matrix} h^3/3 & h^2/2\\ h^2/2 & h\end{matrix}\right]
 ```
 
 **What we observe** for child $k$ (group indicator $g_k$ = 1 for CP, 0 for control):
