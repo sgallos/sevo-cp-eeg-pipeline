@@ -10,7 +10,13 @@ its own folder in `analyses/primary/`, and produces one set of results, from eac
 (stage 01) to the group figures. Stages 01, 05 and 07 start from the EEG recordings, and the others
 build on the outputs of earlier stages. The stages are listed under [Analysis pipeline](#analysis-pipeline).
 
-All figures, including those for publication, are shown in the **[figure gallery](docs/figures.md)**.
+<!-- publication-figures:start -->
+## Figures
+
+All figures are in the **[figure gallery](docs/figures.md)**. The main figures intended for publication
+(power, Figs 1–6, and coherence, Figs 7–11) are tagged <kbd>For publication</kbd>, and the methods for each
+figure are in [`docs/`](docs/README.md).
+<!-- publication-figures:end -->
 
 ## Requirements
 - MATLAB R2024a or later
@@ -58,14 +64,6 @@ The method, parameters, equations, results and verification of each stage are de
 ## Additional analyses
 Analyses beyond the main figures are in [`analyses/additional/`](analyses/additional/).
 They read the outputs of the primary stages and never modify them.
-
-<!-- publication-figures:start -->
-## Figures
-
-All figures are in the **[figure gallery](docs/figures.md)**. The main figures intended for publication
-(power, Figs 1–6, and coherence, Figs 7–11) are tagged <kbd>For publication</kbd>, and the methods for each
-figure are in [`docs/`](docs/README.md).
-<!-- publication-figures:end -->
 
 ## Contributions
 
