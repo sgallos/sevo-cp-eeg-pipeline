@@ -38,6 +38,6 @@ check_cohort
 | 02 | `02_cohort` | power tables, final cohort | ✅ tested |
 | 03 | `03_power_spectra` | group spectra (Figs 1–2) | ✅ tested |
 | 04 | `04_age_trajectories` | alpha power vs age (Figs 3–4) | ✅ tested (CI bug fixed) |
-| 05 | `05_coherence` | F3–F4 coherence | ⏳ |
+| 05 | `05_coherence` | F3–F4 coherence (Fig 07) | ✅ tested |
 | 06 | `06_state_space_model` | SSM age trajectories | ⏳ |
 | 07 | `07_age_varying_spectrogram` | age-varying spectrograms | ⏳ |
