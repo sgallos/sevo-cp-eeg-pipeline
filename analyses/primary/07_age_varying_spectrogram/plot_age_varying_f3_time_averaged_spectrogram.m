@@ -257,12 +257,8 @@ axCounts2 = nexttile(tlCounts, 2);
 plot_count_panel(axCounts2, ageCenters, cpCounts, cpLowConfidenceMask, 'CP support by age center', [0.20 0.45 0.85], minSubjectsPerWindow, lowConfidenceThreshold);
 xlabel(axCounts2, 'Age center (years)');
 
-figDiff = figure('Color', 'w', 'Position', [160 160 900 560]);
-axDiff = axes(figDiff);
-plot_age_spec_panel(axDiff, ageCenters, freqDisplay, primaryDifferenceSpec, differenceClim, ...
-    'Descriptive difference: CP - Control F3 time-averaged spectrogram spectrum');
-cbDiff = colorbar(axDiff);
-cbDiff.Label.String = 'CP - Control median power (dB)';
+% The CP - Control difference map is not drawn (decision 2026-10-20); the
+% difference matrices are still saved in the results file.
 
 figSensitivityControl = figure('Color', 'w', 'Position', [180 180 900 560]);
 axSensitivityControl = axes(figSensitivityControl);
@@ -306,7 +302,6 @@ save(resultsFile, ...
 save_figure_if_valid(figPrimaryControl, fullfile(outDir, sprintf('%s_primary_control.png', plotFileBase)));
 save_figure_if_valid(figPrimaryCP, fullfile(outDir, sprintf('%s_primary_cp.png', plotFileBase)));
 save_figure_if_valid(figCounts, fullfile(outDir, sprintf('%s_counts.png', plotFileBase)));
-save_figure_if_valid(figDiff, fullfile(outDir, sprintf('%s_difference.png', plotFileBase)));
 save_figure_if_valid(figSensitivityControl, fullfile(outDir, sprintf('%s_sensitivity_control.png', plotFileBase)));
 save_figure_if_valid(figSensitivityCP, fullfile(outDir, sprintf('%s_sensitivity_cp.png', plotFileBase)));
 

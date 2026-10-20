@@ -45,7 +45,7 @@ function testResultsMatchExactly(testCase)
 end
 
 function testFiguresWritten(testCase)
-    for suffix = ["_primary_control.png", "_primary_cp.png", "_difference.png"]
+    for suffix = ["_primary_control.png", "_primary_cp.png"]
         verifyTrue(testCase, isfile(testCase.TestData.newBase + suffix), suffix);
     end
 end
