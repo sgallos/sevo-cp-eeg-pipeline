@@ -55,5 +55,10 @@ The 2.5th and 97.5th percentiles across those 2,000 spectra are the 95% CI.
 > step 1 is off by a constant $\sqrt{F_s}$. Step 2 (z-scoring) removes any constant
 > factor, so it cancels. Not a bug, but it's an accident of ordering, not a design choice.
 
+## Questions to revisit
+- Why shuffle real and imaginary parts together in one pool rather than separately?
+- Is pooling across all 1–40 Hz OK when the whitened noise may not be identical everywhere
+  (e.g. near the alpha peak)?
+
 ---
 [02_cohort →](02_cohort.md)

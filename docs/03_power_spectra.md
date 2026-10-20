@@ -55,5 +55,9 @@ significant under every method. **What the population-level view adds:** the alp
 specifically generalizes beyond these 24 children. Also, the two-stage bootstrap set aside
 as "unstable at n = 19" is stable at n = 24.
 
+## Questions to revisit
+- Why median rather than mean across children? (Robust to outliers, fine, but say so in methods.)
+- The 1 Hz minimum-width rule is a heuristic; with a cluster test it becomes unnecessary.
+
 ---
 [← 02_cohort](02_cohort.md) · [04_age_trajectories →](04_age_trajectories.md)

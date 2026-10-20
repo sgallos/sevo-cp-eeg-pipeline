@@ -58,5 +58,10 @@ medians are close and one control child has high gamma coherence, so that band r
 the recordings rather than generalizing across children. The pooled-vs-Welch t-test
 question doesn't matter here (both p = 0.015).
 
+## Questions to revisit
+- Why does the CP median show a small bump at 10–11 Hz while controls have a broad 9–12 Hz plateau? (Possible
+  peak-frequency shift; worth plotting individual peak frequencies.)
+- fpass 0.5–40 here vs 1–40 for power. Harmless, but should be stated.
+
 ---
 [← 04_age_trajectories](04_age_trajectories.md) · [06_state_space_model →](06_state_space_model.md)

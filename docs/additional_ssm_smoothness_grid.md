@@ -55,5 +55,27 @@ centred on "no difference" should; the gap still excludes 0 from 11.7 to 15.2 yr
    as everywhere else.
 5. **Too wobbly is clearly worse:** at q_δ = 10⁴ × default the alpha log-likelihood drops by 17 units.
 
+## How this is used (decision 2026-10-20)
+- **Main Figs 05–06 stay the published version** (FixedHeuristicQ). The grid shows it sits on the likelihood
+  plateau, so it is a well-supported choice.
+- **The wobbliest still-supported version goes to additional**, drawn next to the published one
+  (`gallery_<band>.png`), to show how far the data can be pushed:
+
+| Band | Wobbliest supported setting | Gap range | Gap below 0 |
+|---|---|---|---|
+| Alpha | q_f0 ≈ 0, q_δ = 10 × default (29.9) | −6.3 to −2.3 dB | 11.0–14.6 yr |
+| Theta | q_f0 = 10×, q_δ = 100× (16.2, 162) | −5.8 to +1.3 dB | 11.0–15.2 yr |
+| Delta | q_f0 = 3×, q_δ = 100× (4.56, 152) | −5.4 to +0.3 dB | 11.0–11.7 yr only |
+
+- **The constant-gap result is reported in the text, not drawn** (a constant gap plots as a bare rectangle):
+  *"A constant-difference model fit best (alpha: CP −5.3 dB at all ages, 95% CrI −8.2 to −2.4; Bayes factor ≈ 24
+  vs no difference)."*
+
+Methods sentence: *"A 10 × 10 profile-likelihood grid over the baseline and group-difference smoothness
+parameters (10⁻⁶ to 10⁴ × the heuristic default, r re-estimated in each cell) showed a broad likelihood plateau
+containing the default (Δ log L ≤ 0.45 in all bands). Across all supported settings the CP − Control difference varied by
+< 0.6 dB and excluded zero; a constant-difference model was preferred in every band (alpha log BF = 3.2 vs no
+difference)."*
+
 ---
 [← additional_subject_level_inference](additional_subject_level_inference.md) · [additional_coherence_state_space →](additional_coherence_state_space.md)
