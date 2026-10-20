@@ -64,11 +64,11 @@ figure are in [`docs/`](docs/README.md).
 
 ## Contributions
 
-Juan Jose Navarrete Pérez collected the clinical data. Emily Stephen and Emery Brown guided the overall
+Emily Stephen and Emery Brown guided the overall
 direction of the project, and Juan Jose Navarrete Pérez and Emery Brown provided the clinical
-interpretation of the results. Emily Stephen and Sebastian Gallo jointly directed the analysis. Sebastian
+interpretation of the results. Emily Stephen, Emery Brown, and Sebastian Gallo jointly led the scientific analysis. Sebastian
 Gallo performed all of the analyses, including their validation and the extension of the original
-methods.
+methods. Juan Jose Navarrete Pérez collected the clinical data.
 
 ## A note on the use of AI: A goal for augmentation, not automation
 
@@ -84,7 +84,7 @@ Every scientific decision was made by the authors, including the cohort definiti
 statistical inference, the choice of alpha band, which results to report and the selection of figures.
 
 **What Claude did, and why.**
-- Reorganised the original scripts into this pipeline, with a single cohort definition, a
+- Reorganized the original scripts into this pipeline, with a single cohort definition, a
   configuration file and `run_all.m`, so that collaborators can reproduce every result from the data
   alone.
 - Wrote the test suite in `tests/`, which checks every stage against the original outputs, to confirm
