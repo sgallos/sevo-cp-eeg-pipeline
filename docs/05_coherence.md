@@ -5,45 +5,61 @@
 **Question this stage answers:** how strongly do the left (F3) and right (F4) frontal
 signals move together at each frequency, and is that coupling different in CP?
 
-**Code:** [run_subject_f3f4_coherence_for_id.m](../analyses/primary/05_coherence/run_subject_f3f4_coherence_for_id.m)
-→ [validate_group_coherence_inputs.m](../analyses/primary/05_coherence/validate_group_coherence_inputs.m)
-→ [run_group_f3f4_coherence_analysis.m](../analyses/primary/05_coherence/run_group_f3f4_coherence_analysis.m)
-→ plots / [write_…](../analyses/primary/05_coherence/write_group_f3f4_coherence_results.m) (console report) / publication SVG (Fig 07)
-**Cohort:** `get_cohort()` subjects that also have F4 → **23** (11 Control, 12 CP; one control has no F4)
+> [!IMPORTANT]
+> **CP has lower frontal alpha coherence than controls (median 0.49 vs 0.59).**
+> Alpha is significant under every test, including ones with each child as one observation (p ≈ 0.015).
+> The published Bokil test also flags 2–10.5 Hz and 30–40 Hz.
 
-## The steps
+| Fig 07: coherence per group and two-group test | Alpha coherence (8–13 Hz), one value per child |
+|---|---|
+| ![F3-F4 coherence per group with the two-group test](figures/pipeline/coherence_group_level/02_group_f3f4_coherence_combined.png) | ![Alpha coherence per child by group](figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png) |
+
+## The method, in words
+Coherence measures how consistently two signals keep the same phase relationship at a given frequency.
+For each child, cut the 2 minutes into short windows, compute F3 and F4 Fourier transforms in each, and ask how well they line up across windows.
+Then compare the groups frequency by frequency, and with one alpha number per child.
+
+## The steps, in equations
+
 ### 1. Coherence per child (Chronux)
-The 120 s epoch is cut into **60 windows of 2 s** (512 samples at 256 Hz). In each window,
-multitaper Fourier transforms of F3 and F4 with tapers `[3 5]` ($TW = 3$, $K = 5$ → ±1.5 Hz smoothing):
+The 120 s epoch is cut into **60 windows of 2 s** (512 samples at 256 Hz).
+In each window, multitaper Fourier transforms of F3 and F4:
 
 $$
 C(f) = \frac{\left|\langle X_{F3}(f)\,X_{F4}^*(f)\rangle\right|}{\sqrt{\langle|X_{F3}(f)|^2\rangle\,\langle|X_{F4}(f)|^2\rangle}}
 \qquad 0 \le C \le 1
 $$
 
-($\langle\cdot\rangle$ = average over tapers and windows). 1 = perfectly locked, 0 = unrelated.
-`fpass` = 0.5–40 Hz (power uses 1–40 Hz). The script **requires** exactly 256 Hz and both channels.
+($\langle\cdot\rangle$ = average over tapers and windows).
+1 = perfectly locked, 0 = unrelated.
+The script **requires** exactly 256 Hz and both channels.
 
 ### 2. Group curves
 Median coherence per frequency for each group, plus IQR bands.
 
 ### 3. Group test (Bokil et al., Chronux `two_group_test_coherence`)
-Compares the two groups' coherence at each frequency via a transformed difference $dz$
-(negative = controls > CP) with jackknife variance. Significance: p < 0.001 (primary) or
-p < 0.01 (exploratory), kept only in runs ≥ 3 Hz wide (the taper bandwidth).
+Compares the two groups' coherence at each frequency via a transformed difference $dz$ (negative = controls > CP) with jackknife variance.
+Significance: p < 0.001 (primary) or p < 0.01 (exploratory), kept only in runs ≥ 3 Hz wide (the taper bandwidth).
 
 ### 4. Alpha scalar
 Each child's mean coherence over 8–13 Hz, then a two-sample t-test (pooled) and rank-sum.
 
-## Two kinds of inference (both valid; they answer different questions)
-**Published (primary): Bokil two-group coherence test.** It treats each 2 s window × taper
-as a trial (3,300 control + 3,600 CP) and tests whether the two sets of recordings
-differ in coherence: conditional inference given these children's data, in the
-Chronux/Bokil framework.
+## Settings
+| Setting | Value | Meaning |
+|---|---|---|
+| Windows | 60 × 2 s (512 samples) | trials for the coherence average |
+| Tapers | `[3 5]`: $TW = 3$, $K = 5$ | ±1.5 Hz smoothing |
+| `fpass` | 0.5–40 Hz | (power uses 1–40 Hz) |
+| Significance | p < 0.001 primary, p < 0.01 exploratory | runs ≥ 3 Hz wide only |
+| Alpha band | 8–13 Hz | for the one-number-per-child test |
+| Cohort | `get_cohort()` children with F4: **23** (11 Control, 12 CP) | one control has no F4 |
 
-**Complementary: population-level tests,** with each child as one observation, asking
-whether the difference would generalize to new children.
-(a private check script, `scripts/coherence_inference_check.m`)
+## Two kinds of inference (both valid; they answer different questions)
+**Published (primary): Bokil two-group coherence test.**
+It treats each 2 s window × taper as a trial (3,300 control + 3,600 CP) and tests whether the two sets of recordings differ in coherence: conditional inference given these children's data, in the Chronux/Bokil framework.
+
+**Complementary: population-level tests,** with each child as one observation, asking whether the difference would generalize to new children
+(a private check script, `scripts/coherence_inference_check.m`).
 
 | Test | Question | Significant |
 |---|---|---|
@@ -52,16 +68,21 @@ whether the difference would generalize to new children.
 | Child-level cluster test | new children, corrected | 9–11 Hz (p = 0.03) |
 | Alpha coherence per child (8–13 Hz) | new children | p ≈ 0.015 (pooled t, Welch, rank-sum agree) |
 
-**Where they agree:** CP has lower frontal alpha coherence (median 0.49 vs 0.59), and alpha is
-significant under every test. **Worth knowing for discussion:** at 30–40 Hz the group
-medians are close and one control child has high gamma coherence, so that band rests on
-the recordings rather than generalizing across children. The pooled-vs-Welch t-test
-question doesn't matter here (both p = 0.015).
+**Where they agree:** CP has lower frontal alpha coherence, and alpha is significant under every test.
+**Worth knowing for discussion:** at 30–40 Hz the group medians are close and one control child has high gamma coherence, so that band rests on the recordings rather than generalizing across children.
+The pooled-vs-Welch t-test question doesn't matter here (both p = 0.015).
 
 ## Questions to revisit
 - Why does the CP median show a small bump at 10–11 Hz while controls have a broad 9–12 Hz plateau? (Possible
   peak-frequency shift; worth plotting individual peak frequencies.)
 - fpass 0.5–40 here vs 1–40 for power. Harmless, but should be stated.
+
+## Code and files
+- **Code:** [run_subject_f3f4_coherence_for_id.m](../analyses/primary/05_coherence/run_subject_f3f4_coherence_for_id.m)
+  → [validate_group_coherence_inputs.m](../analyses/primary/05_coherence/validate_group_coherence_inputs.m)
+  → [run_group_f3f4_coherence_analysis.m](../analyses/primary/05_coherence/run_group_f3f4_coherence_analysis.m)
+  → plots / [write_…](../analyses/primary/05_coherence/write_group_f3f4_coherence_results.m) (console report) / publication SVG (Fig 07).
+- **Output:** `outputs/coherence_group_level/`; Fig 07 SVG in `outputs/figures/requested_svg_only/`.
 
 ---
 [← 04_age_trajectories](04_age_trajectories.md) · [06_state_space_model →](06_state_space_model.md)

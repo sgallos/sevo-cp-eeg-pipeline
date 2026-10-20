@@ -39,12 +39,15 @@ function testStage02PowerTablesMatch(testCase)
     a = sortrows(readtable(fullfile(td.new, 'state_space_model', 'power_table_for_ssm_subepochs_collapsed.csv'), 'TextType', 'string'), 'subjectID');
     b = sortrows(readtable(fullfile(td.refSSA, 'power_table_for_ssm_subepochs_collapsed.csv'), 'TextType', 'string'), 'subjectID');
     verifyEqual(testCase, a.subjectID, b.subjectID);
-    for band = ["delta_dB", "theta_dB", "alpha_dB"]
+    for band = ["delta_dB", "theta_dB"]
         verifyEqual(testCase, a.(band), b.(band), 'AbsTol', 1e-9, band);   % no randomness
     end
+    % Alpha is now 8-13 Hz (the original used 8-12): integrating over a wider band
+    % can only add power, so every child's alpha must be at least the original value.
+    verifyGreaterThanOrEqual(testCase, a.alpha_dB - b.alpha_dB, -1e-9);
     % MFDB variance comes from the bootstrap: compare within Monte Carlo noise
-    rel = abs(a.alpha_meanSubepochMfdbVariance - b.alpha_meanSubepochMfdbVariance) ./ b.alpha_meanSubepochMfdbVariance;
-    fprintf('Stage 02: alpha MFDB variance, median relative difference %.3f\n', median(rel));
+    rel = abs(a.theta_meanSubepochMfdbVariance - b.theta_meanSubepochMfdbVariance) ./ b.theta_meanSubepochMfdbVariance;
+    fprintf('Stage 02: theta MFDB variance, median relative difference %.3f\n', median(rel));
     verifyLessThan(testCase, median(rel), 0.05);
 end
 

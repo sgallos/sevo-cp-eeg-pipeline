@@ -48,10 +48,11 @@ fig1 = figure('Color', 'w', 'Position', [100 100 1050 520]);
 ax1 = axes(fig1);
 hold(ax1, 'on');
 
-controlLineColor = [0.00 0.38 0.95];
-controlFillColor = [0.22 0.62 1.00];
-cpLineColor = [0.92 0.02 0.08];
-cpFillColor = [1.00 0.30 0.36];
+gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+controlLineColor = gc.controlLine;
+controlFillColor = gc.controlFill;
+cpLineColor = gc.cpLine;
+cpFillColor = gc.cpFill;
 
 hCPCI = fill(ax1, [freq; flipud(freq)], ...
     [groupMedian_CP_CI_low_dB; flipud(groupMedian_CP_CI_high_dB)], ...

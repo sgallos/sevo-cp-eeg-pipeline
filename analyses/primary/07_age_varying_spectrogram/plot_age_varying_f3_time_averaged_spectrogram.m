@@ -252,9 +252,10 @@ cbPrimaryCP.Label.String = 'Median F3 Power (dB)';
 figCounts = figure('Color', 'w', 'Position', [140 140 1200 520]);
 tlCounts = tiledlayout(figCounts, 2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
 axCounts1 = nexttile(tlCounts, 1);
-plot_count_panel(axCounts1, ageCenters, controlCounts, controlLowConfidenceMask, 'Control support by age center', [0.90 0.45 0.10], minSubjectsPerWindow, lowConfidenceThreshold);
+gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+plot_count_panel(axCounts1, ageCenters, controlCounts, controlLowConfidenceMask, 'Control support by age center', gc.controlLine, minSubjectsPerWindow, lowConfidenceThreshold);
 axCounts2 = nexttile(tlCounts, 2);
-plot_count_panel(axCounts2, ageCenters, cpCounts, cpLowConfidenceMask, 'CP support by age center', [0.20 0.45 0.85], minSubjectsPerWindow, lowConfidenceThreshold);
+plot_count_panel(axCounts2, ageCenters, cpCounts, cpLowConfidenceMask, 'CP support by age center', gc.cpLine, minSubjectsPerWindow, lowConfidenceThreshold);
 xlabel(axCounts2, 'Age center (years)');
 
 % The CP - Control difference map is not drawn (decision 2026-10-20); the

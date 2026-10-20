@@ -6,6 +6,14 @@
 · run with `run_subject_level_inference.m` after `run_all.m`
 · results in `outputs/additional/subject_level_inference/`
 
+> [!IMPORTANT]
+> **The alpha effects generalize to new children.** Resampling children (not spectra), CP alpha power is 4.8 dB lower (p = 0.007; cluster 9.5–11.6 Hz),
+> alpha vs age gives −5.3 dB at every age (p = 0.002, no change with age), and alpha coherence is lower (cluster 9–11 Hz).
+
+| Power: CP − Control, children resampled | Alpha power vs age, every child |
+|---|---|
+| ![Power difference with children-resampled CI and clusters](figures/additional/power_difference_subject_level.png) | ![Alpha power vs age, every child and age-adjusted](figures/additional/alpha_vs_age_subject_level.png) |
+
 **What this is:** a complementary, population-level analysis. The published inference
 (MFDB group bootstrap, Bokil test) is **conditional on the observed children**: it asks
 whether these recordings differ beyond spectral-estimation uncertainty, and it is the
@@ -35,8 +43,7 @@ Cluster test in one line: *"is this run of frequencies bigger than any run that 
 |---|---|---|---|---|
 | delta 1–4 | −3.4 dB | [−5.8, −1.0] | −1.0 | 0.018 |
 | theta 4–8 | −3.4 dB | [−5.9, −0.9] | −1.0 | 0.018 |
-| **alpha 8–12** | **−5.3 dB** | [−8.2, −2.3] | **−1.3** | **0.003** |
-| alpha 8–13 | −4.8 dB | [−7.9, −1.7] | −1.2 | 0.007 |
+| **alpha 8–13** | **−4.8 dB** | [−7.9, −1.7] | **−1.2** | **0.007** |
 | beta 13–30 | −4.7 dB | [−8.4, −0.7] | −0.9 | 0.028 |
 | gamma 30–40 | −3.2 dB | [−6.6, +0.3] | −0.7 | 0.09 |
 
@@ -72,7 +79,7 @@ which removes the shared age trend so children of different ages can sit side by
 ## Bottom line: where the two kinds of inference agree
 | Finding | Published (conditional, primary) | Population-level (complementary) |
 |---|---|---|
-| CP has lower alpha power | ✅ | ✅ strongest effect (g ≈ −1.3, cluster 9.5–11.6 Hz) |
+| CP has lower alpha power | ✅ | ✅ strongest effect (g ≈ −1.2, cluster 9.5–11.6 Hz) |
 | Power lower across frequencies | ✅ most of 1–40 Hz | alpha confirmed; other bands lower (g ≈ −1), p ≈ 0.02–0.03 uncorrected |
 | Alpha gap across ages 10–16 | ✅ per window (after bug fix) | ✅ −5.3 dB age-adjusted, constant (interaction p = 0.86) |
 | CP has lower alpha coherence | ✅ | ✅ (g ≈ −1.1, cluster 9–11 Hz) |

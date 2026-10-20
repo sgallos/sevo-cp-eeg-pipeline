@@ -21,7 +21,7 @@ function setupOnce(testCase)
     mkdir(outDir);
     testCase.addTeardown(@() rmdir(outDir, 's'));
 
-    evalc('extract_band_power_subepochs(refSubepochDir, outDir);');
+    evalc('extract_band_power_subepochs(refSubepochDir, outDir, state_space_bands("original"));');   % original alpha 8-12 Hz
     evalc('collapse_subepoch_power_table_for_ssm(outDir);');
 
     testCase.TestData.outDir = outDir;

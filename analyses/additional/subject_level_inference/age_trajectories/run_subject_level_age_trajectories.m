@@ -111,8 +111,9 @@ function [m, lo, hi, k] = window_summary(children, groupName, centers, halfWidth
 end
 
 function fig = plot_results(children, windows, bins, model, summary) %#ok<INUSD> bins kept in the CSV, not plotted
-    ctrlColor = [0.90 0.45 0.10];
-    cpColor = [0.20 0.45 0.85];
+    gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+    ctrlColor = gc.controlLine;
+    cpColor = gc.cpLine;
     names = ["Control", "CP"];  colors = {ctrlColor, cpColor};
     fig = figure('Color', 'w', 'Position', [100 100 1250 560]);
     tl = tiledlayout(fig, 1, 3, 'TileSpacing', 'compact');

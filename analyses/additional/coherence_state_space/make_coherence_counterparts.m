@@ -13,8 +13,9 @@ function out = make_coherence_counterparts()
     paths = project_paths();
     outDir = fullfile(paths.outputsDir, 'additional', 'coherence_state_space');
     if ~isfolder(outDir), mkdir(outDir); end
-    controlColor = [0.00 0.38 0.95];
-    cpColor = [0.92 0.02 0.08];
+    gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+    controlColor = gc.controlLine;
+    cpColor = gc.cpLine;
 
     cohort = get_cohort();
     cohort = cohort(cohort.hasF4, :);

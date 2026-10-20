@@ -15,7 +15,7 @@ function run_power_ssm_scalar_r(varargin)
 % --- Which band to run ---
 bandName = "alpha";        % "delta" | "theta" | "alpha"
 bandLowHz = 8;
-bandHighHz = 12;
+bandHighHz = 13;
 
 % --- Input data ---
 inputTable = "alpha_table_for_ssm_subepochs_collapsed.csv";
@@ -521,8 +521,9 @@ function plot_three_trajectories(versionResults, displayVersionName, bandConfig,
 
     ax = nexttile(tl);
     hold(ax, 'on');
-    plot_band(ax, ages, traj.baselineMean_dB, traj.baselineCILow_dB, traj.baselineCIHigh_dB, [0.55 0.68 0.92]);
-    scatter(ax, traj.ageYears(isControl), traj.alpha_dB(isControl), 58, [0.12 0.32 0.78], ...
+    gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+    plot_band(ax, ages, traj.baselineMean_dB, traj.baselineCILow_dB, traj.baselineCIHigh_dB, gc.controlLight);
+    scatter(ax, traj.ageYears(isControl), traj.alpha_dB(isControl), 58, gc.controlLine, ...
         'filled', 'MarkerEdgeColor', 'w', 'LineWidth', 0.8);
     ylabel(ax, sprintf('%s power (dB)', title_case(bandConfig.bandName)));
     title(ax, sprintf('Control trajectory f_0(a) -- %s', result.versionName), 'FontWeight', 'normal');
@@ -530,8 +531,8 @@ function plot_three_trajectories(versionResults, displayVersionName, bandConfig,
 
     ax = nexttile(tl);
     hold(ax, 'on');
-    plot_band(ax, ages, traj.cpMean_dB, traj.cpCILow_dB, traj.cpCIHigh_dB, [0.92 0.62 0.62]);
-    scatter(ax, traj.ageYears(isCP), traj.alpha_dB(isCP), 58, [0.78 0.16 0.16], ...
+    plot_band(ax, ages, traj.cpMean_dB, traj.cpCILow_dB, traj.cpCIHigh_dB, gc.cpLight);
+    scatter(ax, traj.ageYears(isCP), traj.alpha_dB(isCP), 58, gc.cpLine, ...
         'filled', 'MarkerEdgeColor', 'w', 'LineWidth', 0.8);
     ylabel(ax, sprintf('%s power (dB)', title_case(bandConfig.bandName)));
     title(ax, 'CP trajectory f_0(a) + group difference', 'FontWeight', 'normal');

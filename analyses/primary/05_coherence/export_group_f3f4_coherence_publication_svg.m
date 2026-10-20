@@ -23,10 +23,11 @@ S = load(settings.resultsFile);
 freq = S.freq(:);
 metadataRef = S.metadataRef;
 
-controlLineColor = [0.00 0.38 0.95];
-controlFillColor = [0.22 0.62 1.00];
-cpLineColor = [0.92 0.02 0.08];
-cpFillColor = [1.00 0.30 0.36];
+gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+controlLineColor = gc.controlLine;
+controlFillColor = gc.controlFill;
+cpLineColor = gc.cpLine;
+cpFillColor = gc.cpFill;
 
 controlTraceColor = blend_with_white(controlLineColor, 0.70);
 cpTraceColor = blend_with_white(cpLineColor, 0.70);

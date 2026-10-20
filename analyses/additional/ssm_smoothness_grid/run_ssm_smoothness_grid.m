@@ -77,10 +77,11 @@ function out = run_ssm_smoothness_grid(bandName, measureName)
         block = table();
         for s = 1:numel(shapeNames)
             c = fit_cell(T, qF0Best, specs{s, 1}, specs{s, 2});
+            % 95% credible band averaged over ages (for a constant gap it is the same at every age)
             block = [block; table(shapeNames(s), priorSD(p), c.logLikelihood, c.r, c.meanGap, ...
-                c.exclusionAgeLow, c.exclusionAgeHigh, ...
+                mean(c.gapLow), mean(c.gapHigh), c.exclusionAgeLow, c.exclusionAgeHigh, ...
                 'VariableNames', {'gapShape', 'priorSD_dB', 'logLik', 'r', 'meanGap_dB', ...
-                'gapBelowZeroFromAge', 'gapBelowZeroToAge'})]; %#ok<AGROW>
+                'meanGapCILow_dB', 'meanGapCIHigh_dB', 'gapBelowZeroFromAge', 'gapBelowZeroToAge'})]; %#ok<AGROW>
         end
         block.logBayesFactorVsNoGap = block.logLik - block.logLik(end);
         shapeTable = [shapeTable; block]; %#ok<AGROW>

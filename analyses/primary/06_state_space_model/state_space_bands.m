@@ -1,10 +1,16 @@
-function bands = state_space_bands()
-%STATE_SPACE_BANDS The three bands fitted by the state-space model (Figs 05-06).
-%   Same settings as regenerate_publication_figures.m section 3. Note alpha
-%   is 8-12 Hz here (the stage 02 power table), vs 8-13 Hz in Figs 3-4.
+function bands = state_space_bands(version)
+%STATE_SPACE_BANDS Delta, theta and alpha band edges for the stage 02 power table and
+%   the state-space model (Figs 05-06). Alpha is 8-13 Hz, as in every other figure.
+%
+%   STATE_SPACE_BANDS("original") returns the edges the original analysis used
+%   (alpha 8-12 Hz). Only the reproduction tests use it, to compare against the
+%   saved original outputs.
+    if nargin < 1, version = "current"; end
+    alphaHighHz = 13;
+    if version == "original", alphaHighHz = 12; end
     bands = struct( ...
         'name',   {"delta", "theta", "alpha"}, ...
         'lowHz',  {1, 4, 8}, ...
-        'highHz', {4, 8, 12}, ...
+        'highHz', {4, 8, alphaHighHz}, ...
         'column', {"delta_dB", "theta_dB", "alpha_dB"});
 end

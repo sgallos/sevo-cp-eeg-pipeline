@@ -1,4 +1,4 @@
-function T = extract_band_power_subepochs(subepochRoot, outDir)
+function T = extract_band_power_subepochs(subepochRoot, outDir, bands)
 %EXTRACT_BAND_POWER_SUBEPOCHS Build a delta/theta/alpha sub-epoch power table.
 %
 % Uses the saved 4 x 30 s sub-epoch MFDB spectra. No multitaper or MFDB
@@ -6,7 +6,8 @@ function T = extract_band_power_subepochs(subepochRoot, outDir)
 % over each band:
 %   delta: 1-4 Hz
 %   theta: 4-8 Hz
-%   alpha: 8-12 Hz
+%   alpha: 8-13 Hz
+% (band edges from state_space_bands.m, shared with the state-space model)
 %
 % Output:
 %   outputs/power_table_for_ssm_subepochs.csv
@@ -18,6 +19,8 @@ function T = extract_band_power_subepochs(subepochRoot, outDir)
 % Optional inputs (used by tests/ to read the original stage 01 outputs):
 %   subepochRoot - folder of sub-epoch MFDB files (default: stage 01 output)
 %   outDir       - where to write the tables (default: state_space_outputs_dir())
+%   bands        - band edges (default: state_space_bands(); tests pass
+%                  state_space_bands("original") to reproduce the original table)
 
 if nargin < 2 || isempty(outDir)
     outDir = state_space_outputs_dir();
@@ -35,10 +38,9 @@ if ~isfolder(subepochRoot)
     error('Sub-epoch output folder not found: %s', subepochRoot);
 end
 
-bands = struct( ...
-    'name', {'delta', 'theta', 'alpha'}, ...
-    'lowHz', {1, 4, 8}, ...
-    'highHz', {4, 8, 12});
+if nargin < 3 || isempty(bands)
+    bands = state_space_bands();
+end
 
 cohort = get_cohort();   % who is eligible: see shared/cohort_criteria.m
 cohortIDs = cohort.subjectID;

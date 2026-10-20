@@ -6,9 +6,9 @@
 group, and how big is the CP − Control gap at each age, using all 24 children at once?
 
 > [!IMPORTANT]
-> **CP alpha power is about 5.2 dB lower than controls, and the gap barely changes with age.**
-> The 95% credible band for the gap excludes zero from 11.0 to 14.9 yr.
-> All four ways of setting the smoothness agree (−5.2 to −5.4 dB).
+> **CP alpha power is about 4.9 dB lower than controls, and the gap barely changes with age.**
+> The 95% credible band for the gap excludes zero from 11.5 to 14.9 yr.
+> All four ways of setting the smoothness agree (−4.9 to −5.1 dB).
 
 | Fig 06: Control and CP trajectories (alpha) | Fig 05: CP − Control gap, 95% credible band |
 |---|---|
@@ -56,9 +56,9 @@ Children closer in age (small $h$) constrain each other more.
 ## Settings
 | Setting | Value | Meaning |
 |---|---|---|
-| Bands | delta 1–4, theta 4–8, **alpha 8–12 Hz** | from the stage 02 table, one value per child |
-| Smoothness $q_{f0} = q_\delta$ | $\dfrac{(\text{power range})^2}{(\text{age span})^3} = 2.99$ | "FixedHeuristicQ", the published setting |
-| Noise variance $r$ | 13.8 dB² (estimated by EM) | noise SD ≈ 3.7 dB per child |
+| Bands | delta 1–4, theta 4–8, **alpha 8–13 Hz** | from the stage 02 table, one value per child |
+| Smoothness $q_{f0} = q_\delta$ | $\dfrac{(\text{power range})^2}{(\text{age span})^3} = 2.97$ | "FixedHeuristicQ", the published setting |
+| Noise variance $r$ | 13.6 dB² (estimated by EM) | noise SD ≈ 3.7 dB per child |
 | Credible band | 95% | from the Kalman smoother's posterior variance |
 
 ## Results
@@ -66,24 +66,25 @@ Children closer in age (small $h$) constrain each other more.
 |---|---|
 | Delta | ≈ −3.5 dB |
 | Theta | ≈ −3.6 dB |
-| **Alpha** | **−5.2 dB**, band excludes 0 from 11.0 to 14.9 yr |
+| **Alpha** | **−4.9 dB**, band excludes 0 from 11.5 to 14.9 yr |
 
 <details>
 <summary><b>Four ways to set</b> $q$ <b>(all give the same alpha gap)</b></summary>
 
 | Version | $q$ | Alpha: mean gap, ages where band excludes 0 | Notes |
 |---|---|---|---|
-| **FixedHeuristicQ** (published) | $q_{f0}=q_\delta=2.99$ (heuristic above) | **−5.2 dB**, 11.0–14.9 yr | EM for $r$ converged (8 iterations) |
-| FixedSmoothQ | 0.1 × heuristic | −5.4 dB, 11.0–15.2 yr | converged |
-| EM-Joint | estimated by EM | −5.3 dB, 11.0–15.2 yr | stopped at 300 iterations (not converged) |
-| Profile-q | best likelihood on a grid | −5.3 dB, 11.0–15.2 yr | $q_\delta$ at the grid floor (10⁻⁸) |
+| **FixedHeuristicQ** (published) | $q_{f0}=q_\delta=2.97$ (heuristic above) | **−4.9 dB**, 11.5–14.9 yr | EM for $r$ converged (7 iterations) |
+| FixedSmoothQ | 0.1 × heuristic | −5.1 dB, 11.5–15.2 yr | converged |
+| EM-Joint | estimated by EM | −5.0 dB, 11.5–15.2 yr | stopped at 300 iterations (not converged) |
+| Profile-q | best likelihood on a grid | −5.0 dB, 11.5–15.2 yr | $q_\delta$ at the grid floor (10⁻⁸) |
 </details>
 
 ## Verification
-- **Robust to the smoothing choice:** all four $q$ versions give the same alpha gap (−5.2 to −5.4 dB),
-  excluding zero over ~11–15 yr. Delta (≈ −3.5 dB) and theta (≈ −3.6 dB) likewise.
+- **Robust to the smoothing choice:** all four $q$ versions give the same alpha gap (−4.9 to −5.1 dB),
+  excluding zero over ~11.5–15 yr. Delta (≈ −3.5 dB) and theta (≈ −3.6 dB) likewise.
 - **Agrees with an independent method:** the population-level regression (additional analysis)
-  gives −5.3 dB, the same as the state-space estimate.
+  gives −5.3 dB. It uses each child's full 120 s spectrum rather than the mean of four 30 s
+  sub-epochs, so a few tenths of a dB apart is expected.
 - **The noise term $r$ includes child-to-child variation:** each child is one observation, so the
   SD of 3.7 dB matches the between-child spread (3.0–3.6 dB, stage 04). The credible bands
   therefore already reflect how much children differ.
@@ -94,7 +95,6 @@ Children closer in age (small $h$) constrain each other more.
 
 ## Questions to revisit
 - Colours: Figs 05–06 use blue = Control, red = CP; Figs 3–4 use orange = Control, blue = CP. Unify.
-- Alpha is 8–12 Hz here vs 8–13 Hz in Figs 3–4.
 - The x-axis runs to 16 but data stop at 15.2 (oldest child).
 
 ## Code and files

@@ -209,10 +209,11 @@ patientResults = results(patientMask, :);
 controlBoot = subjectBootPowerDB(controlMask);
 patientBoot = subjectBootPowerDB(patientMask);
 
-ctrlColor = [0.9 0.45 0.1];
-patColor = [0.2 0.45 0.85];
-ctrlCIColor = [1.0 0.77 0.58];
-patCIColor = [0.64 0.80 1.0];
+gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+ctrlColor = gc.controlLine;
+patColor = gc.cpLine;
+ctrlCIColor = gc.controlLight;
+patCIColor = gc.cpLight;
 
 %% Step 5: Compute sliding-window summaries and MFDB-based confidence intervals
 rng(get_opt(opts, 'randomSeed', cfg.randomSeed));

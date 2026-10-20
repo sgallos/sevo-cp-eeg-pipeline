@@ -2,6 +2,14 @@
 
 # Additional analysis: coherence counterparts of the power figures (2026-10-20)
 
+> [!IMPORTANT]
+> **CP has lower left–right alpha coherence (≈ −0.13 z, about 0.49 vs 0.59–0.61) by every method, and the gap is stable with age.**
+> Delta and theta coherence show no reliable difference, so the coherence effect is alpha-specific.
+
+| Coherence state-space model, all bands | Alpha coherence vs age |
+|---|---|
+| ![Coherence state-space trajectories and gap for delta, theta, alpha](figures/additional/coherence/coherence_state_space_all_bands.png) | ![Alpha coherence vs age, every child and age-adjusted](figures/additional/coherence/alpha_coherence_vs_age.png) |
+
 **Why:** a collaborator's request: for every power figure, within reason, a coherence figure. MFDB-based power
 figures (Figs 1–4) are excluded. Started with her suggestion that the state-space analysis
 done for power can be done for coherence.
@@ -23,7 +31,7 @@ power versions, run with `"coherence"` ([ssm_measure.m](../analyses/additional/s
 - Band coherence per child: $\bar C_i = \text{mean}_{f \in \text{band}}\, C_i(f)$ from the stage 05 curve
   (reproduces stage 05's alpha value exactly for 8–13 Hz).
 - Fisher z: $z_i = \operatorname{atanh}(\bar C_i)$; statistics on z; plots back in coherence with $C = \tanh(z)$.
-- State-space model as in [stage 06](06_state_space_model.md) with $y_k = z_k$; bands as for power (alpha 8–12 Hz).
+- State-space model as in [stage 06](06_state_space_model.md) with $y_k = z_k$; bands as for power (alpha 8–13 Hz).
 - **Two coherence-specific settings:**
   1. Profile-q grid scaled to each band's default q (coherence z values are ~30× smaller than dB).
   2. Bayes factors reported at prior SD **0.3 z** (≈ 3× the children's spread). The fits' default prior
@@ -40,15 +48,16 @@ power versions, run with `"coherence"` ([ssm_measure.m](../analyses/additional/s
 |---|---|---|---|---|
 | Delta | −0.05 z | nowhere | p = 0.14 | p = 0.85 |
 | Theta | −0.10 z | nowhere | p = 0.07 | p = 0.97 |
-| **Alpha** | **−0.16 z** | **12.2–15.2 yr** | **p = 0.007** | p = 0.24 |
+| **Alpha** | **−0.13 z** | **12.3–14.9 yr** | **p = 0.023** | p = 0.31 |
 
-**Smoothness grid:** published setting within 0.29–0.37 log-lik of the best in every band; 64–72 supported cells.
-Alpha gap −0.15 to −0.16 z in **every** supported cell, always excluding zero; delta and theta never exclude zero.
+**Smoothness grid:** published setting within 0.27–0.37 log-lik of the best in every band; 64–72 supported cells.
+Alpha gap −0.12 to −0.14 z in **every** supported cell, always excluding zero; delta and theta never exclude zero.
 
-**Gap shape** (prior SD 0.3 z): alpha **constant gap** best, log BF vs no gap **+2.0** (≈ 7 : 1), and preferred
-over a widening/flexible gap by ≈ 4 : 1. Delta (−1.1) and theta (−0.2) favour **no gap**.
+**Gap shape** (prior SD 0.3 z): alpha **constant gap** best, log BF vs no gap **+0.9** (≈ 2.5 : 1, weak; gap −0.13 z, 95% CrI −0.23 to −0.02), and preferred
+over a widening/flexible gap by ≈ 5 : 1. Delta (−1.1) and theta (−0.2) favour **no gap**.
+With 8–12 Hz the constant gap was favoured ≈ 7 : 1; adding 12–13 Hz makes the gap a little smaller (−0.16 → −0.13 z).
 
-**Wobbliest still supported:** alpha keeps the gap below zero from 12.2 to 14.8 yr (a swing at 10–11 yr is
+**Wobbliest still supported:** alpha keeps the gap below zero from 12.2 to 14.6 yr (a swing at 10–11 yr is
 driven by the youngest one or two children); delta and theta stay non-significant.
 
 **Alpha coherence vs age (8–13 Hz):** CP − Control −0.13 z [−0.25, −0.02], p = 0.023; group × age p = 0.31.
@@ -57,11 +66,11 @@ driven by the youngest one or two children); delta and theta stay non-significan
 windows are thin (CP at 16 yr is **one child**), so treat edge columns as anecdotal.
 
 ## What this means
-1. **CP has lower alpha coherence** (≈ −0.13 to −0.16 z, i.e. ≈ 0.49 vs 0.59–0.61), across every method.
+1. **CP has lower alpha coherence** (≈ −0.13 z, i.e. ≈ 0.49 vs 0.59–0.61), across every method.
 2. **It's alpha-specific:** delta and theta show no reliable difference (unlike power, where they were
    lower too but weaker).
 3. **The gap is best described as constant with age.** The default-smoothness curve suggests widening, but the
-   regression (p = 0.24–0.31) and the gap-shape comparison (constant preferred ≈ 4 : 1) don't support it.
+   regression (p = 0.31) and the gap-shape comparison (constant preferred ≈ 5 : 1) don't support it.
 4. Same story as power: a focused, age-stable alpha deficit, now in both power and left–right coupling.
 
 ---

@@ -6,7 +6,7 @@ and how big is the CP − Control gap at each age? The same state-space analysis
 
 ## What it does
 1. Each child's band coherence = mean of their stage 05 coherence curve over the band
-   (delta 1–4, theta 4–8, alpha 8–12 Hz; same edges as the power model).
+   (delta 1–4, theta 4–8, alpha 8–13 Hz; same edges as the power model).
 2. Fisher z, `z = atanh(C)` (Chronux returns magnitude coherence). Coherence is bounded in
    [0, 1]; z is unbounded and close to normal, as the model assumes.
 3. Same model and same four smoothness versions as for power (`run_power_ssm_scalar_r`). The

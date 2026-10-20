@@ -34,8 +34,8 @@ function out = run_subject_level_power_spectra()
     clusters = cluster_permutation_test(spectraDB(isCP, :), spectraDB(~isCP, :), freq);
 
     % 3. Band power per child, then group comparison per band
-    bands = table(["delta"; "theta"; "alpha (8-12)"; "alpha (8-13)"; "beta"; "gamma (30-40)"], ...
-        [1; 4; 8; 8; 13; 30], [4; 8; 12; 13; 30; 40], 'VariableNames', {'band', 'lowHz', 'highHz'});
+    bands = table(["delta"; "theta"; "alpha"; "beta"; "gamma (30-40)"], ...
+        [1; 4; 8; 13; 30], [4; 8; 13; 30; 40], 'VariableNames', {'band', 'lowHz', 'highHz'});
     bandResults = compare_bands(spectraLinear, freq, isCP, bands);
 
     % The published (conditional, MFDB) group CI, shown alongside

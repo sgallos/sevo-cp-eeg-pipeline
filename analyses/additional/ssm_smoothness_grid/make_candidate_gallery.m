@@ -93,8 +93,9 @@ end
 
 function plot_trajectories(ax, T, traj, M)
     % M.toDisplay maps model units to plotted units (identity for dB, tanh for coherence z)
-    controlColor = [0.00 0.38 0.95];
-    cpColor = [0.92 0.02 0.08];
+    gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+    controlColor = gc.controlLine;
+    cpColor = gc.cpLine;
     d = M.toDisplay;
     hold(ax, 'on');
     band(ax, traj.ageYears, d(traj.baselineCILow_dB), d(traj.baselineCIHigh_dB), controlColor);

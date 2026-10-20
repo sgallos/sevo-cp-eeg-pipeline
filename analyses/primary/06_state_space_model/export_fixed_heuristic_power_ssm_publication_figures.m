@@ -115,10 +115,11 @@ function outputFiles = export_control_cp_figure(result, traj, bandName, svgOutDi
 isControl = traj.groupIndicator == 0;
 isCP = traj.groupIndicator == 1;
 
-controlLineColor = [0.00 0.38 0.95];
-controlFillColor = [0.22 0.62 1.00];
-cpLineColor = [0.92 0.02 0.08];
-cpFillColor = [1.00 0.30 0.36];
+gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+controlLineColor = gc.controlLine;
+controlFillColor = gc.controlFill;
+cpLineColor = gc.cpLine;
+cpFillColor = gc.cpFill;
 
 fig = figure('Color', 'w', 'Position', [100 100 920 560]);
 ax = axes(fig);

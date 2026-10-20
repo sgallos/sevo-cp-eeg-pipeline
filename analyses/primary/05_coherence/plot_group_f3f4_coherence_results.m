@@ -36,12 +36,13 @@ fprintf('Frequency bins: %d\n', numel(freq));
 fprintf('Primary contiguous significant bins: %d\n', sum(inference.sigMask_contiguous));
 
 %% Step 3: Plot descriptive group median coherence curves
-ctrlLineColor = [0.90 0.45 0.10];
-cpLineColor = [0.20 0.45 0.85];
-ctrlFillColor = [1.00 0.78 0.60];
-cpFillColor = [0.68 0.82 1.00];
-ctrlSubjectColor = [0.90 0.45 0.10 0.18];
-cpSubjectColor = [0.20 0.45 0.85 0.18];
+gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+ctrlLineColor = gc.controlLine;
+cpLineColor = gc.cpLine;
+ctrlFillColor = gc.controlLight;
+cpFillColor = gc.cpLight;
+ctrlSubjectColor = [gc.controlLine 0.18];
+cpSubjectColor = [gc.cpLine 0.18];
 alphaBandColor = [0.90 0.90 0.90];
 primarySigColor = [0.80 0.20 0.20];
 exploratorySigColor = [0.95 0.72 0.45];

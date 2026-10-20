@@ -18,7 +18,7 @@ function setupOnce(testCase)
     outDir = tempname;
     mkdir(outDir);
     testCase.addTeardown(@() rmdir(outDir, 's'));
-    bands = state_space_bands();
+    bands = state_space_bands("original");   % the original fits used alpha 8-12 Hz
     for b = 1:numel(bands)
         evalc(['run_power_ssm_scalar_r(''bandName'', bands(b).name, ''bandLowHz'', bands(b).lowHz, ' ...
             '''bandHighHz'', bands(b).highHz, ''inputTable'', inputTable, ''powerColumn'', bands(b).column, ' ...

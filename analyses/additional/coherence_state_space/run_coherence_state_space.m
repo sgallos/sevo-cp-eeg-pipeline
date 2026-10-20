@@ -88,8 +88,9 @@ function out = run_coherence_state_space()
 end
 
 function plot_trajectories(ax, T, traj, band)
-    controlColor = [0.00 0.38 0.95];
-    cpColor = [0.92 0.02 0.08];
+    gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+    controlColor = gc.controlLine;
+    cpColor = gc.cpLine;
     hold(ax, 'on');
     shade(ax, traj.ageYears, tanh(traj.baselineCILow_dB), tanh(traj.baselineCIHigh_dB), controlColor);
     shade(ax, traj.ageYears, tanh(traj.cpCILow_dB), tanh(traj.cpCIHigh_dB), cpColor);

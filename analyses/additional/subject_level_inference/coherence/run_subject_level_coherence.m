@@ -68,8 +68,9 @@ function g = hedges_g(a, b)
 end
 
 function fig = plot_results(freq, boot, clusters, published, a, alpha)
-    ctrlColor = [0.90 0.45 0.10];
-    cpColor = [0.20 0.45 0.85];
+    gc = group_colors();   % shared/group_colors.m: Control blue, CP red
+    ctrlColor = gc.controlLine;
+    cpColor = gc.cpLine;
     fig = figure('Color', 'w', 'Position', [100 100 1150 520]);
     tl = tiledlayout(fig, 1, 3, 'TileSpacing', 'compact');
 
