@@ -73,9 +73,9 @@ function out = make_coherence_counterparts()
     pInteraction = modelInteraction.Coefficients.pValue(contains(rows, ':'));
 
     windowCenters = (10:0.5:16).';
-    fig = figure('Color', 'w', 'Position', [100 100 1250 860]);
-    tl = tiledlayout(fig, 2, 3, 'TileSpacing', 'compact');
-    ax = nexttile(tl, 1, [1 2]);  hold(ax, 'on');
+    fig = figure('Color', 'w', 'Position', [100 100 1250 560]);
+    tl = tiledlayout(fig, 1, 3, 'TileSpacing', 'compact');
+    ax = nexttile(tl, [1 2]);  hold(ax, 'on');
     groups = ["Control", "CP"];  colors = {controlColor, cpColor};
     for g = 1:2
         sel = children.group == groups(g);
@@ -92,26 +92,8 @@ function out = make_coherence_counterparts()
     grid(ax, 'on');  box(ax, 'off');  xlabel(ax, 'Age (years)');  ylabel(ax, 'Alpha (8-13 Hz) F3-F4 coherence');
     title(ax, sprintf('Alpha coherence vs age (group x age interaction p = %.2f)', pInteraction));
     legend(ax, 'Location', 'northwest');
-    topAx = ax;
 
-    % Bottom left: CP - Control in the same windows (z scale), with the regression's constant gap
-    [d, dLo, dHi] = window_difference(children.z, children.group, children.ageYears, windowCenters, 2, 3);
-    ax = nexttile(tl, 4, [1 2]);  hold(ax, 'on');
-    ok = ~isnan(dLo);
-    x = windowCenters(ok).';
-    fill(ax, [x fliplr(x)], [dLo(ok).' fliplr(dHi(ok).')], [0.5 0.5 0.5], 'FaceAlpha', 0.25, ...
-        'EdgeColor', 'none', 'DisplayName', '95% CI (resampling children)');
-    plot(ax, windowCenters, d, 'k-', 'LineWidth', 2, 'DisplayName', 'CP - Control (4-yr window)');
-    yline(ax, effect, '--', 'Color', [0.6 0.1 0.1], 'LineWidth', 1.5, ...
-        'DisplayName', sprintf('Regression: constant gap %.2f z', effect));
-    yline(ax, 0, 'k:', 'HandleVisibility', 'off');
-    xlim(ax, xlim(topAx));
-    grid(ax, 'on');  box(ax, 'off');  xlabel(ax, 'Age (years)');
-    ylabel(ax, 'CP - Control alpha coherence (Fisher z)');
-    title(ax, 'Group difference vs age');
-    legend(ax, 'Location', 'southwest');
-
-    ax = nexttile(tl, 3, [2 1]);  hold(ax, 'on');
+    ax = nexttile(tl);  hold(ax, 'on');
     slope = model.Coefficients{'ageYears', 'Estimate'};
     adjusted = tanh(children.z - slope * (children.ageYears - mean(children.ageYears)));
     rng(1);
@@ -129,10 +111,7 @@ function out = make_coherence_counterparts()
     close(fig);
 
     writetable(children, fullfile(outDir, 'alpha_coherence_per_child.csv'));
-    windows = table(windowCenters, d, dLo, dHi, 'VariableNames', ...
-        {'ageCenter', 'difference_z', 'diff_ciLow_z', 'diff_ciHigh_z'});
-    writetable(windows, fullfile(outDir, 'alpha_coherence_difference_windows.csv'));
-    out = struct('outDir', outDir, 'windows', windows, 'effect_z', effect, 'effectCI_z', effectCI, 'pGroup', pGroup, ...
+    out = struct('outDir', outDir, 'effect_z', effect, 'effectCI_z', effectCI, 'pGroup', pGroup, ...
         'pInteraction', pInteraction, 'nControl', nControl, 'nCP', nCP);
 end
 
@@ -144,22 +123,6 @@ function [M, counts] = window_median(curves, ages, centers, halfWidth)
         counts(c) = sum(in);
         if counts(c) > 0
             M(c, :) = median(curves(in, :), 1, 'omitnan');
-        end
-    end
-end
-
-function [d, lo, hi] = window_difference(values, group, ages, centers, halfWidth, minN)
-    [d, lo, hi] = deal(nan(numel(centers), 1));
-    for w = 1:numel(centers)
-        near = abs(ages - centers(w)) <= halfWidth;
-        cp = values(near & group == "CP");
-        ctrl = values(near & group == "Control");
-        if isempty(cp) || isempty(ctrl), continue; end
-        d(w) = mean(cp) - mean(ctrl);
-        if numel(cp) >= minN && numel(ctrl) >= minN
-            b = subject_bootstrap_ci(cp, ctrl, struct('statFn', @mean));
-            lo(w) = b.ciDifference(1);
-            hi(w) = b.ciDifference(2);
         end
     end
 end

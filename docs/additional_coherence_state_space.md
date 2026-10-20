@@ -39,8 +39,7 @@ power versions, run with `"coherence"` ([ssm_measure.m](../analyses/additional/s
 - Coherograms: same windows as stage 07 (centres 10–16 yr, ±1.25 yr), median per window, 1–30 Hz.
 - Alpha coherence vs age: alpha 8–13 Hz (stage 05's band); same layout as the power version: 4-year
   sliding windows (half-width 2 yr, step 0.5 yr), mean of z per window with a children-resampled 95% CI
-  (only where a window has ≥ 3 children); regression $z = \beta_0 + \beta_1\,\text{CP} + \beta_2\,\text{age}$; bottom panel = CP − Control
-  mean z per window with a children-resampled 95% CI and the regression gap as a dashed line; right panel =
+  (only where a window has ≥ 3 children); regression $z = \beta_0 + \beta_1\,\text{CP} + \beta_2\,\text{age}$; right panel =
   each child's z adjusted to the mean age, $z_i - \hat\beta_2(\text{age}_i - \overline{\text{age}})$, shown as $\tanh(\cdot)$.
 
 ## Results (23 children: 11 Control, 12 CP)
@@ -61,9 +60,6 @@ over a widening/flexible gap by ≈ 4 : 1. Delta (−1.1) and theta (−0.2) fav
 driven by the youngest one or two children); delta and theta stay non-significant.
 
 **Alpha coherence vs age (8–13 Hz):** CP − Control −0.13 z [−0.25, −0.02], p = 0.023; group × age p = 0.31.
-Per 4-year window the difference is about −0.09 to −0.11 z up to 12 yr (CI includes 0) and −0.16 to −0.20 z
-from 12.5 yr on (CI excludes 0). The regression doesn't support a real change with age (p = 0.31): each
-window holds only 5–10 children per group, so the early windows are just less certain.
 
 **Coherograms:** controls show a strong 9–12 Hz band that strengthens with age; much weaker in CP. Edge
 windows are thin (CP at 16 yr is **one child**), so treat edge columns as anecdotal.

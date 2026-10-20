@@ -56,16 +56,10 @@ $\text{alpha}_i = \beta_0 + \beta_1\,\text{CP}_i + \beta_2\,\text{age}_i + \vare
 **No one-year bin has ≥ 3 children in both groups**, so per-bin comparisons can only be
 descriptive (still saved in `one_year_bins.csv`, no longer plotted).
 
-**Figure:** top left = every child vs age with each group's sliding-window mean; bottom left =
-**CP − Control in the same windows**, $\bar y_{\text{CP}}(w) - \bar y_{\text{Control}}(w)$, with a 95% CI
-that resamples children within each group (only where both groups have ≥ 3), and the regression's
-constant gap as a dashed line; right = each
+**Figure:** left = every child vs age with each group's sliding-window mean; right = each
 child's alpha **adjusted to the average age (13.0 yr)**, CP vs Control, one dot per child.
 Age adjustment: $\text{alpha}^{adj}_i = \text{alpha}_i - \hat\beta_2(\text{age}_i - \overline{\text{age}})$,
 which removes the shared age trend so children of different ages can sit side by side.
-Per 4-year window, CP − Control is −3.5 to −5.9 dB, scattered around the regression's −5.3 dB with no
-trend; the CI excludes 0 in every window except the two thinnest edge windows (10 and 15.5 yr, 3–4 children
-in one group).
 
 ### Coherence (Fig 07): 12 CP vs 11 Control
 | Test | Result |

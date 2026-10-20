@@ -37,15 +37,3 @@ function testNoBinCIWithFewChildren(testCase)
     few = bins.nCP < 3 | bins.nControl < 3;
     verifyTrue(testCase, all(isnan(bins.ciLow_dB(few))), 'No CI where a group has < 3 children');
 end
-
-function testWindowDifferencePanel(testCase)
-    % Bottom panel: CP - Control in each window equals the difference of the group means,
-    % and has a CI only where both groups have >= 3 children.
-    w = testCase.TestData.age.windows;
-    verifyEqual(testCase, w.difference_dB, w.CP_mean_dB - w.Control_mean_dB, 'AbsTol', 1e-12);
-    few = w.CP_n < 3 | w.Control_n < 3;
-    verifyTrue(testCase, all(isnan(w.diff_ciLow_dB(few))));
-    verifyTrue(testCase, all(~isnan(w.diff_ciLow_dB(~few))));
-    ok = ~few;
-    verifyTrue(testCase, all(w.diff_ciLow_dB(ok) <= w.difference_dB(ok) & w.difference_dB(ok) <= w.diff_ciHigh_dB(ok)));
-end

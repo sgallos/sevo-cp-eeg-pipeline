@@ -42,9 +42,6 @@ function out = run_subject_level_age_trajectories()
         windows.(g + "_ciLow_dB") = lo;
         windows.(g + "_ciHigh_dB") = hi;
     end
-    % CP - Control in the same windows; CI only where both groups have minPerGroup children
-    [windows.difference_dB, windows.diff_ciLow_dB, windows.diff_ciHigh_dB] = ...
-        window_difference(children.alpha_dB, children.group, children.ageYears, centers, halfWidth, minPerGroup);
 
     % One-year bins (Fig 4): difference only where both groups have enough children
     binCenters = (criteria.ageMinYears + 0.5 : 1 : criteria.ageMaxYears - 0.5).';
@@ -113,31 +110,15 @@ function [m, lo, hi, k] = window_summary(children, groupName, centers, halfWidth
     end
 end
 
-function [d, lo, hi] = window_difference(values, group, ages, centers, halfWidth, minN)
-    [d, lo, hi] = deal(nan(numel(centers), 1));
-    for w = 1:numel(centers)
-        near = abs(ages - centers(w)) <= halfWidth;
-        cp = values(near & group == "CP");
-        ctrl = values(near & group == "Control");
-        if isempty(cp) || isempty(ctrl), continue; end
-        d(w) = mean(cp) - mean(ctrl);
-        if numel(cp) >= minN && numel(ctrl) >= minN
-            boot = subject_bootstrap_ci(cp, ctrl, struct('statFn', @mean));
-            lo(w) = boot.ciDifference(1);
-            hi(w) = boot.ciDifference(2);
-        end
-    end
-end
-
 function fig = plot_results(children, windows, bins, model, summary) %#ok<INUSD> bins kept in the CSV, not plotted
     ctrlColor = [0.90 0.45 0.10];
     cpColor = [0.20 0.45 0.85];
     names = ["Control", "CP"];  colors = {ctrlColor, cpColor};
-    fig = figure('Color', 'w', 'Position', [100 100 1250 860]);
-    tl = tiledlayout(fig, 2, 3, 'TileSpacing', 'compact');
+    fig = figure('Color', 'w', 'Position', [100 100 1250 560]);
+    tl = tiledlayout(fig, 1, 3, 'TileSpacing', 'compact');
 
-    % Top left: every child vs age, with each group's sliding-window mean
-    ax1 = nexttile(tl, 1, [1 2]); hold(ax1, 'on');
+    % Left: every child vs age, with each group's sliding-window mean
+    ax1 = nexttile(tl, [1 2]); hold(ax1, 'on');
     for g = 1:2
         c = colors{g};
         ok = ~isnan(windows.(names(g) + "_ciLow_dB"));
@@ -156,27 +137,10 @@ function fig = plot_results(children, windows, bins, model, summary) %#ok<INUSD>
         summary.pGroupByAge));
     legend(ax1, 'Location', 'northeast');
 
-    % Bottom left: CP - Control in the same windows, with the regression's constant gap
-    ax3 = nexttile(tl, 4, [1 2]); hold(ax3, 'on');
-    ok = ~isnan(windows.diff_ciLow_dB);
-    x = windows.ageCenter(ok).';
-    fill(ax3, [x fliplr(x)], [windows.diff_ciLow_dB(ok).' fliplr(windows.diff_ciHigh_dB(ok).')], ...
-        [0.5 0.5 0.5], 'FaceAlpha', 0.25, 'EdgeColor', 'none', 'DisplayName', '95% CI (resampling children)');
-    plot(ax3, windows.ageCenter, windows.difference_dB, 'k-', 'LineWidth', 2, ...
-        'DisplayName', 'CP - Control (4-yr window)');
-    yline(ax3, summary.groupEffect_dB, '--', 'Color', [0.6 0.1 0.1], 'LineWidth', 1.5, ...
-        'DisplayName', sprintf('Regression: constant gap %.1f dB', summary.groupEffect_dB));
-    yline(ax3, 0, 'k:', 'HandleVisibility', 'off');
-    xlim(ax3, xlim(ax1));
-    grid(ax3, 'on'); box(ax3, 'off');
-    xlabel(ax3, 'Age (years)'); ylabel(ax3, 'CP - Control alpha power (dB)');
-    title(ax3, 'Group difference vs age');
-    legend(ax3, 'Location', 'southwest');
-
     % Right: each child's alpha adjusted to the average age, CP vs Control
     ageSlope = model.Coefficients{'ageYears', 'Estimate'};
     adjusted = children.alpha_dB - ageSlope * (children.ageYears - mean(children.ageYears));
-    ax2 = nexttile(tl, 3, [2 1]); hold(ax2, 'on');
+    ax2 = nexttile(tl); hold(ax2, 'on');
     rng(1);   % fixed horizontal jitter so the plot is identical every run
     for g = 1:2
         v = adjusted(children.group == names(g));
