@@ -110,14 +110,15 @@ function [m, lo, hi, k] = window_summary(children, groupName, centers, halfWidth
     end
 end
 
-function fig = plot_results(children, windows, bins, model, summary)
+function fig = plot_results(children, windows, bins, model, summary) %#ok<INUSD> bins kept in the CSV, not plotted
     ctrlColor = [0.90 0.45 0.10];
     cpColor = [0.20 0.45 0.85];
-    fig = figure('Color', 'w', 'Position', [100 100 1100 820]);
-    tl = tiledlayout(fig, 2, 1, 'TileSpacing', 'compact');
-
-    ax1 = nexttile(tl); hold(ax1, 'on');
     names = ["Control", "CP"];  colors = {ctrlColor, cpColor};
+    fig = figure('Color', 'w', 'Position', [100 100 1250 560]);
+    tl = tiledlayout(fig, 1, 3, 'TileSpacing', 'compact');
+
+    % Left: every child vs age, with each group's sliding-window mean
+    ax1 = nexttile(tl, [1 2]); hold(ax1, 'on');
     for g = 1:2
         c = colors{g};
         ok = ~isnan(windows.(names(g) + "_ciLow_dB"));
@@ -125,34 +126,31 @@ function fig = plot_results(children, windows, bins, model, summary)
         fill(ax1, [x fliplr(x)], [windows.(names(g) + "_ciLow_dB")(ok).' fliplr(windows.(names(g) + "_ciHigh_dB")(ok).')], ...
             c, 'FaceAlpha', 0.18, 'EdgeColor', 'none', 'HandleVisibility', 'off');
         plot(ax1, windows.ageCenter, windows.(names(g) + "_mean_dB"), '-', 'Color', c, 'LineWidth', 2, ...
-            'DisplayName', names(g) + " mean (4-yr sliding window, 95% CI resampling children)");
+            'DisplayName', names(g) + " mean (4-yr window, 95% CI resampling children)");
         sel = children.group == names(g);
-        scatter(ax1, children.ageYears(sel), children.alpha_dB(sel), 36, c, 'filled', ...
+        scatter(ax1, children.ageYears(sel), children.alpha_dB(sel), 40, c, 'filled', ...
             'MarkerEdgeColor', 'k', 'DisplayName', names(g) + " children");
     end
     grid(ax1, 'on'); box(ax1, 'off');
-    ylabel(ax1, 'Alpha power at F3 (dB)');
-    title(ax1, sprintf('Alpha power vs age. CP - Control = %.1f dB [%.1f, %.1f], p = %.3g (age-adjusted, n = %d)', ...
-        summary.groupEffect_dB, summary.ciLow_dB, summary.ciHigh_dB, summary.pGroup, model.NumObservations));
+    xlabel(ax1, 'Age (years)'); ylabel(ax1, 'Alpha power at F3 (dB)');
+    title(ax1, sprintf('Alpha power vs age (group x age interaction p = %.2f: the gap does not change with age)', ...
+        summary.pGroupByAge));
     legend(ax1, 'Location', 'northeast');
 
+    % Right: each child's alpha adjusted to the average age, CP vs Control
+    ageSlope = model.Coefficients{'ageYears', 'Estimate'};
+    adjusted = children.alpha_dB - ageSlope * (children.ageYears - mean(children.ageYears));
     ax2 = nexttile(tl); hold(ax2, 'on');
-    yline(ax2, 0, '--', 'Color', [0.4 0.4 0.4], 'HandleVisibility', 'off');
-    yline(ax2, summary.groupEffect_dB, '-', 'Color', [0.3 0.3 0.3], 'LineWidth', 1, ...
-        'DisplayName', 'Age-adjusted group difference (all children)');
-    hasCI = ~isnan(bins.ciLow_dB);
-    errorbar(ax2, bins.ageCenter(hasCI), bins.difference_dB(hasCI), ...
-        bins.difference_dB(hasCI) - bins.ciLow_dB(hasCI), bins.ciHigh_dB(hasCI) - bins.difference_dB(hasCI), ...
-        'o', 'Color', 'k', 'MarkerFaceColor', 'k', 'LineWidth', 1.2, 'DisplayName', 'Bin difference, 95% CI (children resampled)');
-    plot(ax2, bins.ageCenter(~hasCI), bins.difference_dB(~hasCI), 'o', 'Color', [0.5 0.5 0.5], ...
-        'DisplayName', 'Bin difference, too few children for a CI');
-    for b = 1:height(bins)
-        text(ax2, bins.ageCenter(b), bins.difference_dB(b), sprintf('  %d vs %d', bins.nCP(b), bins.nControl(b)), ...
-            'FontSize', 9, 'Color', [0.35 0.35 0.35]);
+    rng(1);   % fixed horizontal jitter so the plot is identical every run
+    for g = 1:2
+        v = adjusted(children.group == names(g));
+        jitter = (rand(numel(v), 1) - 0.5) * 0.3;
+        scatter(ax2, g + jitter, v, 55, colors{g}, 'filled', 'MarkerEdgeColor', 'k');
+        plot(ax2, g + [-0.25 0.25], mean(v) * [1 1], 'k-', 'LineWidth', 2.5);
     end
+    xticks(ax2, [1 2]); xticklabels(ax2, cellstr(names)); xlim(ax2, [0.4 2.6]);
+    ylabel(ax2, sprintf('Alpha power adjusted to age %.1f yr (dB)', mean(children.ageYears)));
+    title(ax2, {sprintf('CP - Control = %.1f dB [%.1f, %.1f]', summary.groupEffect_dB, summary.ciLow_dB, summary.ciHigh_dB), ...
+        sprintf('p = %.3f, one dot per child (n = %d)', summary.pGroup, model.NumObservations)});
     grid(ax2, 'on'); box(ax2, 'off');
-    xlabel(ax2, 'Age (years)'); ylabel(ax2, 'CP - Control alpha (dB)');
-    title(ax2, sprintf('One-year bins (labels: n CP vs n Control). Group x age interaction p = %.2f', summary.pGroupByAge));
-    legend(ax2, 'Location', 'southoutside', 'NumColumns', 2);
-    linkaxes([ax1 ax2], 'x');
 end
