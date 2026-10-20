@@ -5,7 +5,7 @@ cerebral palsy (CP) and neurotypical controls aged 10–16 years. The pipeline e
 spectra by multitaper analysis with a frequency-domain bootstrap, quantifies F3–F4 coherence, and
 models how the CP − Control difference changes with age using a state-space model.
 
-All figures are shown in the **[figure gallery](docs/figures.md)**.
+All figures, including those for publication, are shown in the **[figure gallery](docs/figures.md)**.
 
 ## Requirements
 - MATLAB R2024a or later
