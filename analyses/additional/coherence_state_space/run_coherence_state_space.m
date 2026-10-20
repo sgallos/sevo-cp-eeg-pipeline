@@ -73,6 +73,22 @@ function out = run_coherence_state_space()
             sprintf('q = %.3g, r = %.3g (z^2)', v.qF0, v.r)}, 'FontSize', 12);
         title(axBottom, gapText, 'FontSize', 11);
 
+        % One figure each, like power Figs 5-6: trajectories (coherence) and gap (Fisher z)
+        single = figure('Color', 'w', 'Position', [100 100 900 540]);
+        ax = axes(single);
+        plot_trajectories(ax, T, traj, band);
+        xlabel(ax, 'Age (years)');
+        title(ax, sprintf('%s (%g-%g Hz) F3-F4 coherence, Control and CP', title_case(band.name), ...
+            band.lowHz, band.highHz), 'FontSize', 13);
+        exportgraphics(single, fullfile(outDir, sprintf('coherence_ssm_%s_control_vs_cp.png', band.name)), 'Resolution', 200);
+        close(single);
+        single = figure('Color', 'w', 'Position', [100 100 900 540]);
+        ax = axes(single);
+        title(ax, {sprintf('%s (%g-%g Hz) coherence, CP - Control', title_case(band.name), band.lowHz, band.highHz), ...
+            plot_gap(ax, traj)}, 'FontSize', 13);
+        exportgraphics(single, fullfile(outDir, sprintf('coherence_ssm_%s_gap.png', band.name)), 'Resolution', 200);
+        close(single);
+
         below = traj.deltaCIHigh_dB < 0;
         ages = [NaN NaN];
         if any(below), ages = [min(traj.ageYears(below)) max(traj.ageYears(below))]; end

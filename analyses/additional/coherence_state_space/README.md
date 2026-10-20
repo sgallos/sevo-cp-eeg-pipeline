@@ -2,7 +2,7 @@
 
 **Question:** how does F3–F4 (left–right frontal) coherence change with age in each group,
 and how big is the CP − Control gap at each age? The same state-space analysis as for power
-(stage 06, Figs 05–06), applied to coherence.
+(stage 06, Figs 5–6), applied to coherence.
 
 ## What it does
 1. Each child's band coherence = mean of their stage 05 coherence curve over the band
@@ -17,7 +17,7 @@ and how big is the CP − Control gap at each age? The same state-space analysis
 Cohort: `get_cohort()` children with F4 (23).
 
 ## Also here
-- `make_coherence_counterparts.m`: age-varying coherograms (counterpart of Figs 02–03) and alpha
+- `make_coherence_counterparts.m`: age-varying coherograms (counterpart of Figs 7–8) and alpha
   coherence vs age (counterpart of the every-child + age-adjusted power figure).
 - Smoothness grid and published-vs-wobbliest gallery: the power versions run with `"coherence"`
   (`analyses/additional/ssm_smoothness_grid/ssm_measure.m`), written to `smoothness_grid/`.

@@ -68,7 +68,7 @@ child's alpha **adjusted to the average age (13.0 yr)**, CP vs Control, one dot 
 Age adjustment: $\text{alpha}^{adj}_i = \text{alpha}_i - \hat\beta_2(\text{age}_i - \overline{\text{age}})$,
 which removes the shared age trend so children of different ages can sit side by side.
 
-### Coherence (Fig 07): 12 CP vs 11 Control
+### Coherence (Fig 9): 12 CP vs 11 Control
 | Test | Result |
 |---|---|
 | **Alpha coherence per child (8–13 Hz)** | median 0.49 vs 0.59, difference −0.10 [−0.19, −0.02], **g = −1.07** |

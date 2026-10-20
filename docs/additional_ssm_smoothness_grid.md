@@ -2,7 +2,7 @@
 
 # Additional analysis: state-space smoothness grid (2026-10-20)
 
-**Question:** how much does the state-space result (Figs 05–06) depend on how smooth the curves are allowed to be?
+**Question:** how much does the state-space result (Figs 5–6) depend on how smooth the curves are allowed to be?
 
 > [!IMPORTANT]
 > **Not much.** The published smoothness sits on the flat top of the likelihood in every band.
@@ -67,7 +67,7 @@ centred on "no difference" should; the gap still excludes 0 from 11.7 to 14.9 yr
 5. **Too wobbly is clearly worse:** at q_δ = 10⁴ × default the alpha log-likelihood drops by about 17 units.
 
 ## How this is used (decision 2026-10-20)
-- **Main Figs 05–06 stay the published version** (FixedHeuristicQ). The grid shows it sits on the likelihood
+- **Main Figs 5–6 stay the published version** (FixedHeuristicQ). The grid shows it sits on the likelihood
   plateau, so it is a well-supported choice.
 - **The wobbliest still-supported version goes to additional**, drawn next to the published one
   (`gallery_<band>.png`), to show how far the data can be pushed:

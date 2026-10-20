@@ -42,6 +42,10 @@ function testFitsConvergedAndFiguresWritten(testCase)
         verifyEqual(testCase, S.converged(S.versionName == "FixedHeuristicQ"), 1, band);
     end
     verifyTrue(testCase, isfile(fullfile(outDir, 'coherence_state_space_all_bands.png')));
+    for band = ["delta", "theta", "alpha"]
+        verifyTrue(testCase, isfile(fullfile(outDir, "coherence_ssm_" + band + "_control_vs_cp.png")), band);
+        verifyTrue(testCase, isfile(fullfile(outDir, "coherence_ssm_" + band + "_gap.png")), band);
+    end
 end
 
 function testCounterpartFigures(testCase)
