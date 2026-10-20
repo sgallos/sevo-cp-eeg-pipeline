@@ -64,11 +64,12 @@ figure are in [`docs/`](docs/README.md).
 
 ## Contributions
 
-Juan Jose Navarrete Pérez collected the clinical data. Emily Stephen, Emery Brown and Sebastian Gallo
-shared the scientific direction of the project. Juan Jose Navarrete Pérez and Emery Brown provided the
-clinical interpretation of the results. Sebastian Gallo performed all of the analyses.
+Juan Jose Navarrete Pérez collected the clinical data. Emily Stephen, Emery Brown
+guided the overall direction of the project. Juan Jose Navarrete Pérez and Emery Brown provided the
+clinical interpretation of the results. The scientific direction of the analysis was led in collaboration with Emily Stephen and Sebastian Gallo
+Sebastian Gallo performed all of the analyses, including the validation and original extension of methods.
 
-## Augmented, not automated
+## A note on the use of AI: A goal for augmentation, not automation
 
 This project used Claude (Anthropic), an AI model, through Claude Code. Following the principles of
 MIT's [report on AI use in teaching, learning and research training](https://aiandeducation.mit.edu/report/)
