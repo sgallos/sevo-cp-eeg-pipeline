@@ -34,7 +34,7 @@ power code with the measure `"coherence"` ([ssm_measure.m](../analyses/additiona
 ## Method
 - Each child's band coherence is the mean of the stage 05 coherence curve over the band,
   $\bar C_i = \text{mean}_{f \in \text{band}} C_i(f)$. For 8–13 Hz this reproduces the stage 05 alpha value exactly.
-- Coherence is analysed after the Fisher transform $z_i = \operatorname{atanh}(\bar C_i)$ and plotted back on the
+- Coherence is analysed after the Fisher transform $z_i = \mathrm{atanh}(\bar C_i)$ and plotted back on the
   coherence scale with $C = \tanh(z)$.
 - The state-space model is the one used in [stage 06](06_state_space_model.md), with $y_k = z_k$ and the same bands as
   for power (alpha 8–13 Hz).

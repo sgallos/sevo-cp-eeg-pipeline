@@ -47,7 +47,7 @@ The result is **24 subjects, 12 Control and 12 CP.**
 \bar P_{\text{subject}} = \frac{1}{4}\sum_{j=1}^{4} P_j \quad(\text{in dB})
 ```
 
-The within-subject SD and range and the "empirical SEM variance" $\operatorname{var}(P_j)/4$ are also saved as diagnostics, but the main model does not use them.
+The within-subject SD and range and the "empirical SEM variance" $\mathrm{var}(P_j)/4$ are also saved as diagnostics, but the main model does not use them.
 
 ## Settings
 | Setting | Value | Meaning |

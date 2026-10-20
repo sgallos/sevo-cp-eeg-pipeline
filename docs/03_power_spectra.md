@@ -29,7 +29,7 @@ Stops with an error if any cohort subject is missing stage 01 outputs.
 At each frequency, the **median** across children (in dB), then CP − Control:
 
 ```math
-\Delta(f) = \operatorname*{median}_{i\in CP} P_i(f) \;-\; \operatorname*{median}_{j\in Ctrl} P_j(f)
+\Delta(f) = \mathop{\mathrm{median}}\limits_{i \in \mathrm{CP}} P_i(f) \;-\; \mathop{\mathrm{median}}\limits_{j \in \mathrm{Control}} P_j(f)
 ```
 
 No randomness.
