@@ -43,3 +43,31 @@ function testFitsConvergedAndFiguresWritten(testCase)
     end
     verifyTrue(testCase, isfile(fullfile(outDir, 'coherence_state_space_all_bands.png')));
 end
+
+function testCounterpartFigures(testCase)
+    % Coherograms (Figs 02-03 counterpart) and alpha coherence vs age
+    evalc('o = make_coherence_counterparts();');
+    close all;
+    for name = ["coherograms.png", "coherogram_control.png", "coherogram_cp.png", "alpha_coherence_vs_age.png"]
+        verifyTrue(testCase, isfile(fullfile(o.outDir, name)), name);
+    end
+    cohort = get_cohort();
+    verifyEqual(testCase, sum(o.nControl) + sum(o.nCP) > 0, true);
+    verifyLessThan(testCase, o.pGroup, 1);
+    verifyEqual(testCase, numel(o.effectCI_z), 2);
+    verifyEqual(testCase, sum(cohort.hasF4), 23);
+end
+
+function testSmoothnessGridForCoherence(testCase)
+    % The power smoothness grid, run on coherence: published setting matches the stage fit
+    repoRoot = fileparts(fileparts(mfilename('fullpath')));
+    addpath(fullfile(repoRoot, 'analyses', 'additional', 'ssm_smoothness_grid'));
+    evalc('o = run_ssm_smoothness_grid("alpha", "coherence");');
+    close all;
+    G = readtable(fullfile(o.outDir, 'grid.csv'));
+    cell = G(G.qF0_multiplier == 1 & G.qDelta_multiplier == 1, :);
+    pub = readtable(fullfile(testCase.TestData.out.outDir, 'coherence_ssm_alpha_summary.csv'), 'TextType', 'string');
+    pub = pub(pub.versionName == "FixedHeuristicQ", :);
+    verifyEqual(testCase, cell.r, pub.r, 'RelTol', 1e-3);
+    verifyEqual(testCase, cell.logLik, pub.logLikelihood, 'AbsTol', 1e-3);
+end

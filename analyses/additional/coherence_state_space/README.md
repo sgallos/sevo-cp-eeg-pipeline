@@ -1,4 +1,4 @@
-# Coherence state-space model
+# Coherence counterparts of the power figures
 
 **Question:** how does F3–F4 (left–right frontal) coherence change with age in each group,
 and how big is the CP − Control gap at each age? The same state-space analysis as for power
@@ -16,10 +16,16 @@ and how big is the CP − Control gap at each age? The same state-space analysis
 
 Cohort: `get_cohort()` children with F4 (23).
 
+## Also here
+- `make_coherence_counterparts.m`: age-varying coherograms (counterpart of Figs 02–03) and alpha
+  coherence vs age (counterpart of the every-child + age-adjusted power figure).
+- Smoothness grid and published-vs-wobbliest gallery: the power versions run with `"coherence"`
+  (`analyses/additional/ssm_smoothness_grid/ssm_measure.m`), written to `smoothness_grid/`.
+
 ## Run
 After `run_all.m` sections 1–5:
 ```matlab
-setup_project(); addpath('analyses/additional/coherence_state_space'); run_coherence_state_space();
+run('analyses/additional/coherence_state_space/run_coherence_figures.m')
 ```
 Results: `outputs/additional/coherence_state_space/` (`coherence_state_space_all_bands.png`,
 `summary.csv`, per-band `coherence_ssm_<band>_*` tables).

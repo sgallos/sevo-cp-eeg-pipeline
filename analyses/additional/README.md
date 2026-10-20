@@ -9,4 +9,4 @@ Analyses beyond the published figures. Each folder:
 |---|---|---|
 | [subject_level_inference](subject_level_inference/) | Complementary population-level inference for Figs 1–4 and 07 (resampling children) | ✅ tested |
 | [ssm_smoothness_grid](ssm_smoothness_grid/) | Profile-likelihood grid over state-space smoothness, gap shapes, prior and age-gap robustness | ✅ tested |
-| [coherence_state_space](coherence_state_space/) | The stage 06 state-space model applied to F3–F4 coherence (Fisher z), delta/theta/alpha | ✅ tested |
+| [coherence_state_space](coherence_state_space/) | Coherence counterparts of the power figures: state-space model (Fisher z), smoothness grid + gallery, age-varying coherograms, alpha coherence vs age | ✅ tested |

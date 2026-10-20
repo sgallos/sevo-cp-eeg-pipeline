@@ -1,4 +1,4 @@
-function out = make_candidate_gallery()
+function out = make_candidate_gallery(measureName)
 %MAKE_CANDIDATE_GALLERY Published and wobbliest state-space fits, side by side.
 %   For each band (delta, theta, alpha), refits the stage 06 model at:
 %     1. Published   - FixedHeuristicQ, q_f0 = q_delta = default (Figs 05-06)
@@ -7,17 +7,19 @@ function out = make_candidate_gallery()
 %   Each panel title states the settings and how well it fits.
 %   Needs run_all_bands.m (reads each band's grid.csv).
 %   Writes outputs/additional/ssm_smoothness_grid/gallery_<band>.png.
+%   make_candidate_gallery("coherence") does the same for F3-F4 coherence.
 
-    gridDir = fullfile(project_paths().outputsDir, 'additional', 'ssm_smoothness_grid');
-    raw = readtable(fullfile(state_space_outputs_dir(), 'power_table_for_ssm_subepochs_collapsed.csv'), ...
-        'TextType', 'string');
+    if nargin < 1, measureName = "power"; end
+    M = ssm_measure(measureName);
+    gridDir = M.outRoot;
+    raw = readtable(M.inputTable, 'TextType', 'string');
     bands = state_space_bands();
     out = struct();
 
     for b = 1:numel(bands)
         band = bands(b);
         T = table(string(raw.subjectID), string(raw.groupLabel), double(raw.ageYears), ...
-            double(raw.(band.column)), zeros(height(raw), 1), ...
+            double(raw.(M.column(band))), zeros(height(raw), 1), ...
             'VariableNames', {'subjectID', 'groupLabel', 'ageYears', 'alpha_dB', 'mfdb_var'});
         G = readtable(fullfile(gridDir, band.name, 'grid.csv'));
         qInit = G.qF0(1) / G.qF0_multiplier(1);
@@ -32,7 +34,7 @@ function out = make_candidate_gallery()
 
         fig = figure('Color', 'w', 'Position', [60 60 1200 900]);
         tl = tiledlayout(fig, 2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
-        title(tl, sprintf('%s band (%g-%g Hz): published vs wobbliest supported state-space fit, %d children', ...
+        title(tl, sprintf('%s%s band (%g-%g Hz): published vs wobbliest supported state-space fit, %d children', M.titlePrefix, ...
             title_case(band.name), band.lowHz, band.highHz, height(T)), 'FontWeight', 'bold', 'FontSize', 15);
         rows = table();
         for v = 1:size(versions, 1)
@@ -43,17 +45,17 @@ function out = make_candidate_gallery()
             if any(below)
                 ageText = sprintf('%.1f-%.1f yr', min(traj.ageYears(below)), max(traj.ageYears(below)));
             end
-            settingsText = sprintf('q_{f0} = %s, q_\\delta = %s, r = %.1f dB^2', ...
-                q_text(versions{v, 2}), q_text(versions{v, 3}), fit.r);
+            settingsText = sprintf('q_{f0} = %s, q_\\delta = %s, r = %.3g %s^2', ...
+                q_text(versions{v, 2}), q_text(versions{v, 3}), fit.r, M.units);
             fitText = sprintf('log-lik %.1f (best grid cell %.1f)', fit.logLikelihood, bestLogLik);
 
             ax = nexttile(tl, v);
-            plot_trajectories(ax, T, traj);
+            plot_trajectories(ax, T, traj, M);
             title(ax, {versions{v, 1}, settingsText}, 'FontSize', 11);
             ax = nexttile(tl, v + 2);
-            plot_gap(ax, traj);
-            title(ax, {sprintf('CP - Control: %.1f to %.1f dB; band below 0: %s', ...
-                min(traj.deltaMean_dB), max(traj.deltaMean_dB), ageText), fitText}, 'FontSize', 11);
+            plot_gap(ax, traj, M);
+            title(ax, {sprintf('CP - Control: %.3g to %.3g %s; band below 0: %s', ...
+                min(traj.deltaMean_dB), max(traj.deltaMean_dB), M.units, ageText), fitText}, 'FontSize', 11);
 
             rows = [rows; table(string(band.name), string(versions{v, 1}), versions{v, 2}, versions{v, 3}, ...
                 fit.r, fit.logLikelihood, mean(traj.deltaMean_dB), min(traj.deltaMean_dB), ...
@@ -89,27 +91,29 @@ function fit = fit_version(T, qF0, qDelta, extra)
     fit.r = exp(logR);
 end
 
-function plot_trajectories(ax, T, traj)
+function plot_trajectories(ax, T, traj, M)
+    % M.toDisplay maps model units to plotted units (identity for dB, tanh for coherence z)
     controlColor = [0.00 0.38 0.95];
     cpColor = [0.92 0.02 0.08];
+    d = M.toDisplay;
     hold(ax, 'on');
-    band(ax, traj.ageYears, traj.baselineCILow_dB, traj.baselineCIHigh_dB, controlColor);
-    band(ax, traj.ageYears, traj.cpCILow_dB, traj.cpCIHigh_dB, cpColor);
-    plot(ax, traj.ageYears, traj.baselineMean_dB, '-', 'Color', controlColor, 'LineWidth', 2.2);
-    plot(ax, traj.ageYears, traj.cpMean_dB, '-', 'Color', cpColor, 'LineWidth', 2.2);
+    band(ax, traj.ageYears, d(traj.baselineCILow_dB), d(traj.baselineCIHigh_dB), controlColor);
+    band(ax, traj.ageYears, d(traj.cpCILow_dB), d(traj.cpCIHigh_dB), cpColor);
+    plot(ax, traj.ageYears, d(traj.baselineMean_dB), '-', 'Color', controlColor, 'LineWidth', 2.2);
+    plot(ax, traj.ageYears, d(traj.cpMean_dB), '-', 'Color', cpColor, 'LineWidth', 2.2);
     isCP = T.groupLabel == "CP";
-    scatter(ax, T.ageYears(~isCP), T.alpha_dB(~isCP), 38, controlColor, 'filled', 'MarkerEdgeColor', 'w');
-    scatter(ax, T.ageYears(isCP), T.alpha_dB(isCP), 38, cpColor, 'filled', 'MarkerEdgeColor', 'w');
-    style(ax);  ylabel(ax, 'Power (dB)');
+    scatter(ax, T.ageYears(~isCP), d(T.alpha_dB(~isCP)), 38, controlColor, 'filled', 'MarkerEdgeColor', 'w');
+    scatter(ax, T.ageYears(isCP), d(T.alpha_dB(isCP)), 38, cpColor, 'filled', 'MarkerEdgeColor', 'w');
+    style(ax);  ylabel(ax, M.yLabel);
     legend(ax, {'', '', 'Control', 'CP'}, 'Location', 'northeast');
 end
 
-function plot_gap(ax, traj)
+function plot_gap(ax, traj, M)
     hold(ax, 'on');
     band(ax, traj.ageYears, traj.deltaCILow_dB, traj.deltaCIHigh_dB, [0.35 0.40 0.50]);
     plot(ax, traj.ageYears, traj.deltaMean_dB, '-', 'Color', [0.2 0.25 0.35], 'LineWidth', 2.2);
     yline(ax, 0, '--', 'Color', [0.4 0.4 0.4]);
-    style(ax);  xlabel(ax, 'Age (years)');  ylabel(ax, 'CP - Control (dB)');
+    style(ax);  xlabel(ax, 'Age (years)');  ylabel(ax, M.gapLabel);
 end
 
 function band(ax, x, lo, hi, c)

@@ -1,4 +1,4 @@
-function out = run_ssm_smoothness_grid(bandName)
+function out = run_ssm_smoothness_grid(bandName, measureName)
 %RUN_SSM_SMOOTHNESS_GRID How straight or wobbly can the state-space curves be?
 %   out = RUN_SSM_SMOOTHNESS_GRID("alpha") fits the stage 06 state-space model
 %   (same equations, same data) across a grid of smoothness settings and asks
@@ -12,22 +12,25 @@ function out = run_ssm_smoothness_grid(bandName)
 %   3. Robustness of the published setting to the two settings never varied:
 %      the starting (prior) uncertainty and the minimum age-gap floor.
 %   Writes to outputs/additional/ssm_smoothness_grid/<band>/.
+%
+%   run_ssm_smoothness_grid("alpha", "coherence") runs the same grid on F3-F4
+%   coherence (Fisher z); see ssm_measure.m.
 
     multipliers = [1e-6 1e-4 1e-2 0.1 0.3 1 3 10 1e2 1e4];
     publishedIndex = find(multipliers == 1);
     supportedDrop = 3;   % cells within 3 log-lik units of the best: ~95% region for 2 parameters
     tiny = 1e-10;        % "zero" variance for extreme models (kept > 0 for numerical stability)
 
-    paths = project_paths();
+    if nargin < 2, measureName = "power"; end
+    M = ssm_measure(measureName);
     band = state_space_bands();
     band = band([band.name] == string(bandName));
-    outDir = fullfile(paths.outputsDir, 'additional', 'ssm_smoothness_grid', char(band.name));
+    outDir = fullfile(M.outRoot, char(band.name));
     if ~isfolder(outDir), mkdir(outDir); end
 
-    raw = readtable(fullfile(state_space_outputs_dir(), 'power_table_for_ssm_subepochs_collapsed.csv'), ...
-        'TextType', 'string');
+    raw = readtable(M.inputTable, 'TextType', 'string');
     T = table(string(raw.subjectID), string(raw.groupLabel), double(raw.ageYears), ...
-        double(raw.(band.column)), zeros(height(raw), 1), ...
+        double(raw.(M.column(band))), zeros(height(raw), 1), ...
         'VariableNames', {'subjectID', 'groupLabel', 'ageYears', 'alpha_dB', 'mfdb_var'});
     qInit = (max(T.alpha_dB) - min(T.alpha_dB))^2 / (max(T.ageYears) - min(T.ageYears))^3;
 
@@ -59,10 +62,10 @@ function out = run_ssm_smoothness_grid(bandName)
     end
 
     % ---- 2. Extreme gap shapes (baseline smoothness at its best value) -------
-    % Log Bayes factors depend on the prior on the gap, so repeat at prior SD 3, 10, 30 dB.
+    % Log Bayes factors depend on the prior on the gap, so repeat at several prior SDs.
     qF0Best = qInit * multipliers(bi);
     shapeNames = ["Flexible gap (best grid cell)"; "Straight-line gap"; "Constant gap"; "No gap (CP = Control)"];
-    priorSD = [3 10 30];
+    priorSD = M.priorSD;
     shapeTable = table();
     for p = 1:numel(priorSD)
         v = priorSD(p)^2;
@@ -86,9 +89,9 @@ function out = run_ssm_smoothness_grid(bandName)
     % ---- 3. Robustness of the published setting ------------------------------
     qPub = qInit * multipliers(publishedIndex);
     checks = {
-        'Published (prior SD 10 dB, age-gap floor 0.05 yr)', struct()
-        'Prior SD 3 dB',  struct('initialCovarianceScale', 9)
-        'Prior SD 30 dB', struct('initialCovarianceScale', 900)
+        sprintf('Published (prior SD %g %s, age-gap floor 0.05 yr)', M.defaultPriorSD, M.units), struct()
+        sprintf('Prior SD %g %s', M.priorSD(1), M.units),  struct('initialCovarianceScale', M.priorSD(1)^2)
+        sprintf('Prior SD %g %s', M.priorSD(end), M.units), struct('initialCovarianceScale', M.priorSD(end)^2)
         'Age-gap floor 0.01 yr', struct('minAgeGapYears', 0.01)
         'Age-gap floor 0.2 yr',  struct('minAgeGapYears', 0.2)};
     robustTable = table();
@@ -105,7 +108,7 @@ function out = run_ssm_smoothness_grid(bandName)
     summary = table(string(band.name), qInit, multipliers(bi), multipliers(bj), bestLogLik, ...
         logLik(publishedIndex, publishedIndex) - bestLogLik, sum(supported(:)), ...
         min(sup.meanGap_dB), max(sup.meanGap_dB), all(isfinite(sup.gapBelowZeroFromAge)), ...
-        shapeTable.logBayesFactorVsNoGap(shapeTable.gapShape == "Constant gap" & shapeTable.priorSD_dB == 10), ...
+        shapeTable.logBayesFactorVsNoGap(shapeTable.gapShape == "Constant gap" & shapeTable.priorSD_dB == M.bfPriorSD), ...
         'VariableNames', {'band', 'qInit', 'bestQF0_multiplier', 'bestQDelta_multiplier', 'bestLogLik', ...
         'publishedDeltaLogLik', 'nSupportedCells', 'supportedMeanGapMin_dB', 'supportedMeanGapMax_dB', ...
         'gapExcludesZeroInAllSupportedCells', 'constantGap_logBFvsNoGap'});
@@ -117,7 +120,7 @@ function out = run_ssm_smoothness_grid(bandName)
     save(fullfile(outDir, 'ssm_smoothness_grid.mat'), 'grid', 'gridTable', 'shapeTable', ...
         'robustTable', 'summary', 'multipliers', 'qInit');
 
-    fig = plot_grid(band.name, multipliers, logLik - bestLogLik, supported, publishedIndex, [bi bj], grid);
+    fig = plot_grid(M.titlePrefix + string(band.name), multipliers, logLik - bestLogLik, supported, publishedIndex, [bi bj], grid, M.gapLabel);
     exportgraphics(fig, fullfile(outDir, 'smoothness_grid.png'), 'Resolution', 170);
     close(fig);
 
@@ -171,7 +174,7 @@ function v = get_field(s, name, default)
     if isfield(s, name), v = s.(name); else, v = default; end
 end
 
-function fig = plot_grid(bandName, m, dLogLik, supported, pubIdx, bestIdx, cells)
+function fig = plot_grid(bandName, m, dLogLik, supported, pubIdx, bestIdx, cells, gapLabel)
     fig = figure('Color', 'w', 'Position', [100 100 1400 760]);
     tl = tiledlayout(fig, 2, 4, 'TileSpacing', 'compact');
     title(tl, sprintf('%s band: how straight or wobbly can the curves be?', bandName), 'FontWeight', 'bold');
@@ -207,6 +210,6 @@ function fig = plot_grid(bandName, m, dLogLik, supported, pubIdx, bestIdx, cells
         grid(ax, 'on');  box(ax, 'off');
         title(ax, {sprintf('%s: q_\\delta = default x %g', names{p}, m(j)), ...
             sprintf('\\Delta log-lik %.1f', dLogLik(bestIdx(1), j))});
-        xlabel(ax, 'Age (years)');  ylabel(ax, 'CP - Control (dB)');
+        xlabel(ax, 'Age (years)');  ylabel(ax, gapLabel);
     end
 end
