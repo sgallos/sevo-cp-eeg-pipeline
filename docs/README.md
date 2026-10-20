@@ -3,7 +3,8 @@
 How each stage of the pipeline works: what it computes, its parameters and equations, and
 the results. Code links go to the exact files and lines in this repo.
 
-**[Figure gallery](figures.md)**: every figure at a glance.
+**[Figures for publication](publication_figures.md)**: every figure, full width, in reading order.
+**[Figure gallery](figures.md)**: every figure as thumbnails.
 
 | Page | Question it answers |
 |---|---|
