@@ -30,8 +30,10 @@ F3–F4 coherence, and a state-space model of the age trajectory.
 - Analysis parameters live in `shared/mfdb_config.m` or at the top of each stage script.
   Don't change a parameter without saying so; results must match the original analysis.
 - Bootstrap steps call `rng(cfg.randomSeed)` so reruns are identical.
-- `notes/` is a separate PRIVATE repo (gitignored here). Never copy notes into this repo
-  unless the user asks.
+- `notes/` is a separate PRIVATE repo (gitignored here). Never copy notes into this repo by
+  hand. `docs/` is generated from them by `notes/scripts/export_public_docs.py`, which drops
+  subject IDs and private pages and refuses to export if any are left. Edit notes, then rerun
+  it; never edit `docs/` directly.
 - Don't commit data (`*.mat`, `*.xlsx`) or `config_local.m`.
 
 ## Layout

@@ -33,15 +33,18 @@ check_cohort
 ```
 
 ## Pipeline stages
-| Stage | Folder | Produces | Status |
-|---|---|---|---|
-| 01 | `analyses/primary/01_subject_spectra` | per-subject F3 spectrum + bootstrap | ✅ tested |
-| 02 | `02_cohort` | power tables, final cohort | ✅ tested |
-| 03 | `03_power_spectra` | group spectra (Figs 1–2) | ✅ tested |
-| 04 | `04_age_trajectories` | alpha power vs age (Figs 3–4) | ✅ tested (CI bug fixed) |
-| 05 | `05_coherence` | F3–F4 coherence (Fig 07) | ✅ tested |
-| 06 | `06_state_space_model` | SSM age trajectories (Figs 05–06) | ✅ tested |
-| 07 | `07_age_varying_spectrogram` | age-varying spectrograms (Figs 02–03) | ✅ tested |
+Each stage's method, parameters and equations, with figures and test results, is written up in
+[`docs/`](docs/README.md) (renders on GitHub).
+
+| Stage | Folder | Produces | Status | How it works |
+|---|---|---|---|---|
+| 01 | `analyses/primary/01_subject_spectra` | per-subject F3 spectrum + bootstrap | ✅ tested | [notes](docs/01_subject_spectra.md) |
+| 02 | `02_cohort` | power tables, final cohort | ✅ tested | [notes](docs/02_cohort.md) |
+| 03 | `03_power_spectra` | group spectra (Figs 1–2) | ✅ tested | [notes](docs/03_power_spectra.md) |
+| 04 | `04_age_trajectories` | alpha power vs age (Figs 3–4) | ✅ tested (CI bug fixed) | [notes](docs/04_age_trajectories.md) |
+| 05 | `05_coherence` | F3–F4 coherence (Fig 07) | ✅ tested | [notes](docs/05_coherence.md) |
+| 06 | `06_state_space_model` | SSM age trajectories (Figs 05–06) | ✅ tested | [notes](docs/06_state_space_model.md) |
+| 07 | `07_age_varying_spectrogram` | age-varying spectrograms (Figs 02–03) | ✅ tested | [notes](docs/07_age_varying_spectrogram.md) |
 
 ## Additional analyses
 Analyses beyond the published figures live in [`analyses/additional/`](analyses/additional/).
