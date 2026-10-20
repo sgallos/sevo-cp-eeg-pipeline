@@ -21,6 +21,14 @@ After `run_all.m` sections 1–6: `run('analyses/additional/ssm_smoothness_grid/
 Results: `outputs/additional/ssm_smoothness_grid/<band>/` (`grid.csv`, `gap_shapes.csv`,
 `robustness.csv`, `summary.csv`, `smoothness_grid.png`).
 
+## Power or coherence
+Both functions take a measure: `run_ssm_smoothness_grid("alpha", "coherence")` and
+`make_candidate_gallery("coherence")` run on F3–F4 coherence (Fisher z) instead of power.
+Settings per measure live in `ssm_measure.m`: data table, units, display transform (tanh for
+coherence), and the prior SDs for the gap-shape comparison (power 3/10/30 dB; coherence
+0.3/10/30 z, with Bayes factors reported at 0.3 z because 10 z is unrealistically wide).
+Coherence outputs go to `outputs/additional/coherence_state_space/smoothness_grid/`.
+
 ## Candidate gallery
 `make_candidate_gallery.m` refits two versions per band (published FixedHeuristicQ and the wobbliest
 still-supported setting) and draws them side by side with their settings:
