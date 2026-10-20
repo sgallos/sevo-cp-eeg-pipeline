@@ -26,22 +26,22 @@ The epoch is **120 s at Fs = 256 Hz**, so $N = 30{,}720$ samples.
 ### 2. Multitaper spectrum ([line 98](../analyses/primary/01_subject_spectra/run_subject_mfdb_bootstrap_for_id.m#L98), [mtm.m](../shared/mtm.m))
 Average over $K$ tapers $h_k$:
 
-$$
+```math
 X_k(f) = \sum_{t=1}^{N} h_k(t)\, x(t)\, e^{-i 2\pi f t / F_s},
 \qquad
 \hat S(f) = \frac{1}{K}\sum_{k=1}^{K} \frac{|X_k(f)|^2}{F_s}
-$$
+```
 
-Result: `S_subject_original_dB` = $10\log_{10}\hat S(f)$. **No randomness here.**
+The result, `S_subject_original_dB`, is $10\log_{10}\hat S(f)$. **This step involves no randomness.**
 
 ### 3. Frequency-domain bootstrap (MFDB) ([lines 118–143](../analyses/primary/01_subject_spectra/run_subject_mfdb_bootstrap_for_id.m#L118))
-Idea (Kim et al. 2018): divide each Fourier coefficient by the spectrum.
+The idea (Kim et al. 2018) is to divide each Fourier coefficient by the spectrum.
 What's left is roughly **unit-size noise that looks the same at every frequency**, so it can be shuffled across frequencies.
 
-1. **Whiten:** $\;s_k(f) = \dfrac{X_k(f)}{\sqrt{\hat S(f)/2}}$, splitting real and imaginary parts into one stacked vector of length $n_{\text{fft}}$.
+1. **Whiten.** Compute $s_k(f) = \dfrac{X_k(f)}{\sqrt{\hat S(f)/2}}$, splitting real and imaginary parts into one stacked vector of length $n_{\text{fft}}$.
 2. **Standardize** each taper's vector to mean 0, SD 1.
-3. **Resample:** draw $n_{\text{fft}}$ indices with replacement (`bootsam`). The **same indices are reused for all $K$ tapers**, which keeps the tapers' relationship intact.
-4. **Re-color:** multiply back by $\sqrt{\hat S(f)/2}$ and average $|X_k^*(f)|^2$ over tapers.
+3. **Resample.** Draw $n_{\text{fft}}$ indices with replacement (`bootsam`). The **same indices are reused for all $K$ tapers**, which keeps the tapers' relationship intact.
+4. **Re-color.** Multiply back by $\sqrt{\hat S(f)/2}$ and average $|X_k^*(f)|^2$ over tapers.
 5. Repeat $B_{\text{subj}} = 2000$ times → `S_subject_boot_dB` (2000 × 4681).
 
 The 2.5th and 97.5th percentiles across those 2,000 spectra are the 95% CI.
@@ -49,7 +49,7 @@ The 2.5th and 97.5th percentiles across those 2,000 spectra are the 95% CI.
 <details>
 <summary><b>A subtle point about the whitening step</b></summary>
 
-> **Subtle point:** `mtm.m` divides $\hat S$ by $F_s$ but not $X_k$, so
+> **Subtle point.** `mtm.m` divides $\hat S$ by $F_s$ but not $X_k$, so
 > step 1 is off by a constant $\sqrt{F_s}$. Step 2 (z-scoring) removes any constant
 > factor, so it cancels. Not a bug, but it's an accident of ordering, not a design choice.
 </details>
@@ -70,8 +70,8 @@ The 2.5th and 97.5th percentiles across those 2,000 spectra are the 95% CI.
   (e.g. near the alpha peak)?
 
 ## Code and files
-- **Code:** [run_subject_mfdb_bootstrap_for_id.m](../analyses/primary/01_subject_spectra/run_subject_mfdb_bootstrap_for_id.m);
-  parameters in [mfdb_config.m](../shared/mfdb_config.m).
+- **Code:** [run_subject_mfdb_bootstrap_for_id.m](../analyses/primary/01_subject_spectra/run_subject_mfdb_bootstrap_for_id.m),
+  with parameters in [mfdb_config.m](../shared/mfdb_config.m).
 - **Output:** `outputs/mfdb_subject_level/<ID>/<ID>_F3_mfdb.mat`.
 
 ---

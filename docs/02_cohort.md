@@ -6,7 +6,7 @@
 alpha band power, and which children meet the inclusion criteria?
 
 > [!IMPORTANT]
-> **24 children are analysed: 12 Control and 12 CP, aged 10–16, all under sevoflurane.**
+> **24 children are analysed (12 Control and 12 CP), aged 10–16 and all recorded under sevoflurane.**
 > Each child gets one delta (1–4 Hz), theta (4–8 Hz) and alpha (8–13 Hz) power value, the mean of four 30 s pieces.
 > This table feeds the state-space model (stage 06), and every stage takes its children from the same cohort definition.
 
@@ -25,29 +25,29 @@ Shorter pieces mean coarser frequency resolution, but they give 4 looks at each 
 ### 1. Integrate each band ([`integrate_subepoch_band`](../analyses/primary/02_cohort/extract_band_power_subepochs.m#L118))
 Band power is the **area under the linear spectrum**, then converted to dB:
 
-$$
+```math
 P_{\text{band}} = 10\log_{10}\!\int_{f_\text{lo}}^{f_\text{hi}} \hat S(f)\,df
-$$
+```
 
 (numerically `trapz` over the frequency bins in the band).
-It also does the same integral on each of the 2,000 bootstrap spectra and keeps their variance (`*_mfdb_var`): how uncertain that one 30 s band power is.
+It also does the same integral on each of the 2,000 bootstrap spectra and keeps their variance (`*_mfdb_var`), which measures how uncertain each 30 s band power is.
 
 ### 2. Who gets in ([lines 63–72](../analyses/primary/02_cohort/extract_band_power_subepochs.m#L63))
 A subject is included if both hold:
 - they are in **`get_cohort()`**, the single cohort definition used by every stage
-  ([shared/cohort_criteria.m](../shared/cohort_criteria.m)): sevoflurane, age **10–16 years**,
-  **F3** present (the two children without a usable F3 are out), at least **120 s** of EEG
+  ([shared/cohort_criteria.m](../shared/cohort_criteria.m)), which requires sevoflurane, age **10–16 years**,
+  channel **F3** (the two children without a usable F3 are out) and at least **120 s** of EEG
 - they have exactly **4** sub-epochs
 
-Result: **24 subjects, 12 Control + 12 CP.**
+The result is **24 subjects, 12 Control and 12 CP.**
 
 ### 3. Collapse 4 sub-epochs → 1 number per subject
 
-$$
+```math
 \bar P_{\text{subject}} = \frac{1}{4}\sum_{j=1}^{4} P_j \quad(\text{in dB})
-$$
+```
 
-Also saved as diagnostics (not used by the main model): within-subject SD and range, and the "empirical SEM variance" $\operatorname{var}(P_j)/4$.
+The within-subject SD and range and the "empirical SEM variance" $\operatorname{var}(P_j)/4$ are also saved as diagnostics, but the main model does not use them.
 
 ## Settings
 | Setting | Value | Meaning |
@@ -71,10 +71,10 @@ Every file has a metadata row, and every 10–16 yr sevo subject in the metadata
 | 1 | F3 bad **and** only 60 s of data | ✅ can't make 4 × 30 s sub-epochs |
 | **24** | **final cohort** (12 Control + 12 CP) | |
 
-**Upper bound:** if every ⚠️/❌ case resolved in favour of inclusion, CP could go from
-**12 → 19**. Controls stay at 12: every eligible control is already in except the one with 60 s of data.
+**Upper bound.** If every ⚠️/❌ case were resolved in favour of inclusion, CP could go from
+**12 → 19**. Controls stay at 12, because every eligible control is already in except the one with 60 s of data.
 
-**Confirmed along the way:** one control has no F4 channel, which is why the coherence
+**Confirmed along the way.** One control has no F4 channel, which is why the coherence
 cohort (stage 05) has 23 children.
 
 ## Questions to revisit

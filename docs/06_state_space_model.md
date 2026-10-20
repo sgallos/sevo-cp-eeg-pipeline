@@ -21,23 +21,23 @@ Each child's measured power is the curve for their group at their age, plus nois
 The model learns both curves at once from all 24 children.
 
 ## The model, in equations
-State at age $a$: the level and slope of each curve,
-$\;x(a) = [\,f_0,\ f_0',\ \delta,\ \delta'\,]^\top$.
+The state at age $a$ holds the level and slope of each curve,
+$x(a) = [ f_0, f_0', \delta, \delta' ]^\top$.
 
 **How the curves move between neighbouring children** (age gap $h$):
 
-$$
+```math
 x_{k} = \begin{bmatrix}1&h&0&0\\0&1&0&0\\0&0&1&h\\0&0&0&1\end{bmatrix} x_{k-1} + w_k,
 \qquad
 w_k \sim \mathcal N\!\left(0,\ \begin{bmatrix} q_{f0} B_h & 0\\ 0 & q_{\delta} B_h\end{bmatrix}\right),
 \quad B_h = \begin{bmatrix} h^3/3 & h^2/2\\ h^2/2 & h\end{bmatrix}
-$$
+```
 
 **What we observe** for child $k$ (group indicator $g_k$ = 1 for CP, 0 for control):
 
-$$
+```math
 y_k = f_0(a_k) + g_k\,\delta(a_k) + \varepsilon_k,\qquad \varepsilon_k \sim \mathcal N(0,\ r)
-$$
+```
 
 A **Kalman filter + smoother** gives each curve's posterior mean and 95% credible band.
 **EM** estimates the noise variance $r$.
@@ -45,11 +45,11 @@ A **Kalman filter + smoother** gives each curve's posterior mean and 95% credibl
 <details>
 <summary><b>Why this transition, and where</b> $B_h$ <b>comes from</b></summary>
 
-This is an *integrated Wiener process*: each curve's slope does a random walk, and its level is the integral of the slope.
+This is an *integrated Wiener process*, in which each curve's slope follows a random walk and its level is the integral of the slope.
 If the slope gains random increments with variance $q$ per year, then after an age step $h$ the level and slope
 have covariance $q B_h$. The $h^3/3$ term is the level's variance, $h$ is the slope's, and $h^2/2$ is how the two move together.
 
-So $q$ sets how wiggly a curve may be: small $q$ = nearly straight, large $q$ = flexible.
+So $q$ sets how flexible a curve may be. A small $q$ gives a nearly straight curve, and a large $q$ a flexible one.
 Children closer in age (small $h$) constrain each other more.
 </details>
 
@@ -80,21 +80,20 @@ Children closer in age (small $h$) constrain each other more.
 </details>
 
 ## Verification
-- **Robust to the smoothing choice:** all four $q$ versions give the same alpha gap (−4.9 to −5.1 dB),
+- **Robust to the smoothing choice.** All four $q$ versions give the same alpha gap (−4.9 to −5.1 dB),
   excluding zero over ~11.5–15 yr. Delta (≈ −3.5 dB) and theta (≈ −3.6 dB) likewise.
-- **Agrees with an independent method:** the population-level regression (additional analysis)
+- **Agrees with an independent method.** The population-level regression (additional analysis)
   gives −5.3 dB. It uses each child's full 120 s spectrum rather than the mean of four 30 s
   sub-epochs, so a few tenths of a dB apart is expected.
-- **The noise term $r$ includes child-to-child variation:** each child is one observation, so the
+- **The noise term $r$ includes child-to-child variation.** Each child is one observation, so the
   SD of 3.7 dB matches the between-child spread (3.0–3.6 dB, stage 04). The credible bands
   therefore already reflect how much children differ.
-- **Profile-q puts $q_\delta$ at its floor:** the data prefer a gap that barely changes with age.
+- **Profile-q puts $q_\delta$ at its floor.** The data prefer a gap that barely changes with age.
   That matches the regression (group × age p = 0.86) and is worth one sentence in the methods.
-- **EM-Joint didn't converge** within 300 iterations; its answer matches the others, and it isn't
+- **EM-Joint did not converge** within 300 iterations. Its answer matches the others, and it is not
   the published version, so it doesn't matter for the figures.
 
 ## Questions to revisit
-- Colours: Figs 3–4 use blue = Control, red = CP; Figs A1–A2 use orange = Control, blue = CP. Unify.
 - The x-axis runs to 16 but data stop at 15.2 (oldest child).
 
 ## Code and files
@@ -102,8 +101,8 @@ Children closer in age (small $h$) constrain each other more.
   (runs the fits, writes tables) → [SS_age_diff_em.m](../analyses/primary/06_state_space_model/SS_age_diff_em.m)
   (Kalman filter, smoother, EM) → [export_fixed_heuristic_power_ssm_publication_figures.m](../analyses/primary/06_state_space_model/export_fixed_heuristic_power_ssm_publication_figures.m) (Figs 3–4).
   Bands: [state_space_bands.m](../analyses/primary/06_state_space_model/state_space_bands.m).
-- **Input:** stage 02 table (one row per child: age, group, delta/theta/alpha dB).
-- **Output:** `outputs/state_space_model/power_ssm_publication_<band>_{summary,trajectories}.csv`;
+- **Input:** the stage 02 table, with one row per child (age, group, and delta, theta and alpha power in dB).
+- **Output:** `outputs/state_space_model/power_ssm_publication_<band>_{summary,trajectories}.csv`, with
   figures in `outputs/figures/` (delta and theta versions there too).
 
 ---

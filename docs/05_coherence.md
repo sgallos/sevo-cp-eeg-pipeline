@@ -25,10 +25,10 @@ Then compare the groups frequency by frequency, and with one alpha number per ch
 The 120 s epoch is cut into **60 windows of 2 s** (512 samples at 256 Hz).
 In each window, multitaper Fourier transforms of F3 and F4:
 
-$$
+```math
 C(f) = \frac{\left|\langle X_{F3}(f)\,X_{F4}^*(f)\rangle\right|}{\sqrt{\langle|X_{F3}(f)|^2\rangle\,\langle|X_{F4}(f)|^2\rangle}}
 \qquad 0 \le C \le 1
-$$
+```
 
 ($\langle\cdot\rangle$ = average over tapers and windows).
 1 = perfectly locked, 0 = unrelated.
@@ -39,7 +39,7 @@ Median coherence per frequency for each group, plus IQR bands.
 
 ### 3. Group test (Bokil et al., Chronux `two_group_test_coherence`)
 Compares the two groups' coherence at each frequency via a transformed difference $dz$ (negative = controls > CP) with jackknife variance.
-Significance: p < 0.001 (primary) or p < 0.01 (exploratory), kept only in runs ≥ 3 Hz wide (the taper bandwidth).
+Frequencies count as significant at p < 0.001 (primary) or p < 0.01 (exploratory), and only in runs at least 3 Hz wide (the taper bandwidth).
 
 ### 4. Alpha scalar
 Each child's mean coherence over 8–13 Hz, then a two-sample t-test (pooled) and rank-sum.
@@ -55,10 +55,10 @@ Each child's mean coherence over 8–13 Hz, then a two-sample t-test (pooled) an
 | Cohort | `get_cohort()` children with F4: **23** (11 Control, 12 CP) | one control has no F4 |
 
 ## Two kinds of inference (both valid; they answer different questions)
-**Published (primary): Bokil two-group coherence test.**
-It treats each 2 s window × taper as a trial (3,300 control + 3,600 CP) and tests whether the two sets of recordings differ in coherence: conditional inference given these children's data, in the Chronux/Bokil framework.
+**Published (primary) analysis, the Bokil two-group coherence test.**
+It treats each 2 s window × taper as a trial (3,300 control + 3,600 CP) and tests whether the two sets of recordings differ in coherence. This is conditional inference given these children's data, in the Chronux/Bokil framework.
 
-**Complementary: population-level tests,** with each child as one observation, asking whether the difference would generalize to new children
+**Complementary population-level tests** treat each child as one observation and ask whether the difference would generalize to new children
 (a private check script, `scripts/coherence_inference_check.m`).
 
 | Test | Question | Significant |
@@ -69,12 +69,12 @@ It treats each 2 s window × taper as a trial (3,300 control + 3,600 CP) and tes
 | Alpha coherence per child (8–13 Hz) | new children | p ≈ 0.015 (pooled t, Welch, rank-sum agree) |
 
 **Where they agree:** CP has lower frontal alpha coherence, and alpha is significant under every test.
-**Worth knowing for discussion:** at 30–40 Hz the group medians are close and one control child has high gamma coherence, so that band rests on the recordings rather than generalizing across children.
+**Worth knowing for discussion.** At 30–40 Hz the group medians are close and one control child has high gamma coherence, so that band rests on the recordings rather than generalizing across children.
 The pooled-vs-Welch t-test question doesn't matter here (both p = 0.015).
 
 ## Questions to revisit
 - Why does the CP median show a small bump at 10–11 Hz while controls have a broad 9–12 Hz plateau? (Possible
-  peak-frequency shift; worth plotting individual peak frequencies.)
+  shift in peak frequency, which plotting individual peak frequencies would show.)
 - fpass 0.5–40 here vs 1–40 for power. Harmless, but should be stated.
 
 ## Code and files
@@ -82,7 +82,7 @@ The pooled-vs-Welch t-test question doesn't matter here (both p = 0.015).
   → [validate_group_coherence_inputs.m](../analyses/primary/05_coherence/validate_group_coherence_inputs.m)
   → [run_group_f3f4_coherence_analysis.m](../analyses/primary/05_coherence/run_group_f3f4_coherence_analysis.m)
   → plots / [write_…](../analyses/primary/05_coherence/write_group_f3f4_coherence_results.m) (console report) / publication SVG (Fig 7).
-- **Output:** `outputs/coherence_group_level/`; Fig 7 SVG in `outputs/figures/requested_svg_only/`.
+- **Output:** `outputs/coherence_group_level/`, with the Fig 7 SVG in `outputs/figures/requested_svg_only/`.
 
 ---
 [← 04_age_trajectories](04_age_trajectories.md) · [06_state_space_model →](06_state_space_model.md)
