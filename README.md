@@ -15,7 +15,7 @@ build on the outputs of earlier stages. The stages are listed under [Analysis pi
 
 All figures are in the **[figure gallery](docs/figures.md)**. The main figures intended for publication
 (power, Figs 1–6, and coherence, Figs 7–11) are tagged <kbd>For publication</kbd>, and the methods for each
-figure are in [`docs/`](docs/README.md).
+figure are in [`docs/`](docs/README.md). The additional analysis poses interesting candidates for primary figures.
 <!-- publication-figures:end -->
 
 ## Requirements
