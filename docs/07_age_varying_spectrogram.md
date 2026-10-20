@@ -48,8 +48,8 @@ The edge windows (10 and 16) rest on few children; the oldest child is 15.2 yr, 
 - **Descriptive only**, as its title says: no CIs or tests. Statistical claims come from stages 03–06.
 - **Consistent with the other analyses:** CP is lower than controls almost everywhere, most strongly
   around 10–11 Hz (alpha) and 15–25 Hz (beta).
-- **Colour scale:** the "jet" rainbow map is not perceptually uniform (it can show bands that aren't there).
-  A perceptually uniform map (e.g. `parula`) would be safer for Figs 02–03.
+- **Colour scale:** Figs 02–03 keep the published "jet" map (decision 2026-10-20). Jet is not perceptually
+  uniform, so read colour boundaries as approximate rather than as sharp bands.
 - Averaging in dB over time is a geometric mean of linear power (like stage 02), which is fine; say so in methods.
 
 ## Code and files
