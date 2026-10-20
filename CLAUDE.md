@@ -34,6 +34,9 @@ F3–F4 coherence, and a state-space model of the age trajectory.
   03 group power spectra → 04 age trajectories → 05 coherence → 06 state-space model;
   07 age-varying spectrogram is independent).
 - `shared/`: config, paths, `mtm.m`, data loading. `external/`: Chronux 2.12 subset.
+- `analyses/additional/`: every analysis beyond the published figures (Goal 4 sub-analyses
+  go here too). Reads `primary/` outputs, never modifies them; one README per folder.
+  First one: `subject_level_inference/` (child as the unit for CIs/significance).
 
 ## Origin
 Code was copied from three folders, which are left untouched:

@@ -41,3 +41,7 @@ check_cohort
 | 05 | `05_coherence` | F3–F4 coherence (Fig 07) | ✅ tested |
 | 06 | `06_state_space_model` | SSM age trajectories | ⏳ |
 | 07 | `07_age_varying_spectrogram` | age-varying spectrograms | ⏳ |
+
+## Additional analyses
+Analyses beyond the published figures live in [`analyses/additional/`](analyses/additional/).
+They read the outputs of the primary stages and never change them.
