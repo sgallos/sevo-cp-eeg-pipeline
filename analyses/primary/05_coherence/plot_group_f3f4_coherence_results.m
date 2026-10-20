@@ -78,81 +78,52 @@ legend(ax1, [hCtrl, hCp, hCtrlIQR, hCpIQR], ...
 annotationText = sprintf(['Subject-level coherence computed from 2 s non-overlapping windows\n' ...
     'tapers = [%g %g], fpass = [%.1f %.1f] Hz, Fs = %.1f Hz\n' ...
     'Bokil/Chronux two-group test: primary p < %.3g, contiguous width >= %.1f Hz (%d bins)\n' ...
-    'Wilcoxon alpha-coherence p = %.4f'], ...
+    'Wilcoxon rank-sum test, alpha coherence: p = %.4f'], ...
     metadataRef.tapers(1), metadataRef.tapers(2), metadataRef.fpass(1), metadataRef.fpass(2), metadataRef.Fs, ...
     inference.primaryP, inference.contiguousWidthHz, inference.minContiguousBins, alphaComparison.ranksumP);
 text(ax1, 0.02, 0.98, annotationText, 'Units', 'normalized', ...
     'HorizontalAlignment', 'left', 'VerticalAlignment', 'top', ...
     'FontName', 'Helvetica', 'FontSize', 9, 'BackgroundColor', [1 1 1]);
 
-%% Step 4: Plot combined coherence figure with significance strip
-fig2 = figure('Color', 'w', 'Position', [100 100 1120 650]);
-tlo = tiledlayout(fig2, 2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
-
-ax2a = nexttile(tlo, 1);
-hold(ax2a, 'on');
-patch(ax2a, [metadataRef.alphaBand(1) metadataRef.alphaBand(2) metadataRef.alphaBand(2) metadataRef.alphaBand(1)], ...
-    [0 0 1 1], alphaBandColor, 'EdgeColor', 'none', 'FaceAlpha', 0.35, 'HandleVisibility', 'off');
-for i = 1:size(controlSpectra, 1)
-    plot(ax2a, freq, controlSpectra(i, :), '-', 'Color', ctrlSubjectColor, 'LineWidth', 0.8, 'HandleVisibility', 'off');
+%% Step 4: Fig 9, one panel: group curves with the Bokil test result as bars along the top
+fig2 = figure('Color', 'w', 'Position', [100 100 1300 620]);
+ax2 = axes(fig2);
+hold(ax2, 'on');
+nControl = size(controlSpectra, 1);
+nCP = size(cpSpectra, 1);
+hAlpha = patch(ax2, [metadataRef.alphaBand(1) metadataRef.alphaBand(2) metadataRef.alphaBand(2) metadataRef.alphaBand(1)], ...
+    [0 0 1 1], alphaBandColor, 'EdgeColor', 'none', 'FaceAlpha', 0.35);
+for i = 1:nControl
+    hCtrlChild = plot(ax2, freq, controlSpectra(i, :), '-', 'Color', ctrlSubjectColor, 'LineWidth', 0.8);
 end
-for i = 1:size(cpSpectra, 1)
-    plot(ax2a, freq, cpSpectra(i, :), '-', 'Color', cpSubjectColor, 'LineWidth', 0.8, 'HandleVisibility', 'off');
+for i = 1:nCP
+    hCpChild = plot(ax2, freq, cpSpectra(i, :), '-', 'Color', cpSubjectColor, 'LineWidth', 0.8);
 end
-hCtrlIQR2 = fill(ax2a, [freq; flipud(freq)], [controlIQR(1, :).'; flipud(controlIQR(2, :).')], ...
+hCtrlIQR2 = fill(ax2, [freq; flipud(freq)], [controlIQR(1, :).'; flipud(controlIQR(2, :).')], ...
     ctrlFillColor, 'EdgeColor', 'none', 'FaceAlpha', 0.28);
-hCpIQR2 = fill(ax2a, [freq; flipud(freq)], [cpIQR(1, :).'; flipud(cpIQR(2, :).')], ...
+hCpIQR2 = fill(ax2, [freq; flipud(freq)], [cpIQR(1, :).'; flipud(cpIQR(2, :).')], ...
     cpFillColor, 'EdgeColor', 'none', 'FaceAlpha', 0.28);
-hCtrl2 = plot(ax2a, freq, controlMedian, '-', 'Color', ctrlLineColor, 'LineWidth', 2.8);
-hCp2 = plot(ax2a, freq, cpMedian, '-', 'Color', cpLineColor, 'LineWidth', 2.8);
-style_axes(ax2a, metadataRef.fpass, [0 1]);
-ylabel(ax2a, 'Median coherence');
-title(ax2a, 'F3-F4 Interhemispheric Coherence: Group Curves and Significance', 'FontSize', 14, 'FontWeight', 'bold');
-legend(ax2a, [hCtrl2, hCp2, hCtrlIQR2, hCpIQR2], ...
-    {'Control median', 'CP median', 'Control IQR', 'CP IQR'}, 'Location', 'best');
+hCtrl2 = plot(ax2, freq, controlMedian, '-', 'Color', ctrlLineColor, 'LineWidth', 2.8);
+hCp2 = plot(ax2, freq, cpMedian, '-', 'Color', cpLineColor, 'LineWidth', 2.8);
 
-ax2b = nexttile(tlo, 2);
-hold(ax2b, 'on');
-style_axes(ax2b, metadataRef.fpass, [0 1]);
-ax2b.YTick = [];
-xlabel(ax2b, 'Frequency (Hz)');
-ylabel(ax2b, 'Sig.');
+% Significance bars above the curves: primary (top row) and exploratory (row below)
+hPrimary = draw_sig_bars(ax2, freq, inference.sigMask_contiguous(:), [1.075 1.105], primarySigColor);
+hExploratory = draw_sig_bars(ax2, freq, inference.sigMask_contiguous_exploratory(:), [1.035 1.065], exploratorySigColor);
 
-if any(inference.sigMask_contiguous_exploratory)
-    exploratoryIntervals = mask_to_intervals(freq, inference.sigMask_contiguous_exploratory(:));
-    for i = 1:size(exploratoryIntervals, 1)
-        patch(ax2b, [exploratoryIntervals(i, 1) exploratoryIntervals(i, 2) exploratoryIntervals(i, 2) exploratoryIntervals(i, 1)], ...
-            [0 0 1 1], exploratorySigColor, 'EdgeColor', 'none', 'FaceAlpha', 0.45, 'HandleVisibility', 'off');
-    end
-    hExploratory = plot(ax2b, nan, nan, 's', 'MarkerFaceColor', exploratorySigColor, ...
-        'MarkerEdgeColor', 'none', 'MarkerSize', 8, 'LineStyle', 'none');
-else
-    hExploratory = plot(ax2b, nan, nan, 's', 'MarkerFaceColor', exploratorySigColor, ...
-        'MarkerEdgeColor', 'none', 'MarkerSize', 8, 'LineStyle', 'none');
-end
-
-if any(inference.sigMask_contiguous)
-    primaryIntervals = mask_to_intervals(freq, inference.sigMask_contiguous(:));
-    for i = 1:size(primaryIntervals, 1)
-        patch(ax2b, [primaryIntervals(i, 1) primaryIntervals(i, 2) primaryIntervals(i, 2) primaryIntervals(i, 1)], ...
-            [0 0 1 1], primarySigColor, 'EdgeColor', 'none', 'FaceAlpha', 0.70, 'HandleVisibility', 'off');
-    end
-    hPrimary = plot(ax2b, nan, nan, 's', 'MarkerFaceColor', primarySigColor, ...
-        'MarkerEdgeColor', 'none', 'MarkerSize', 8, 'LineStyle', 'none');
-else
-    hPrimary = plot(ax2b, nan, nan, 's', 'MarkerFaceColor', primarySigColor, ...
-        'MarkerEdgeColor', 'none', 'MarkerSize', 8, 'LineStyle', 'none');
-end
-
-legend(ax2b, [hPrimary, hExploratory], ...
-    {sprintf('Primary p < %.3g, >= %.1f Hz', inference.primaryP, inference.contiguousWidthHz), ...
-     sprintf('Exploratory p < %.3g, >= %.1f Hz', inference.exploratoryP, inference.contiguousWidthHz)}, ...
-    'Location', 'best');
-
-if ~any(inference.sigMask_contiguous) && ~any(inference.sigMask_contiguous_exploratory)
-    text(ax2b, mean(metadataRef.fpass), 0.5, 'No contiguous significant frequency bands', ...
-        'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', 'FontSize', 12);
-end
+style_axes(ax2, metadataRef.fpass, [0 1.12]);
+ax2.YTick = 0:0.1:1;
+xlabel(ax2, 'Frequency (Hz)');
+ylabel(ax2, 'F3-F4 coherence');
+title(ax2, sprintf('F3-F4 coherence, Control (n = %d) vs CP (n = %d)', nControl, nCP), 'FontSize', 14, 'FontWeight', 'bold');
+subtitle(ax2, 'Bars at top: frequencies where the Bokil two-group coherence test (Chronux, jackknife variance) finds CP \neq Control', ...
+    'FontSize', 10);
+legend(ax2, [hCtrl2, hCp2, hCtrlIQR2, hCpIQR2, hCtrlChild, hCpChild, hAlpha, hPrimary, hExploratory], ...
+    {'Control median', 'CP median', 'Control IQR (25th-75th percentile)', 'CP IQR (25th-75th percentile)', ...
+     'Each Control child', 'Each CP child', ...
+     sprintf('Alpha band (%g-%g Hz)', metadataRef.alphaBand(1), metadataRef.alphaBand(2)), ...
+     sprintf('Bokil test p < %.3g, runs \\geq %.0f Hz (primary)', inference.primaryP, inference.contiguousWidthHz), ...
+     sprintf('Bokil test p < %.3g, runs \\geq %.0f Hz (exploratory)', inference.exploratoryP, inference.contiguousWidthHz)}, ...
+    'Location', 'eastoutside', 'FontSize', 10);
 
 %% Step 5: Plot scalar alpha-coherence comparison
 fig3 = figure('Color', 'w', 'Position', [100 100 900 520]);
@@ -176,8 +147,8 @@ ax3.XTick = [1 2];
 ax3.XTickLabel = {'Control', 'CP'};
 style_axes(ax3, [0.5 2.5], []);
 ylabel(ax3, 'Mean alpha coherence (8-13 Hz)');
-title(ax3, 'Scalar Alpha-Coherence Comparison', 'FontSize', 14, 'FontWeight', 'bold');
-text(ax3, 0.02, 0.98, sprintf('Wilcoxon p = %.4f\nTwo-sample t-test p = %.4f', alphaComparison.ranksumP, alphaComparison.ttestP), ...
+title(ax3, sprintf('Alpha coherence (%g-%g Hz), one value per child', metadataRef.alphaBand(1), metadataRef.alphaBand(2)), 'FontSize', 14, 'FontWeight', 'bold');
+text(ax3, 0.02, 0.98, sprintf('Wilcoxon rank-sum test p = %.4f\nTwo-sample t-test (pooled variance) p = %.4f', alphaComparison.ranksumP, alphaComparison.ttestP), ...
     'Units', 'normalized', 'HorizontalAlignment', 'left', 'VerticalAlignment', 'top', ...
     'FontName', 'Helvetica', 'FontSize', 10, 'BackgroundColor', [1 1 1]);
 
@@ -219,5 +190,16 @@ function intervals = mask_to_intervals(xVals, mask)
 
     for i = 1:numel(startIdx)
         intervals(end + 1, :) = [xVals(startIdx(i)), xVals(endIdx(i))]; %#ok<AGROW>
+    end
+end
+
+function h = draw_sig_bars(ax, freq, mask, yRange, color)
+%DRAW_SIG_BARS One horizontal bar per run of significant frequencies; returns a legend handle.
+    h = patch(ax, nan(4, 1), nan(4, 1), color, 'EdgeColor', 'none');
+    if ~any(mask), return; end
+    intervals = mask_to_intervals(freq, mask);
+    for k = 1:size(intervals, 1)
+        patch(ax, [intervals(k, 1) intervals(k, 2) intervals(k, 2) intervals(k, 1)], ...
+            [yRange(1) yRange(1) yRange(2) yRange(2)], color, 'EdgeColor', 'none', 'HandleVisibility', 'off');
     end
 end

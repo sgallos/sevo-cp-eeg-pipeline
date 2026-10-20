@@ -126,36 +126,90 @@ The coherence version of Figs 7–8.
 
 ### Additional analyses
 
-Every other figure: individual children, population-level tests, and how much the state-space results depend on smoothness. Methods for each are linked in the [figure gallery](docs/figures.md).
+Every other figure, in the order of the main figures they extend. Methods for each are linked in the
+[figure gallery](docs/figures.md).
 
-![Alpha coherence per child. One value per child (8–13 Hz), by group.](docs/figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png)
-**Alpha coherence per child.** One value per child (8–13 Hz), by group.
+#### 1. Do the differences generalize to new children? (extends Figs 1–2, 9)
 
-![Alpha power vs age, every child. Every child, and age-adjusted by group.](docs/figures/additional/alpha_vs_age_subject_level.png)
-**Alpha power vs age, every child.** Every child, and age-adjusted by group.
+![Population-level: power. CP − Control, CI resampling children, cluster permutation test.](docs/figures/additional/power_difference_subject_level.png)
+**Population-level: power.** CP − Control, CI resampling children, cluster permutation test.
 
-![Alpha coherence vs age, every child. Every child, and age-adjusted by group.](docs/figures/additional/coherence/alpha_coherence_vs_age.png)
-**Alpha coherence vs age, every child.** Every child, and age-adjusted by group.
+![Population-level: coherence. CP − Control coherence, CI resampling children, cluster permutation test.](docs/figures/additional/coherence_subject_level.png)
+**Population-level: coherence.** CP − Control coherence, CI resampling children, cluster permutation test.
 
-![Population-level: power. CP − Control, CI resampling children, clusters.](docs/figures/additional/power_difference_subject_level.png)
-**Population-level: power.** CP − Control, CI resampling children, clusters.
+![Alpha coherence per child. One value per child; Wilcoxon rank-sum and t-test.](docs/figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png)
+**Alpha coherence per child.** One value per child; Wilcoxon rank-sum and t-test.
 
-![Population-level: coherence. CP − Control coherence, CI resampling children, clusters.](docs/figures/additional/coherence_subject_level.png)
-**Population-level: coherence.** CP − Control coherence, CI resampling children, clusters.
+#### 2. Every child vs age (extends Figs 3–4)
 
-![Smoothness grid: power. Likelihood and alpha gap across smoothness settings.](docs/figures/additional/ssm_smoothness_grid_alpha.png)
-**Smoothness grid: power.** Likelihood and alpha gap across smoothness settings.
+![Alpha power vs age, every child. Every child, and age-adjusted by group; linear regression.](docs/figures/additional/alpha_vs_age_subject_level.png)
+**Alpha power vs age, every child.** Every child, and age-adjusted by group; linear regression.
 
-![Published vs wobbliest: power. Alpha power, least-smooth setting the data still support.](docs/figures/additional/gallery_alpha.png)
-**Published vs wobbliest: power.** Alpha power, least-smooth setting the data still support.
+![Alpha coherence vs age, every child. Every child, and age-adjusted by group; linear regression.](docs/figures/additional/coherence/alpha_coherence_vs_age.png)
+**Alpha coherence vs age, every child.** Every child, and age-adjusted by group; linear regression.
 
-![Smoothness grid: coherence. Likelihood and alpha gap across smoothness settings.](docs/figures/additional/coherence/smoothness_grid_alpha.png)
-**Smoothness grid: coherence.** Likelihood and alpha gap across smoothness settings.
+#### 3. Delta and theta state-space models (extends Figs 5–6, 10–11)
 
-![Published vs wobbliest: coherence. Alpha coherence, least-smooth setting the data still support.](docs/figures/additional/coherence/gallery_alpha.png)
-**Published vs wobbliest: coherence.** Alpha coherence, least-smooth setting the data still support.
+![Power: Delta (1–4 Hz) trajectories. Control and CP, 95% credible bands.](docs/figures/additional/power_ssm_delta_control_vs_cp.png)
+**Power: Delta (1–4 Hz) trajectories.** Control and CP, 95% credible bands.
 
-![Coherence state-space, all bands. Delta, theta and alpha.](docs/figures/additional/coherence/coherence_state_space_all_bands.png)
-**Coherence state-space, all bands.** Delta, theta and alpha.
+![Power: Delta (1–4 Hz) gap. CP − Control, 95% credible band.](docs/figures/additional/power_ssm_delta_group_difference.png)
+**Power: Delta (1–4 Hz) gap.** CP − Control, 95% credible band.
+
+![Power: Theta (4–8 Hz) trajectories. Control and CP, 95% credible bands.](docs/figures/additional/power_ssm_theta_control_vs_cp.png)
+**Power: Theta (4–8 Hz) trajectories.** Control and CP, 95% credible bands.
+
+![Power: Theta (4–8 Hz) gap. CP − Control, 95% credible band.](docs/figures/additional/power_ssm_theta_group_difference.png)
+**Power: Theta (4–8 Hz) gap.** CP − Control, 95% credible band.
+
+![Coherence: Delta (1–4 Hz) trajectories. Control and CP, 95% credible bands.](docs/figures/additional/coherence/coherence_ssm_delta_control_vs_cp.png)
+**Coherence: Delta (1–4 Hz) trajectories.** Control and CP, 95% credible bands.
+
+![Coherence: Delta (1–4 Hz) gap. CP − Control (Fisher z), 95% credible band.](docs/figures/additional/coherence/coherence_ssm_delta_gap.png)
+**Coherence: Delta (1–4 Hz) gap.** CP − Control (Fisher z), 95% credible band.
+
+![Coherence: Theta (4–8 Hz) trajectories. Control and CP, 95% credible bands.](docs/figures/additional/coherence/coherence_ssm_theta_control_vs_cp.png)
+**Coherence: Theta (4–8 Hz) trajectories.** Control and CP, 95% credible bands.
+
+![Coherence: Theta (4–8 Hz) gap. CP − Control (Fisher z), 95% credible band.](docs/figures/additional/coherence/coherence_ssm_theta_gap.png)
+**Coherence: Theta (4–8 Hz) gap.** CP − Control (Fisher z), 95% credible band.
+
+#### 4. How much do the state-space results depend on smoothness? (extends Figs 5–6, 10–11)
+
+![Power: Delta (1–4 Hz) smoothness grid. Likelihood and gap across smoothness settings.](docs/figures/additional/ssm_smoothness_grid_delta.png)
+**Power: Delta (1–4 Hz) smoothness grid.** Likelihood and gap across smoothness settings.
+
+![Power: Delta (1–4 Hz) published vs wobbliest. Least-smooth fit the data still support.](docs/figures/additional/gallery_delta.png)
+**Power: Delta (1–4 Hz) published vs wobbliest.** Least-smooth fit the data still support.
+
+![Power: Theta (4–8 Hz) smoothness grid. Likelihood and gap across smoothness settings.](docs/figures/additional/ssm_smoothness_grid_theta.png)
+**Power: Theta (4–8 Hz) smoothness grid.** Likelihood and gap across smoothness settings.
+
+![Power: Theta (4–8 Hz) published vs wobbliest. Least-smooth fit the data still support.](docs/figures/additional/gallery_theta.png)
+**Power: Theta (4–8 Hz) published vs wobbliest.** Least-smooth fit the data still support.
+
+![Power: Alpha (8–13 Hz) smoothness grid. Likelihood and gap across smoothness settings.](docs/figures/additional/ssm_smoothness_grid_alpha.png)
+**Power: Alpha (8–13 Hz) smoothness grid.** Likelihood and gap across smoothness settings.
+
+![Power: Alpha (8–13 Hz) published vs wobbliest. Least-smooth fit the data still support.](docs/figures/additional/gallery_alpha.png)
+**Power: Alpha (8–13 Hz) published vs wobbliest.** Least-smooth fit the data still support.
+
+![Coherence: Delta (1–4 Hz) smoothness grid. Likelihood and gap across smoothness settings.](docs/figures/additional/coherence/smoothness_grid_delta.png)
+**Coherence: Delta (1–4 Hz) smoothness grid.** Likelihood and gap across smoothness settings.
+
+![Coherence: Delta (1–4 Hz) published vs wobbliest. Least-smooth fit the data still support.](docs/figures/additional/coherence/gallery_delta.png)
+**Coherence: Delta (1–4 Hz) published vs wobbliest.** Least-smooth fit the data still support.
+
+![Coherence: Theta (4–8 Hz) smoothness grid. Likelihood and gap across smoothness settings.](docs/figures/additional/coherence/smoothness_grid_theta.png)
+**Coherence: Theta (4–8 Hz) smoothness grid.** Likelihood and gap across smoothness settings.
+
+![Coherence: Theta (4–8 Hz) published vs wobbliest. Least-smooth fit the data still support.](docs/figures/additional/coherence/gallery_theta.png)
+**Coherence: Theta (4–8 Hz) published vs wobbliest.** Least-smooth fit the data still support.
+
+![Coherence: Alpha (8–13 Hz) smoothness grid. Likelihood and gap across smoothness settings.](docs/figures/additional/coherence/smoothness_grid_alpha.png)
+**Coherence: Alpha (8–13 Hz) smoothness grid.** Likelihood and gap across smoothness settings.
+
+![Coherence: Alpha (8–13 Hz) published vs wobbliest. Least-smooth fit the data still support.](docs/figures/additional/coherence/gallery_alpha.png)
+**Coherence: Alpha (8–13 Hz) published vs wobbliest.** Least-smooth fit the data still support.
 
 <!-- publication-figures:end -->

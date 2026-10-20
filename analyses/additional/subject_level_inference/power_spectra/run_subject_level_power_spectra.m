@@ -98,7 +98,7 @@ function fig = plot_results(freq, boot, clusters, published)
     sig = clusters.clusters(clusters.clusters.p < 0.05, :);
     for k = 1:height(sig)
         xregion(ax, sig.xLow(k), sig.xHigh(k), 'FaceColor', [0.2 0.7 0.2], 'FaceAlpha', 0.15);
-        legendText{end + 1} = sprintf('Cluster %.1f-%.1f Hz, p = %.3f', sig.xLow(k), sig.xHigh(k), sig.p(k)); %#ok<AGROW>
+        legendText{end + 1} = sprintf('Cluster %.1f-%.1f Hz, cluster permutation test (Welch t): p = %.3f', sig.xLow(k), sig.xHigh(k), sig.p(k)); %#ok<AGROW>
     end
     xlim(ax, [freq(1) freq(end)]); grid(ax, 'on'); box(ax, 'off');
     xlabel(ax, 'Frequency (Hz)'); ylabel(ax, 'CP - Control (dB)');

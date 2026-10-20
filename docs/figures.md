@@ -42,25 +42,75 @@ full size, or *method* for how it was made.
 
 ## Additional analyses
 
+In the order of the main figures they extend.
+
+### 1. Do the differences generalize to new children? (extends Figs 1–2, 9)
+
 <table>
 <tr>
-<td width="50%" valign="top"><a href="figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png"><img src="figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png" width="100%" alt="Alpha coherence per child"></a><br><b>Alpha coherence per child</b><br>One value per child (8–13 Hz), by group · <a href="05_coherence.md">method</a></td>
-<td width="50%" valign="top"><a href="figures/additional/alpha_vs_age_subject_level.png"><img src="figures/additional/alpha_vs_age_subject_level.png" width="100%" alt="Alpha power vs age, every child"></a><br><b>Alpha power vs age, every child</b><br>Every child, and age-adjusted by group · <a href="additional_subject_level_inference.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/power_difference_subject_level.png"><img src="figures/additional/power_difference_subject_level.png" width="100%" alt="Population-level: power"></a><br><b>Population-level: power</b><br>CP − Control, CI resampling children, cluster permutation test · <a href="additional_subject_level_inference.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence_subject_level.png"><img src="figures/additional/coherence_subject_level.png" width="100%" alt="Population-level: coherence"></a><br><b>Population-level: coherence</b><br>CP − Control coherence, CI resampling children, cluster permutation test · <a href="additional_subject_level_inference.md">method</a></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="figures/additional/coherence/alpha_coherence_vs_age.png"><img src="figures/additional/coherence/alpha_coherence_vs_age.png" width="100%" alt="Alpha coherence vs age, every child"></a><br><b>Alpha coherence vs age, every child</b><br>Every child, and age-adjusted by group · <a href="additional_coherence_state_space.md">method</a></td>
-<td width="50%" valign="top"><a href="figures/additional/power_difference_subject_level.png"><img src="figures/additional/power_difference_subject_level.png" width="100%" alt="Population-level: power"></a><br><b>Population-level: power</b><br>CP − Control, CI resampling children, clusters · <a href="additional_subject_level_inference.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png"><img src="figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png" width="100%" alt="Alpha coherence per child"></a><br><b>Alpha coherence per child</b><br>One value per child; Wilcoxon rank-sum and t-test · <a href="05_coherence.md">method</a></td>
+</tr>
+</table>
+
+### 2. Every child vs age (extends Figs 3–4)
+
+<table>
+<tr>
+<td width="50%" valign="top"><a href="figures/additional/alpha_vs_age_subject_level.png"><img src="figures/additional/alpha_vs_age_subject_level.png" width="100%" alt="Alpha power vs age, every child"></a><br><b>Alpha power vs age, every child</b><br>Every child, and age-adjusted by group; linear regression · <a href="additional_subject_level_inference.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence/alpha_coherence_vs_age.png"><img src="figures/additional/coherence/alpha_coherence_vs_age.png" width="100%" alt="Alpha coherence vs age, every child"></a><br><b>Alpha coherence vs age, every child</b><br>Every child, and age-adjusted by group; linear regression · <a href="additional_coherence_state_space.md">method</a></td>
+</tr>
+</table>
+
+### 3. Delta and theta state-space models (extends Figs 5–6, 10–11)
+
+<table>
+<tr>
+<td width="50%" valign="top"><a href="figures/additional/power_ssm_delta_control_vs_cp.png"><img src="figures/additional/power_ssm_delta_control_vs_cp.png" width="100%" alt="Power: Delta (1–4 Hz) trajectories"></a><br><b>Power: Delta (1–4 Hz) trajectories</b><br>Control and CP, 95% credible bands · <a href="06_state_space_model.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/power_ssm_delta_group_difference.png"><img src="figures/additional/power_ssm_delta_group_difference.png" width="100%" alt="Power: Delta (1–4 Hz) gap"></a><br><b>Power: Delta (1–4 Hz) gap</b><br>CP − Control, 95% credible band · <a href="06_state_space_model.md">method</a></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="figures/additional/coherence_subject_level.png"><img src="figures/additional/coherence_subject_level.png" width="100%" alt="Population-level: coherence"></a><br><b>Population-level: coherence</b><br>CP − Control coherence, CI resampling children, clusters · <a href="additional_subject_level_inference.md">method</a></td>
-<td width="50%" valign="top"><a href="figures/additional/ssm_smoothness_grid_alpha.png"><img src="figures/additional/ssm_smoothness_grid_alpha.png" width="100%" alt="Smoothness grid: power"></a><br><b>Smoothness grid: power</b><br>Likelihood and alpha gap across smoothness settings · <a href="additional_ssm_smoothness_grid.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/power_ssm_theta_control_vs_cp.png"><img src="figures/additional/power_ssm_theta_control_vs_cp.png" width="100%" alt="Power: Theta (4–8 Hz) trajectories"></a><br><b>Power: Theta (4–8 Hz) trajectories</b><br>Control and CP, 95% credible bands · <a href="06_state_space_model.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/power_ssm_theta_group_difference.png"><img src="figures/additional/power_ssm_theta_group_difference.png" width="100%" alt="Power: Theta (4–8 Hz) gap"></a><br><b>Power: Theta (4–8 Hz) gap</b><br>CP − Control, 95% credible band · <a href="06_state_space_model.md">method</a></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="figures/additional/gallery_alpha.png"><img src="figures/additional/gallery_alpha.png" width="100%" alt="Published vs wobbliest: power"></a><br><b>Published vs wobbliest: power</b><br>Alpha power, least-smooth setting the data still support · <a href="additional_ssm_smoothness_grid.md">method</a></td>
-<td width="50%" valign="top"><a href="figures/additional/coherence/smoothness_grid_alpha.png"><img src="figures/additional/coherence/smoothness_grid_alpha.png" width="100%" alt="Smoothness grid: coherence"></a><br><b>Smoothness grid: coherence</b><br>Likelihood and alpha gap across smoothness settings · <a href="additional_coherence_state_space.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence/coherence_ssm_delta_control_vs_cp.png"><img src="figures/additional/coherence/coherence_ssm_delta_control_vs_cp.png" width="100%" alt="Coherence: Delta (1–4 Hz) trajectories"></a><br><b>Coherence: Delta (1–4 Hz) trajectories</b><br>Control and CP, 95% credible bands · <a href="additional_coherence_state_space.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence/coherence_ssm_delta_gap.png"><img src="figures/additional/coherence/coherence_ssm_delta_gap.png" width="100%" alt="Coherence: Delta (1–4 Hz) gap"></a><br><b>Coherence: Delta (1–4 Hz) gap</b><br>CP − Control (Fisher z), 95% credible band · <a href="additional_coherence_state_space.md">method</a></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="figures/additional/coherence/gallery_alpha.png"><img src="figures/additional/coherence/gallery_alpha.png" width="100%" alt="Published vs wobbliest: coherence"></a><br><b>Published vs wobbliest: coherence</b><br>Alpha coherence, least-smooth setting the data still support · <a href="additional_coherence_state_space.md">method</a></td>
-<td width="50%" valign="top"><a href="figures/additional/coherence/coherence_state_space_all_bands.png"><img src="figures/additional/coherence/coherence_state_space_all_bands.png" width="100%" alt="Coherence state-space, all bands"></a><br><b>Coherence state-space, all bands</b><br>Delta, theta and alpha · <a href="additional_coherence_state_space.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence/coherence_ssm_theta_control_vs_cp.png"><img src="figures/additional/coherence/coherence_ssm_theta_control_vs_cp.png" width="100%" alt="Coherence: Theta (4–8 Hz) trajectories"></a><br><b>Coherence: Theta (4–8 Hz) trajectories</b><br>Control and CP, 95% credible bands · <a href="additional_coherence_state_space.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence/coherence_ssm_theta_gap.png"><img src="figures/additional/coherence/coherence_ssm_theta_gap.png" width="100%" alt="Coherence: Theta (4–8 Hz) gap"></a><br><b>Coherence: Theta (4–8 Hz) gap</b><br>CP − Control (Fisher z), 95% credible band · <a href="additional_coherence_state_space.md">method</a></td>
+</tr>
+</table>
+
+### 4. How much do the state-space results depend on smoothness? (extends Figs 5–6, 10–11)
+
+<table>
+<tr>
+<td width="50%" valign="top"><a href="figures/additional/ssm_smoothness_grid_delta.png"><img src="figures/additional/ssm_smoothness_grid_delta.png" width="100%" alt="Power: Delta (1–4 Hz) smoothness grid"></a><br><b>Power: Delta (1–4 Hz) smoothness grid</b><br>Likelihood and gap across smoothness settings · <a href="additional_ssm_smoothness_grid.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/gallery_delta.png"><img src="figures/additional/gallery_delta.png" width="100%" alt="Power: Delta (1–4 Hz) published vs wobbliest"></a><br><b>Power: Delta (1–4 Hz) published vs wobbliest</b><br>Least-smooth fit the data still support · <a href="additional_ssm_smoothness_grid.md">method</a></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="figures/additional/ssm_smoothness_grid_theta.png"><img src="figures/additional/ssm_smoothness_grid_theta.png" width="100%" alt="Power: Theta (4–8 Hz) smoothness grid"></a><br><b>Power: Theta (4–8 Hz) smoothness grid</b><br>Likelihood and gap across smoothness settings · <a href="additional_ssm_smoothness_grid.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/gallery_theta.png"><img src="figures/additional/gallery_theta.png" width="100%" alt="Power: Theta (4–8 Hz) published vs wobbliest"></a><br><b>Power: Theta (4–8 Hz) published vs wobbliest</b><br>Least-smooth fit the data still support · <a href="additional_ssm_smoothness_grid.md">method</a></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="figures/additional/ssm_smoothness_grid_alpha.png"><img src="figures/additional/ssm_smoothness_grid_alpha.png" width="100%" alt="Power: Alpha (8–13 Hz) smoothness grid"></a><br><b>Power: Alpha (8–13 Hz) smoothness grid</b><br>Likelihood and gap across smoothness settings · <a href="additional_ssm_smoothness_grid.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/gallery_alpha.png"><img src="figures/additional/gallery_alpha.png" width="100%" alt="Power: Alpha (8–13 Hz) published vs wobbliest"></a><br><b>Power: Alpha (8–13 Hz) published vs wobbliest</b><br>Least-smooth fit the data still support · <a href="additional_ssm_smoothness_grid.md">method</a></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="figures/additional/coherence/smoothness_grid_delta.png"><img src="figures/additional/coherence/smoothness_grid_delta.png" width="100%" alt="Coherence: Delta (1–4 Hz) smoothness grid"></a><br><b>Coherence: Delta (1–4 Hz) smoothness grid</b><br>Likelihood and gap across smoothness settings · <a href="additional_coherence_state_space.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence/gallery_delta.png"><img src="figures/additional/coherence/gallery_delta.png" width="100%" alt="Coherence: Delta (1–4 Hz) published vs wobbliest"></a><br><b>Coherence: Delta (1–4 Hz) published vs wobbliest</b><br>Least-smooth fit the data still support · <a href="additional_coherence_state_space.md">method</a></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="figures/additional/coherence/smoothness_grid_theta.png"><img src="figures/additional/coherence/smoothness_grid_theta.png" width="100%" alt="Coherence: Theta (4–8 Hz) smoothness grid"></a><br><b>Coherence: Theta (4–8 Hz) smoothness grid</b><br>Likelihood and gap across smoothness settings · <a href="additional_coherence_state_space.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence/gallery_theta.png"><img src="figures/additional/coherence/gallery_theta.png" width="100%" alt="Coherence: Theta (4–8 Hz) published vs wobbliest"></a><br><b>Coherence: Theta (4–8 Hz) published vs wobbliest</b><br>Least-smooth fit the data still support · <a href="additional_coherence_state_space.md">method</a></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="figures/additional/coherence/smoothness_grid_alpha.png"><img src="figures/additional/coherence/smoothness_grid_alpha.png" width="100%" alt="Coherence: Alpha (8–13 Hz) smoothness grid"></a><br><b>Coherence: Alpha (8–13 Hz) smoothness grid</b><br>Likelihood and gap across smoothness settings · <a href="additional_coherence_state_space.md">method</a></td>
+<td width="50%" valign="top"><a href="figures/additional/coherence/gallery_alpha.png"><img src="figures/additional/coherence/gallery_alpha.png" width="100%" alt="Coherence: Alpha (8–13 Hz) published vs wobbliest"></a><br><b>Coherence: Alpha (8–13 Hz) published vs wobbliest</b><br>Least-smooth fit the data still support · <a href="additional_coherence_state_space.md">method</a></td>
 </tr>
 </table>

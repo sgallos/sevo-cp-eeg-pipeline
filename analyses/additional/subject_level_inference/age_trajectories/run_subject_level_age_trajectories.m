@@ -134,7 +134,7 @@ function fig = plot_results(children, windows, bins, model, summary) %#ok<INUSD>
     end
     grid(ax1, 'on'); box(ax1, 'off');
     xlabel(ax1, 'Age (years)'); ylabel(ax1, 'Alpha power at F3 (dB)');
-    title(ax1, sprintf('Alpha power vs age (group x age interaction p = %.2f: the gap does not change with age)', ...
+    title(ax1, sprintf('Alpha power vs age (group x age interaction, linear regression t-test p = %.2f: the gap does not change with age)', ...
         summary.pGroupByAge));
     legend(ax1, 'Location', 'northeast');
 
@@ -152,6 +152,6 @@ function fig = plot_results(children, windows, bins, model, summary) %#ok<INUSD>
     xticks(ax2, [1 2]); xticklabels(ax2, cellstr(names)); xlim(ax2, [0.4 2.6]);
     ylabel(ax2, sprintf('Alpha power adjusted to age %.1f yr (dB)', mean(children.ageYears)));
     title(ax2, {sprintf('CP - Control = %.1f dB [%.1f, %.1f]', summary.groupEffect_dB, summary.ciLow_dB, summary.ciHigh_dB), ...
-        sprintf('p = %.3f, one dot per child (n = %d)', summary.pGroup, model.NumObservations)});
+        sprintf('Linear regression (alpha ~ group + age), t-test on CP: p = %.3f', summary.pGroup), sprintf('one dot per child (n = %d)', model.NumObservations)});
     grid(ax2, 'on'); box(ax2, 'off');
 end

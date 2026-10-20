@@ -91,7 +91,7 @@ function out = make_coherence_counterparts()
             'MarkerEdgeColor', 'w', 'DisplayName', groups(g) + " children");
     end
     grid(ax, 'on');  box(ax, 'off');  xlabel(ax, 'Age (years)');  ylabel(ax, 'Alpha (8-13 Hz) F3-F4 coherence');
-    title(ax, sprintf('Alpha coherence vs age (group x age interaction p = %.2f)', pInteraction));
+    title(ax, sprintf('Alpha coherence vs age (group x age interaction, linear regression t-test p = %.2f)', pInteraction));
     legend(ax, 'Location', 'northwest');
 
     ax = nexttile(tl);  hold(ax, 'on');
@@ -107,7 +107,7 @@ function out = make_coherence_counterparts()
     grid(ax, 'on');  box(ax, 'off');
     ylabel(ax, sprintf('Alpha coherence adjusted to age %.1f yr', mean(children.ageYears)));
     title(ax, {sprintf('CP - Control = %.2f z [%.2f, %.2f]', effect, effectCI), ...
-        sprintf('p = %.3f, one dot per child (n = %d)', pGroup, height(children))});
+        sprintf('Linear regression (z ~ group + age), t-test on CP: p = %.3f', pGroup), sprintf('one dot per child (n = %d)', height(children))});
     exportgraphics(fig, fullfile(outDir, 'alpha_coherence_vs_age.png'), 'Resolution', 170);
     close(fig);
 

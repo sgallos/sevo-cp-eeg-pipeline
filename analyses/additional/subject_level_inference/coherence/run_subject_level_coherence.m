@@ -83,13 +83,13 @@ function fig = plot_results(freq, boot, clusters, published, a, alpha)
     ylim(ax1, yl);
     % Published Bokil bands (pooled windows) as a thin strip at the top,
     % child-level clusters as a strip just below it.
-    draw_strip(ax1, freq, logical(published.sigMask_contiguous(:).'), yl(2) - 0.02, [0.8 0.3 0.3], 'Published Bokil test (conditional)');
+    draw_strip(ax1, freq, logical(published.sigMask_contiguous(:).'), yl(2) - 0.02, [0.8 0.3 0.3], 'Bokil two-group coherence test (published, conditional), p < 0.001');
     sig = clusters.clusters(clusters.clusters.p < 0.05, :);
     sigMask = false(size(freq));
     for k = 1:height(sig)
         sigMask = sigMask | (freq >= sig.xLow(k) & freq <= sig.xHigh(k));
     end
-    draw_strip(ax1, freq, sigMask, yl(2) - 0.045, [0.2 0.65 0.2], 'Population-level clusters, p < 0.05');
+    draw_strip(ax1, freq, sigMask, yl(2) - 0.045, [0.2 0.65 0.2], 'Cluster permutation test (Welch t on Fisher z, 5,000 shuffles), p < 0.05');
     xlim(ax1, [freq(1) freq(end)]); grid(ax1, 'on'); box(ax1, 'off');
     xlabel(ax1, 'Frequency (Hz)'); ylabel(ax1, 'F3-F4 coherence');
     title(ax1, 'Median coherence, 95% CI resampling children');
@@ -100,7 +100,7 @@ function fig = plot_results(freq, boot, clusters, published, a, alpha)
     swarm(ax2, 2, a.cpValues, cpColor);
     xticks(ax2, [1 2]); xticklabels(ax2, {'Control', 'CP'}); xlim(ax2, [0.4 2.6]);
     ylabel(ax2, 'Alpha coherence (8-13 Hz), one dot per child');
-    title(ax2, sprintf('g = %.2f, permutation p = %.3f', alpha.hedgesG, alpha.pPermutation));
+    title(ax2, {sprintf('Hedges'' g = %.2f', alpha.hedgesG), sprintf('Permutation test (difference in medians): p = %.3f', alpha.pPermutation)});
     grid(ax2, 'on'); box(ax2, 'off');
 end
 
