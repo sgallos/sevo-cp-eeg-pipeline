@@ -24,8 +24,8 @@ F3–F4 coherence, and a state-space model of the age trajectory.
 - Inference framing: the published MFDB / Bokil analysis is **conditional inference given the
   observed subjects** and is the primary, statistician-endorsed approach. Subject-level
   analyses (`analyses/additional/subject_level_inference/`) answer a different question
-  (generalization to new children) and are complementary. Never call the published
-  inference wrong or overstated; code bugs are a separate matter and do get fixed.
+  (generalization to new children) and are complementary. Don't call the published
+  inference wrong or overstated unless it is truly wrong or has not been validated by a statistician; code bugs are a separate matter and do get fixed.
 - No hardcoded paths. Inputs come from `project_paths().dataDir`; outputs go to `outputs/`.
 - Analysis parameters live in `shared/mfdb_config.m` or at the top of each stage script.
   Don't change a parameter without saying so; results must match the original analysis.
