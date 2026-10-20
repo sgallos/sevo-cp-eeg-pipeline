@@ -8,20 +8,13 @@ and how big is the CP − Control gap at each age?
 > [!IMPORTANT]
 > **CP alpha power (8–13 Hz) is lower than controls in every age window from 10 to 16.**
 > One regression over all 24 children gives CP − Control = −5.3 dB [−8.5, −2.1], p = 0.002, and the gap does not change with age (p = 0.86).
-> The published MFDB-only CIs are tiny (≈ ±0.04 dB), so each figure also has a two-stage version whose CI includes child-to-child spread.
+> The figures show two-stage bootstrap CIs, which include child-to-child spread. The published MFDB-only CIs (≈ ±0.04 dB) are still computed but not shown, because they are too narrow to see.
 > These figures are now additional (A1–A2); the main paper uses the state-space model (Figs 3–4) for age.
 
-| Fig A1, two-stage CI: alpha power, 4-year sliding windows | Fig A2, two-stage CI: CP − Control, 4-year sliding windows |
+| Fig A1: alpha power, 4-year sliding windows | Fig A2: CP − Control, 4-year sliding windows |
 |---|---|
 | ![Alpha power vs age per group, two-stage bootstrap CI](figures/pipeline/mfdb_alpha_power_vs_age/mfdb_alpha_f3_10.0_to_16.0_sevo_mean_sliding_hw2.00_step0.50_plot_6C_age_window_two_stage_ci.png) | ![CP minus Control alpha power, sliding windows, two-stage bootstrap CI](figures/pipeline/mfdb_alpha_power_difference_vs_age/mfdb_alpha_difference_f3_10.0_to_16.0_sevo_mean_stationary_hw0.50_step0.50_plot_age_window_difference_two_stage_ci.png) |
 
-<details>
-<summary><b>MFDB-only versions (as published)</b></summary>
-
-| Fig A1, MFDB-only CI | Fig A2, MFDB-only CI (1-year bins) |
-|---|---|
-| ![Alpha power vs age per group, sliding windows](figures/pipeline/mfdb_alpha_power_vs_age/mfdb_alpha_f3_10.0_to_16.0_sevo_mean_sliding_hw2.00_step0.50_plot_6B_age_window_with_ci.png) | ![CP minus Control alpha power by one-year age bin](figures/pipeline/mfdb_alpha_power_difference_vs_age/mfdb_alpha_difference_f3_10.0_to_16.0_sevo_mean_stationary_hw0.50_step0.50_plot_age_window_difference_with_ci.png) |
-</details>
 
 ## The method, in words
 Give each child one alpha number, the area under their spectrum from 8 to 13 Hz.
