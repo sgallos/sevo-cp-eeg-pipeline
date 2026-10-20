@@ -34,7 +34,7 @@ check_cohort
 
 ## Pipeline stages
 Each stage's method, parameters and equations, with figures and test results, is written up in
-[`docs/`](docs/README.md) (renders on GitHub).
+[`docs/`](docs/README.md) (renders on GitHub). Every figure at a glance: **[figure gallery](docs/figures.md)**.
 
 | Stage | Folder | Produces | Status | How it works |
 |---|---|---|---|---|

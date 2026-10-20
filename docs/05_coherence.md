@@ -1,4 +1,4 @@
-> Methods notes for this pipeline, exported from the authors' working notes. Equations and figures render on GitHub. [All pages](README.md)
+[All pages](README.md) · [Figure gallery](figures.md)
 
 # Stage 05: F3–F4 coherence (left–right frontal coupling)
 
@@ -35,19 +35,6 @@ p < 0.01 (exploratory), kept only in runs ≥ 3 Hz wide (the taper bandwidth).
 ### 4. Alpha scalar
 Each child's mean coherence over 8–13 Hz, then a two-sample t-test (pooled) and rank-sum.
 
-## What changed when moving into the repo
-- Paths, plus scripts became functions with optional input/output folders.
-- The group step now takes its cohort from `get_cohort()` (subjects with F4).
-- Fig 07 SVG goes to `outputs/figures/requested_svg_only/`.
-
-## Test results (2026-10-19), `tests/test_05_coherence.m`. No randomness, so exact.
-| Check | Result |
-|---|---|
-| One subject's coherence + Fourier transforms recomputed from raw data | **identical** |
-| Validation: included subjects | identical (23) |
-| Group medians, IQRs, $dz$, p-values, significance masks, alpha t-test and rank-sum | **identical** |
-| Figures + publication SVG | written |
-
 ## Two kinds of inference (both valid; they answer different questions)
 **Published (primary): Bokil two-group coherence test.** It treats each 2 s window × taper
 as a trial (3,300 control + 3,600 CP) and tests whether the two sets of recordings
@@ -71,7 +58,5 @@ medians are close and one control child has high gamma coherence, so that band r
 the recordings rather than generalizing across children. The pooled-vs-Welch t-test
 question doesn't matter here (both p = 0.015).
 
-## Questions to revisit
-- Why does the CP median show a small bump at 10–11 Hz while controls have a broad 9–12 Hz plateau? (Possible
-  peak-frequency shift; worth plotting individual peak frequencies.)
-- fpass 0.5–40 here vs 1–40 for power. Harmless, but should be stated.
+---
+[← 04_age_trajectories](04_age_trajectories.md) · [06_state_space_model →](06_state_space_model.md)

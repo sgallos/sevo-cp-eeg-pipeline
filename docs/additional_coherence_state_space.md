@@ -1,4 +1,4 @@
-> Methods notes for this pipeline, exported from the authors' working notes. Equations and figures render on GitHub. [All pages](README.md)
+[All pages](README.md) · [Figure gallery](figures.md)
 
 # Additional analysis: coherence counterparts of the power figures (2026-10-20)
 
@@ -18,14 +18,6 @@ power versions, run with `"coherence"` ([ssm_measure.m](../analyses/additional/s
 | Figs 05–06 state-space trajectories and gap | **coherence state-space**, delta/theta/alpha | [all bands](figures/additional/coherence/coherence_state_space_all_bands.png) |
 | Smoothness grid + published-vs-wobbliest gallery | same, for coherence | [alpha gallery](figures/additional/coherence/gallery_alpha.png), [alpha grid](figures/additional/coherence/smoothness_grid_alpha.png) |
 | Population-level spectra with clusters | already exists (`subject_level_inference/coherence`) | — |
-
-## Check of the July 2026 version (earlier analysis code)
-| | July version | Verdict |
-|---|---|---|
-| Transform | $z = \operatorname{atanh}(C)$ on magnitude coherence (option for squared coherence) | ✅ correct |
-| Model | same SSM fitted on z; trajectories back-transformed with tanh; gap on z scale | ✅ correct |
-| Input | old **19-child** table, alpha only (8–13 Hz) | ⚠️ out of date |
-| Versions | EM-Joint, FixedHeuristicQ, FixedSmoothQ (no Profile-q) | fine |
 
 ## Method
 - Band coherence per child: $\bar C_i = \text{mean}_{f \in \text{band}}\, C_i(f)$ from the stage 05 curve
@@ -71,3 +63,6 @@ windows are thin (CP at 16 yr is **one child**), so treat edge columns as anecdo
 3. **The gap is best described as constant with age.** The default-smoothness curve suggests widening, but the
    regression (p = 0.24–0.31) and the gap-shape comparison (constant preferred ≈ 4 : 1) don't support it.
 4. Same story as power: a focused, age-stable alpha deficit, now in both power and left–right coupling.
+
+---
+[← additional_ssm_smoothness_grid](additional_ssm_smoothness_grid.md)

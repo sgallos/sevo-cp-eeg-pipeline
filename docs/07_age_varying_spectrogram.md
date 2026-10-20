@@ -1,4 +1,4 @@
-> Methods notes for this pipeline, exported from the authors' working notes. Equations and figures render on GitHub. [All pages](README.md)
+[All pages](README.md) · [Figure gallery](figures.md)
 
 # Stage 07: age-varying spectrograms (Figs 02–03)
 
@@ -28,23 +28,13 @@ its numbers stay in the results file.
 
 The edge windows (10 and 16) rest on few children; the oldest child is 15.2 yr, so "16" is mostly 14.75–15.2.
 
-## What changed when moving into the repo
-- Subjects now come from `get_cohort()`. The original read the metadata and checked manual electrode
-  review files (in the original folder only). None of those reviews removed F3 for a cohort child (the only
-  removal was FT7 for one child), so the subjects and every number are unchanged.
-- Paths only otherwise.
-
-## Test results (2026-10-20), `tests/test_07_age_varying_spectrogram.m`. No randomness, so exact.
-| Check | Result |
-|---|---|
-| Subjects | identical (24) |
-| All 27 numeric results (spectra, window matrices, counts) | **identical** |
-| Figures | written |
-
 ## Verification notes
 - **Descriptive only**, as its title says: no CIs or tests. Statistical claims come from stages 03–06.
 - **Consistent with the other analyses:** CP is lower than controls almost everywhere, most strongly
   around 10–11 Hz (alpha) and 15–25 Hz (beta).
 - **Colour scale:** the "jet" rainbow map is not perceptually uniform (it can show bands that aren't there).
-  For Goal 3: a perceptually uniform map (e.g. `parula`) for Figs 02–03.
+  A perceptually uniform map (e.g. `parula`) would be safer for Figs 02–03.
 - Averaging in dB over time is a geometric mean of linear power (like stage 02), which is fine; say so in methods.
+
+---
+[← 06_state_space_model](06_state_space_model.md) · [additional_subject_level_inference →](additional_subject_level_inference.md)

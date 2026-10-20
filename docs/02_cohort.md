@@ -1,4 +1,4 @@
-> Methods notes for this pipeline, exported from the authors' working notes. Equations and figures render on GitHub. [All pages](README.md)
+[All pages](README.md) · [Figure gallery](figures.md)
 
 # Stage 02: band power per subject, and who is in the cohort
 
@@ -53,17 +53,6 @@ $$
 Also saved as diagnostics (not used by the main SSM): within-subject SD and range,
 and the "empirical SEM variance" $\operatorname{var}(P_j)/4$.
 
-## What changed when moving into the repo
-- Paths only. Both functions now take optional input/output folders, so the test can
-  feed them your original stage 01 files. Defaults behave as before.
-
-## Test results (2026-10-19)
-| Check | Result |
-|---|---|
-| 96-row sub-epoch table, every column | **identical** to original |
-| 24-row collapsed table, every column | **identical** to original |
-| Cohort | 12 Control + 12 CP, ages 10–16, 4 sub-epochs each ✅ |
-
 ## Cohort audit: is everyone eligible actually included? (2026-10-19)
 Traced all **45 EEG files** through every filter.
 Every file has a metadata row, and every 10–16 yr sevo subject in the metadata has a file.
@@ -84,10 +73,5 @@ Every file has a metadata row, and every 10–16 yr sevo subject in the metadata
 **Confirmed along the way:** one control has no F4 channel, which is why the coherence
 cohort (stage 05) has 23 children.
 
-## Questions to revisit
-- **Alpha band mismatch:** 8–12 Hz here (feeds SSM Figs 05/06 and the cohort table) vs
-  8–13 Hz in Figs 3–4 and coherence. Intentional?
-- Averaging the 4 sub-epochs **in dB** is a geometric mean of linear power, which is a
-  bit lower than the arithmetic mean. Fine, but worth saying in the methods.
-- The original `collapse_...m` header still says "76 rows → 19 rows" (old cohort). Fix the
-  comment in the readability pass (Goal 3).
+---
+[← 01_subject_spectra](01_subject_spectra.md) · [03_power_spectra →](03_power_spectra.md)

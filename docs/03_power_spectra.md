@@ -1,4 +1,4 @@
-> Methods notes for this pipeline, exported from the authors' working notes. Equations and figures render on GitHub. [All pages](README.md)
+[All pages](README.md) · [Figure gallery](figures.md)
 
 # Stage 03: group spectra, CP vs Control (Figs 1–2)
 
@@ -29,20 +29,6 @@ bootstrap spectra at random, then recompute both medians and $\Delta(f)$.
 95% CI = 2.5th–97.5th percentile. "Significant" = CI excludes 0 at that frequency.
 The plot then keeps only significant runs at least **1 Hz** wide (`contiguous_width_mask`).
 
-## What changed when moving into the repo
-- Both scripts became functions with optional input/output folders (so tests can use
-  your original files). Analysis lines are unchanged.
-- Added `rng(seed)` before the group bootstrap.
-
-## Test results (2026-10-19)
-| Check | Result |
-|---|---|
-| Cohort (12 CP, 12 Control) | identical |
-| Group medians and $\Delta(f)$ | **identical** |
-| CI on $\Delta(f)$ vs original | 0.044 dB median change; between two seeds: 0.044 dB → Monte Carlo noise only |
-| Significance mask | 4458 / 4681 bins both; 18 flip vs original, 21 between seeds |
-| Four figures | written |
-
 ## Two kinds of inference (both valid; they answer different questions)
 **Published (primary): conditional inference given these children.** The group bootstrap
 redraws each child's spectrum from its MFDB bootstrap (Kim et al. 2018), keeping the 24
@@ -69,6 +55,5 @@ significant under every method. **What the population-level view adds:** the alp
 specifically generalizes beyond these 24 children. Also, the two-stage bootstrap set aside
 as "unstable at n = 19" is stable at n = 24.
 
-## Questions to revisit
-- Why median rather than mean across children? (Robust to outliers, fine, but say so in methods.)
-- The 1 Hz minimum-width rule is a heuristic; with a cluster test it becomes unnecessary.
+---
+[← 02_cohort](02_cohort.md) · [04_age_trajectories →](04_age_trajectories.md)

@@ -1,4 +1,4 @@
-> Methods notes for this pipeline, exported from the authors' working notes. Equations and figures render on GitHub. [All pages](README.md)
+[All pages](README.md) · [Figure gallery](figures.md)
 
 # Stage 01: one subject's spectrum, plus how sure we are about it
 
@@ -55,23 +55,5 @@ The 2.5th and 97.5th percentiles across those 2,000 spectra are the 95% CI.
 > step 1 is off by a constant $\sqrt{F_s}$. Step 2 (z-scoring) removes any constant
 > factor, so it cancels. Not a bug, but it's an accident of ordering, not a design choice.
 
-## What changed when moving into the repo
-- Paths now come from `config_local.m`, not hardcoded Dropbox/Documents paths.
-- **Added `rng(cfg.randomSeed)`** before the bootstrap, so every run gives identical CIs.
-  The original had no seed, so its CIs differ from ours by Monte Carlo noise only.
-
-## Test results (2026-10-19, one subject, 11.6 s per run)
-| Check | Result |
-|---|---|
-| Spectrum `S_subject_original_dB`, freq, Fs, N, age, electrode | **identical** to original output |
-| 95% CI vs original (median / 99th pct abs. diff) | 0.053 / 0.295 dB |
-| 95% CI between two of our own seeds | 0.054 / 0.296 dB → original is "just another seed" |
-| CI width | 4.064 vs 4.063 dB |
-| Same seed twice | bit-for-bit identical |
-
-Not yet tested: the sub-epoch version and `validate_group_mfdb_inputs.m` (they need every subject; tested when the full stage runs).
-
-## Questions to revisit
-- Why shuffle real and imaginary parts together in one pool rather than separately?
-- Is pooling across all 1–40 Hz OK when the whitened noise may not be identical everywhere
-  (e.g. near the alpha peak)?
+---
+[02_cohort →](02_cohort.md)

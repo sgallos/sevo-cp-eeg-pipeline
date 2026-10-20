@@ -1,4 +1,4 @@
-> Methods notes for this pipeline, exported from the authors' working notes. Equations and figures render on GitHub. [All pages](README.md)
+[All pages](README.md) · [Figure gallery](figures.md)
 
 # Stage 04: alpha power vs age (Figs 3–4)
 
@@ -51,14 +51,5 @@ all 24 children gives CP − Control = −5.3 dB [−8.5, −2.1], p = 0.002, wi
 ages (interaction p = 0.86). Some one-year bins hold only 1–3 children per group, so the
 age-adjusted model is a useful companion to the per-bin figure.
 
-## Cohort changes (2026-10-19)
-- The saved May outputs used the **old 19-subject cohort**. The scripts now use `get_cohort()`
-  (24 subjects) and the shared age range 10–16 yr (was 10–15.5; no child is aged 15.5–16, so
-  nothing is lost, but Fig 3 now has one more window, at 16.0).
-
-## Test results (2026-10-19), `tests/test_04_age_trajectories.m`
-| Check | Result |
-|---|---|
-| May reproduction (19 subjects, 10–15.5): alpha per child, window means/differences | **identical** |
-| Every CI contains its estimate (May cohort and current cohort) | ✅ |
-| Default run uses exactly `get_cohort()`; figures written | ✅ |
+---
+[← 03_power_spectra](03_power_spectra.md) · [05_coherence →](05_coherence.md)

@@ -1,4 +1,4 @@
-> Methods notes for this pipeline, exported from the authors' working notes. Equations and figures render on GitHub. [All pages](README.md)
+[All pages](README.md) · [Figure gallery](figures.md)
 
 # Additional analysis: subject-level inference (2026-10-19)
 
@@ -83,5 +83,5 @@ showing the alpha effects (power and coherence) also generalize across children,
 useful for reviewers and for the discussion. The two approaches answer different questions,
 so differences outside alpha are expected, not contradictions.
 
-## Tests
-`tests/test_stats.m` (simulations), `tests/test_subject_level_inference.m` (runs + sanity), 36/36 total.
+---
+[← 07_age_varying_spectrogram](07_age_varying_spectrogram.md) · [additional_ssm_smoothness_grid →](additional_ssm_smoothness_grid.md)
