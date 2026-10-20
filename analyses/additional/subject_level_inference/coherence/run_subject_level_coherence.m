@@ -1,8 +1,9 @@
 function out = run_subject_level_coherence()
-%RUN_SUBJECT_LEVEL_COHERENCE Fig 07 with each child as the unit of analysis.
-%   Uses each child's F3-F4 coherence curve from stage 05 (no new EEG
-%   processing). Changes from the published Bokil test, which pooled every
-%   2 s window from every child as independent trials:
+%RUN_SUBJECT_LEVEL_COHERENCE Fig 07, complementary population-level inference.
+%   The published Bokil test (stage 05) treats each 2 s window x taper as a
+%   trial, conditional on the observed children. This asks whether the
+%   differences generalize to new children, using each child's coherence
+%   curve from stage 05 (no new EEG processing):
 %   - alpha coherence (8-13 Hz), one number per child: Welch t, rank-sum,
 %     permutation p, and effect size with a children-resampled CI;
 %   - which frequency ranges differ: cluster permutation test over children
@@ -81,13 +82,13 @@ function fig = plot_results(freq, boot, clusters, published, a, alpha)
     ylim(ax1, yl);
     % Published Bokil bands (pooled windows) as a thin strip at the top,
     % child-level clusters as a strip just below it.
-    draw_strip(ax1, freq, logical(published.sigMask_contiguous(:).'), yl(2) - 0.02, [0.8 0.3 0.3], 'Published bands (pooled windows)');
+    draw_strip(ax1, freq, logical(published.sigMask_contiguous(:).'), yl(2) - 0.02, [0.8 0.3 0.3], 'Published Bokil test (conditional)');
     sig = clusters.clusters(clusters.clusters.p < 0.05, :);
     sigMask = false(size(freq));
     for k = 1:height(sig)
         sigMask = sigMask | (freq >= sig.xLow(k) & freq <= sig.xHigh(k));
     end
-    draw_strip(ax1, freq, sigMask, yl(2) - 0.045, [0.2 0.65 0.2], 'Child-level clusters, p < 0.05');
+    draw_strip(ax1, freq, sigMask, yl(2) - 0.045, [0.2 0.65 0.2], 'Population-level clusters, p < 0.05');
     xlim(ax1, [freq(1) freq(end)]); grid(ax1, 'on'); box(ax1, 'off');
     xlabel(ax1, 'Frequency (Hz)'); ylabel(ax1, 'F3-F4 coherence');
     title(ax1, 'Median coherence, 95% CI resampling children');

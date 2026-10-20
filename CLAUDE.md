@@ -21,6 +21,11 @@ F3–F4 coherence, and a state-space model of the age trajectory.
 ## Rules
 - We reproduce AND verify. Reproduce the original first (tests), then check the method is
   right. Flag problems in `notes/` and as a draft in `notes/emails_to_collaborators.md`.
+- Inference framing: the published MFDB / Bokil analysis is **conditional inference given the
+  observed subjects** and is the primary, statistician-endorsed approach. Subject-level
+  analyses (`analyses/additional/subject_level_inference/`) answer a different question
+  (generalization to new children) and are complementary. Never call the published
+  inference wrong or overstated; code bugs are a separate matter and do get fixed.
 - No hardcoded paths. Inputs come from `project_paths().dataDir`; outputs go to `outputs/`.
 - Analysis parameters live in `shared/mfdb_config.m` or at the top of each stage script.
   Don't change a parameter without saying so; results must match the original analysis.
@@ -36,7 +41,7 @@ F3–F4 coherence, and a state-space model of the age trajectory.
 - `shared/`: config, paths, `mtm.m`, data loading. `external/`: Chronux 2.12 subset.
 - `analyses/additional/`: every analysis beyond the published figures (Goal 4 sub-analyses
   go here too). Reads `primary/` outputs, never modifies them; one README per folder.
-  First one: `subject_level_inference/` (child as the unit for CIs/significance).
+  First one: `subject_level_inference/` (complementary population-level inference).
 
 ## Origin
 Code was copied from three folders, which are left untouched:

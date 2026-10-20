@@ -1,22 +1,21 @@
 # Subject-level inference
 
-**Question:** would the CP vs control differences hold up with a different sample of
-children? The published figures (`analyses/primary/`) measure how precisely we measured
-*these* 24 children. This folder measures how much the results depend on *which*
-children were sampled, which is what a claim about CP vs controls needs.
+**Question:** would the CP vs control differences generalize to a new sample of children?
+
+The primary analyses (`analyses/primary/`) use conditional inference: given these
+children's recordings, do the groups differ beyond spectral-estimation uncertainty
+(MFDB frequency-domain bootstrap; Bokil two-group coherence test). This folder adds a
+complementary, population-level view that resamples **children** instead. The two answer
+different questions; where they agree, the finding holds at both levels.
 
 Nothing about the EEG processing changes: spectra, coherence and cohort come straight
-from `primary/`. Only the uncertainty and significance steps differ.
+from `primary/`.
 
 | Subfolder | Figures | Change |
 |---|---|---|
-| `power_spectra/` | 1–2 | CI by resampling children (subject bootstrap); cluster permutation test over frequencies instead of the ≥ 1 Hz rule |
-| `age_trajectories/` | 3–4 | Each child shown individually; error bars from resampling children; no per-bin significance where bins hold 1–5 children |
-| `coherence/` | 07 | Per-child alpha coherence test as the main result; significance bands from permuting children, not pooled 2 s windows |
-
-Why: see the "Verification" sections of the stage 03, 04 and 05 notes. In short, the
-current tests treat repeated measurements from one child (bootstrap draws, or 300 EEG
-windows) as if they came from different children.
+| `power_spectra/` | 1–2 | CI by resampling children (subject bootstrap); cluster permutation test across frequencies |
+| `age_trajectories/` | 3–4 | Each child shown individually; one age-adjusted model over all children |
+| `coherence/` | 07 | Per-child alpha coherence test; cluster test permuting children |
 
 ## Run
 After `run_all.m` (sections 1–5): `run('analyses/additional/subject_level_inference/run_subject_level_inference.m')`.

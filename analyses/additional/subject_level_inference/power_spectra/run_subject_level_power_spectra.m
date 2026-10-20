@@ -1,6 +1,8 @@
 function out = run_subject_level_power_spectra()
-%RUN_SUBJECT_LEVEL_POWER_SPECTRA Figs 1-2 with each child as the unit of analysis.
-%   Uses each child's stage 01 F3 spectrum (no new EEG processing) and asks:
+%RUN_SUBJECT_LEVEL_POWER_SPECTRA Figs 1-2, complementary population-level inference.
+%   The published analysis (stage 03) is conditional on the observed children.
+%   This asks whether the differences generalize to new children, using each
+%   child's stage 01 F3 spectrum (no new EEG processing):
 %   - CI on the CP - Control median difference, resampling CHILDREN;
 %   - which frequency ranges differ, with a cluster permutation test that
 %     controls false positives across all 1-40 Hz at once;
@@ -36,7 +38,7 @@ function out = run_subject_level_power_spectra()
         [1; 4; 8; 8; 13; 30], [4; 8; 12; 13; 30; 40], 'VariableNames', {'band', 'lowHz', 'highHz'});
     bandResults = compare_bands(spectraLinear, freq, isCP, bands);
 
-    % The published group CI (measurement noise only), for comparison
+    % The published (conditional, MFDB) group CI, shown alongside
     published = load(fullfile(paths.outputsDir, 'mfdb_group_level', 'group_mfdb_bootstrap_results.mat'), ...
         'groupDiff_boot_CI_low_dB', 'groupDiff_boot_CI_high_dB', 'sigMask');
 
@@ -91,7 +93,7 @@ function fig = plot_results(freq, boot, clusters, published)
         [0 0.45 0.74], 'FaceAlpha', 0.45, 'EdgeColor', 'none');
     plot(ax, freq, boot.difference, 'k', 'LineWidth', 1.2);
     yline(ax, 0, '--', 'Color', [0.4 0.4 0.4]);
-    legendText = {'95% CI, children resampled', '95% CI, published (measurement noise only)', ...
+    legendText = {'95% CI, population-level (children resampled)', '95% CI, published (conditional MFDB bootstrap)', ...
         'CP - Control median difference', ''};
     sig = clusters.clusters(clusters.clusters.p < 0.05, :);
     for k = 1:height(sig)
@@ -100,6 +102,6 @@ function fig = plot_results(freq, boot, clusters, published)
     end
     xlim(ax, [freq(1) freq(end)]); grid(ax, 'on'); box(ax, 'off');
     xlabel(ax, 'Frequency (Hz)'); ylabel(ax, 'CP - Control (dB)');
-    title(ax, 'F3 power: CP - Control, with children as the unit of analysis');
+    title(ax, 'F3 power, CP - Control: published (conditional) and population-level 95% CIs');
     legend(ax, legendText, 'Location', 'southoutside', 'NumColumns', 2);
 end

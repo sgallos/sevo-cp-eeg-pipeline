@@ -1,5 +1,5 @@
 function out = run_subject_level_age_trajectories()
-%RUN_SUBJECT_LEVEL_AGE_TRAJECTORIES Figs 3-4 with each child as the unit of analysis.
+%RUN_SUBJECT_LEVEL_AGE_TRAJECTORIES Figs 3-4, complementary population-level inference.
 %   Same alpha power per child as stage 04 (8-13 Hz, from the stage 01 F3
 %   spectrum), and the same age windows. Changes:
 %   - CIs resample CHILDREN within each window, and are only drawn when a

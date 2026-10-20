@@ -7,4 +7,4 @@ Analyses beyond the published figures. Each folder:
 
 | Folder | What it does | Status |
 |---|---|---|
-| [subject_level_inference](subject_level_inference/) | Same data as Figs 1–4 and 07, with each child as the unit of analysis for CIs and significance | ✅ tested |
+| [subject_level_inference](subject_level_inference/) | Complementary population-level inference for Figs 1–4 and 07 (resampling children) | ✅ tested |
