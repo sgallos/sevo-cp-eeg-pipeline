@@ -5,6 +5,11 @@ cerebral palsy (CP) and neurotypical controls aged 10–16 years. The pipeline e
 spectra by multitaper analysis with a frequency-domain bootstrap, quantifies F3–F4 coherence, and
 models how the CP − Control difference changes with age using a state-space model.
 
+The analysis runs in seven **stages**, numbered 01–07. Each stage is one step of the analysis, with
+its own folder in `analyses/primary/`. It takes the outputs of earlier stages and produces one set of
+results, from each child's spectrum (stage 01) to the group figures. The stages are listed under
+[Analysis pipeline](#analysis-pipeline).
+
 All figures, including those for publication, are shown in the **[figure gallery](docs/figures.md)**.
 
 ## Requirements
@@ -26,7 +31,7 @@ The required components of Chronux 2.12 are included in `external/`.
    Each `%%` section of `run_all.m` can also be run on its own (Cmd/Ctrl+Enter).
 
 ## Cohort and inclusion criteria
-All stages analyse the same cohort, defined in `shared/cohort_criteria.m`. A child is included if
+Every stage uses the same cohort, defined in `shared/cohort_criteria.m`. A child is included if
 the recording was made under sevoflurane, the child was aged 10–16 years, channel F3 is present,
 and at least 120 s of EEG are available. The final cohort comprises 24 children (12 Control,
 12 CP). Coherence analyses use the 23 children who also have channel F4.
