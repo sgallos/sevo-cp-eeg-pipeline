@@ -48,7 +48,16 @@ The plot then keeps only significant runs at least **1 Hz** wide (`contiguous_wi
 | CI | 95% (2.5th–97.5th percentile) | per frequency |
 | Minimum significant run | 1 Hz | shorter runs are not marked |
 
-## Two kinds of inference (both valid; they answer different questions)
+## Statistical tests on this page
+A p-value is the probability of a difference at least as large as the one observed, if there were no real group difference. Each p-value on this page names its test, which is explained here.
+
+| Test | What it shows |
+|---|---|
+| Group MFDB bootstrap 95% CI | Rebuilds the group statistic 2,000 times, each time giving every child one of their own bootstrap spectra. The CI shows how precisely these recordings pin down the statistic for these children. A frequency or window counts as significant when the CI of CP − Control excludes 0. |
+| Subject bootstrap 95% CI | Resamples the children themselves, with replacement within each group, and recomputes the statistic. The CI shows how much the result would change with a different sample of children. |
+| Label permutation test | Shuffles the CP and Control labels many times. The p-value is the share of shuffles that give a difference at least as large as the observed one. |
+
+## Two kinds of inference (both valid, answering different questions)
 **Published (primary) analysis, conditional on these children.**
 The group bootstrap redraws each child's spectrum from its MFDB bootstrap (Kim et al. 2018), keeping the 24 children fixed.
 The CI answers the question *given these recordings, is the CP − Control difference larger than spectral-estimation uncertainty?*

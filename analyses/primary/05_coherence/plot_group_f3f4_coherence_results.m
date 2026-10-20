@@ -43,7 +43,6 @@ ctrlFillColor = gc.controlLight;
 cpFillColor = gc.cpLight;
 ctrlSubjectColor = [gc.controlLine 0.18];
 cpSubjectColor = [gc.cpLine 0.18];
-alphaBandColor = [0.90 0.90 0.90];
 primarySigColor = [0.80 0.20 0.20];
 exploratorySigColor = [0.95 0.72 0.45];
 
@@ -51,8 +50,6 @@ fig1 = figure('Color', 'w', 'Position', [100 100 1120 560]);
 ax1 = axes(fig1);
 hold(ax1, 'on');
 
-patch(ax1, [metadataRef.alphaBand(1) metadataRef.alphaBand(2) metadataRef.alphaBand(2) metadataRef.alphaBand(1)], ...
-    [0 0 1 1], alphaBandColor, 'EdgeColor', 'none', 'FaceAlpha', 0.35, 'HandleVisibility', 'off');
 
 for i = 1:size(controlSpectra, 1)
     plot(ax1, freq, controlSpectra(i, :), '-', 'Color', ctrlSubjectColor, 'LineWidth', 0.8, 'HandleVisibility', 'off');
@@ -91,8 +88,6 @@ ax2 = axes(fig2);
 hold(ax2, 'on');
 nControl = size(controlSpectra, 1);
 nCP = size(cpSpectra, 1);
-hAlpha = patch(ax2, [metadataRef.alphaBand(1) metadataRef.alphaBand(2) metadataRef.alphaBand(2) metadataRef.alphaBand(1)], ...
-    [0 0 1 1], alphaBandColor, 'EdgeColor', 'none', 'FaceAlpha', 0.35);
 for i = 1:nControl
     hCtrlChild = plot(ax2, freq, controlSpectra(i, :), '-', 'Color', ctrlSubjectColor, 'LineWidth', 0.8);
 end
@@ -117,10 +112,9 @@ ylabel(ax2, 'F3-F4 coherence');
 title(ax2, sprintf('F3-F4 coherence, Control (n = %d) vs CP (n = %d)', nControl, nCP), 'FontSize', 14, 'FontWeight', 'bold');
 subtitle(ax2, 'Bars at top: frequencies where the Bokil two-group coherence test (Chronux, jackknife variance) finds CP \neq Control', ...
     'FontSize', 10);
-legend(ax2, [hCtrl2, hCp2, hCtrlIQR2, hCpIQR2, hCtrlChild, hCpChild, hAlpha, hPrimary, hExploratory], ...
+legend(ax2, [hCtrl2, hCp2, hCtrlIQR2, hCpIQR2, hCtrlChild, hCpChild, hPrimary, hExploratory], ...
     {'Control median', 'CP median', 'Control IQR (25th-75th percentile)', 'CP IQR (25th-75th percentile)', ...
      'Each Control child', 'Each CP child', ...
-     sprintf('Alpha band (%g-%g Hz)', metadataRef.alphaBand(1), metadataRef.alphaBand(2)), ...
      sprintf('Bokil test p < %.3g, runs \\geq %.0f Hz (primary)', inference.primaryP, inference.contiguousWidthHz), ...
      sprintf('Bokil test p < %.3g, runs \\geq %.0f Hz (exploratory)', inference.exploratoryP, inference.contiguousWidthHz)}, ...
     'Location', 'eastoutside', 'FontSize', 10);

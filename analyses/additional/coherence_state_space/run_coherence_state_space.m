@@ -131,7 +131,7 @@ function txt = plot_gap(ax, traj)
     if any(below)
         where = sprintf('%.1f-%.1f yr', min(traj.ageYears(below)), max(traj.ageYears(below)));
     end
-    txt = sprintf('CP - Control: %.2f to %.2f z; band below 0: %s', ...
+    txt = sprintf('CP - Control: %.2f to %.2f z; 95%% credible band below 0: %s', ...
         min(traj.deltaMean_dB), max(traj.deltaMean_dB), where);
 end
 

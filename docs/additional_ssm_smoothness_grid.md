@@ -41,6 +41,16 @@ The earlier searches (checked 2026-10-20) had the following limitations.
   fixed at 0), with $\log \text{BF} = \log L_{\text{shape}} - \log L_{\text{no gap}}$. Bayes factors depend on the prior
   on the gap (Lindley's paradox), so each is computed at prior SDs of 3, 10 and 30 dB.
 
+## Statistical tests on this page
+A p-value is the probability of a difference at least as large as the one observed, if there were no real group difference. Each p-value on this page names its test, which is explained here.
+
+| Test | What it shows |
+|---|---|
+| Profile-likelihood region | A smoothness setting counts as supported when its log-likelihood is within 3 units of the best, which is approximately a 95% likelihood-ratio region for two parameters. |
+| Bayes factor | The ratio of how well two models predict the data. A Bayes factor of 16 means the data are 16 times more likely under a constant gap than under no gap. Its value depends on the prior on the gap. |
+| 95% credible band | Comes from the state-space model's posterior distribution, not from a hypothesis test, so it has no p-value. Where the band for the gap excludes 0, the model is at least 95% certain of the gap's sign at that age. |
+| Linear regression t-test | Fits $y = \beta_0 + \beta_1 \text{CP} + \beta_2 \text{age}$ to one value per child. The p-value for CP tests whether the groups differ after adjusting for age. Adding a group × age term tests whether the gap changes with age. |
+
 ## Results (24 children; alpha 8–13 Hz)
 | | Delta | Theta | **Alpha** |
 |---|---|---|---|
@@ -63,7 +73,7 @@ zero (−4.4 dB), as an informative prior centred on no difference should, and t
 2. **The gap estimate does not depend on the smoothness choice.** Across about 65 supported settings it moves by
    less than 0.6 dB, and it excludes zero in all of them.
 3. **The data prefer the simplest shape, a constant gap.** In every band and every prior, a constant
-   CP − Control offset beats straight-line and flexible gaps. The regression (group × age p = 0.86) and stage 06's
+   CP − Control offset beats straight-line and flexible gaps. The regression (group × age interaction, p = 0.86) and stage 06's
    Profile-q boundary reach the same conclusion.
 4. **Strength of evidence for a group difference** (constant gap vs none, prior SD 10 dB). The Bayes factor is about
    16 for alpha ($e^{2.8}$, positive to strong), about 10 for theta (positive to strong) and about 5 for delta

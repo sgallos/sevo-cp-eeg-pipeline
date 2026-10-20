@@ -7,7 +7,7 @@ signals move together at each frequency, and is that coupling different in CP?
 
 > [!IMPORTANT]
 > **CP has lower frontal alpha coherence than controls (median 0.49 vs 0.59).**
-> Alpha is significant under every test, including ones with each child as one observation (p ≈ 0.015).
+> Alpha is significant under every test, including ones with each child as one observation (two-sample t-test and Wilcoxon rank-sum test, both p ≈ 0.015).
 > The published Bokil test also flags 2–10.5 Hz and 30–40 Hz.
 
 | Fig 7: coherence per group and two-group test | Alpha coherence (8–13 Hz), one value per child |
@@ -54,7 +54,19 @@ Each child's mean coherence over 8–13 Hz, then a two-sample t-test (pooled) an
 | Alpha band | 8–13 Hz | for the one-number-per-child test |
 | Cohort | `get_cohort()` children with F4: **23** (11 Control, 12 CP) | one control has no F4 |
 
-## Two kinds of inference (both valid; they answer different questions)
+## Statistical tests on this page
+A p-value is the probability of a difference at least as large as the one observed, if there were no real group difference. Each p-value on this page names its test, which is explained here.
+
+| Test | What it shows |
+|---|---|
+| Bokil two-group coherence test | Compares coherence between the groups at each frequency, using every 2 s window and taper as a trial and a jackknife estimate of the variance. Frequencies count as significant at p < 0.001 (primary) or p < 0.01 (exploratory), in runs at least 3 Hz wide. |
+| Two-sample t-test (pooled variance) | Asks whether the mean of one value per child differs between the groups, assuming both groups have the same spread. |
+| Welch t-test | The same question as the two-sample t-test, without assuming equal spread in the two groups. |
+| Wilcoxon rank-sum test | Ranks all children together and asks whether CP children tend to rank lower than controls. It does not assume normally distributed values. |
+| Label permutation test | Shuffles the CP and Control labels many times. The p-value is the share of shuffles that give a difference at least as large as the observed one. |
+| Cluster permutation test | Computes a Welch t at every frequency and groups adjacent frequencies above threshold into clusters. Each cluster is compared with the largest cluster from 5,000 label shuffles, which controls false positives across all frequencies at once. |
+
+## Two kinds of inference (both valid, answering different questions)
 **Published (primary) analysis, the Bokil two-group coherence test.**
 It treats each 2 s window × taper as a trial (3,300 control + 3,600 CP) and tests whether the two sets of recordings differ in coherence. This is conditional inference given these children's data, in the Chronux/Bokil framework.
 

@@ -66,6 +66,14 @@ Children closer in age (small $h$) constrain each other more.
 | Noise variance $r$ | 13.6 dB² (estimated by EM) | noise SD ≈ 3.7 dB per child |
 | Credible band | 95% | from the Kalman smoother's posterior variance |
 
+## Statistical tests on this page
+A p-value is the probability of a difference at least as large as the one observed, if there were no real group difference. Each p-value on this page names its test, which is explained here.
+
+| Test | What it shows |
+|---|---|
+| 95% credible band | Comes from the state-space model's posterior distribution, not from a hypothesis test, so it has no p-value. Where the band for the gap excludes 0, the model is at least 95% certain of the gap's sign at that age. |
+| Linear regression t-test | Fits $y = \beta_0 + \beta_1 \text{CP} + \beta_2 \text{age}$ to one value per child. The p-value for CP tests whether the groups differ after adjusting for age. Adding a group × age term tests whether the gap changes with age. |
+
 ## Results
 | Band | Mean CP − Control gap |
 |---|---|
@@ -94,7 +102,7 @@ Children closer in age (small $h$) constrain each other more.
   SD of 3.7 dB matches the between-child spread (3.0–3.6 dB, stage 04). The credible bands
   therefore already reflect how much children differ.
 - **Profile-q puts $q_\delta$ at its floor.** The data prefer a gap that barely changes with age.
-  That matches the regression (group × age p = 0.86) and is worth one sentence in the methods.
+  That matches the regression (group × age interaction in the linear regression, p = 0.86) and is worth one sentence in the methods.
 - **EM-Joint did not converge** within 300 iterations. Its answer matches the others, and it is not
   the published version, so it doesn't matter for the figures.
 

@@ -8,7 +8,7 @@
 
 > [!IMPORTANT]
 > **The alpha effects generalize to new children.** When children rather than spectra are resampled, CP alpha power is 4.8 dB lower
-> (p = 0.007, cluster at 9.5–11.6 Hz), the age-adjusted gap is −5.3 dB at every age (p = 0.002, with no change across ages), and alpha
+> (Welch t-test, p = 0.007, with a cluster at 9.5–11.6 Hz), the age-adjusted gap is −5.3 dB at every age (linear regression, p = 0.002, with no change across ages), and alpha
 > coherence is lower (cluster at 9–11 Hz).
 
 | Power: CP − Control, children resampled | Alpha power vs age, every child |
@@ -29,11 +29,25 @@ spectral estimates. Both approaches are valid, and agreement between them streng
 
 In short, the cluster test asks whether a run of frequencies is larger than any run that random relabelling of children produces 95% of the time. This controls false positives across all frequencies at once (Maris & Oostenveld 2007).
 
+## Statistical tests on this page
+A p-value is the probability of a difference at least as large as the one observed, if there were no real group difference. Each p-value on this page names its test, which is explained here.
+
+| Test | What it shows |
+|---|---|
+| Subject bootstrap 95% CI | Resamples the children themselves, with replacement within each group, and recomputes the statistic. The CI shows how much the result would change with a different sample of children. |
+| Cluster permutation test | Computes a Welch t at every frequency and groups adjacent frequencies above threshold into clusters. Each cluster is compared with the largest cluster from 5,000 label shuffles, which controls false positives across all frequencies at once. |
+| Welch t-test | The same question as the two-sample t-test, without assuming equal spread in the two groups. |
+| Wilcoxon rank-sum test | Ranks all children together and asks whether CP children tend to rank lower than controls. It does not assume normally distributed values. |
+| Two-sample t-test (pooled variance) | Asks whether the mean of one value per child differs between the groups, assuming both groups have the same spread. |
+| Permutation test (difference in medians) | Shuffles the group labels 10,000 times. The p-value is the share of shuffles whose median difference is at least as large as the observed one. |
+| Linear regression t-test | Fits $y = \beta_0 + \beta_1 \text{CP} + \beta_2 \text{age}$ to one value per child. The p-value for CP tests whether the groups differ after adjusting for age. Adding a group × age term tests whether the gap changes with age. |
+| Hedges' g | An effect size rather than a test. It is the group difference divided by the pooled standard deviation, so g ≈ −1 means CP is about one standard deviation lower. |
+
 ## Results
 
 ### Power (Figs 1–2), CP − Control, 12 vs 12 children
 **Clusters** (whole 1–40 Hz spectrum, corrected for multiple comparisons)
-| Range | Direction | p |
+| Range | Direction | p (cluster permutation test) |
 |---|---|---|
 | **9.5–11.6 Hz** | CP lower | **0.020** |
 | 5.1–6.2 Hz | CP lower | 0.040 |
@@ -48,12 +62,12 @@ In short, the cluster test asks whether a run of frequencies is larger than any 
 | gamma 30–40 | −3.2 dB | [−6.6, +0.3] | −0.7 | 0.09 |
 
 Alpha shows the strongest effect and survives Holm correction for the six bands. Delta, theta and beta are also
-lower (all g ≈ −1), but only at uncorrected p ≈ 0.02–0.03. This is **suggestive** of a broadband reduction in which
+lower (all g ≈ −1), but only at uncorrected Welch t-test p ≈ 0.02–0.03. This is **suggestive** of a broadband reduction in which
 alpha stands out.
 
 ### Alpha vs age (Figs A1–A2), one model with all 24 children
 $\text{alpha}_i = \beta_0 + \beta_1 \text{CP}_i + \beta_2 \text{age}_i + \varepsilon_i$
-| | Estimate | 95% CI | p |
+| | Estimate | 95% CI | p (linear regression t-test) |
 |---|---|---|---|
 | **CP − Control (age-adjusted)** | **−5.3 dB** | [−8.5, −2.1] | **0.002** |
 | Age slope | −0.95 dB / year | | 0.064 |
@@ -73,15 +87,15 @@ removes the shared age trend so that children of different ages can be compared 
 |---|---|
 | **Alpha coherence per child (8–13 Hz)** | median 0.49 vs 0.59, difference −0.10 [−0.19, −0.02], **g = −1.07** |
 | p: pooled t / Welch / rank-sum / permutation | 0.015 / 0.015 / 0.015 / 0.023 |
-| Cluster test (Fisher-z, 0.5–40 Hz) | **9–11 Hz, p = 0.032**; nothing else |
+| Cluster permutation test (Fisher z, 0.5–40 Hz) | **9–11 Hz, p = 0.032**, and no other cluster |
 | Published Bokil test (conditional, for reference) | 2–10.5 Hz and 30–40 Hz |
 
 ## Where the two kinds of inference agree
 | Finding | Published (conditional, primary) | Population-level (complementary) |
 |---|---|---|
 | CP has lower alpha power | ✅ | ✅ strongest effect (g ≈ −1.2, cluster 9.5–11.6 Hz) |
-| Power lower across frequencies | ✅ most of 1–40 Hz | alpha confirmed; other bands lower (g ≈ −1), p ≈ 0.02–0.03 uncorrected |
-| Alpha gap across ages 10–16 | ✅ per window (after bug fix) | ✅ −5.3 dB age-adjusted, constant (interaction p = 0.86) |
+| Power lower across frequencies | ✅ most of 1–40 Hz | alpha confirmed; other bands lower (g ≈ −1), Welch t-test p ≈ 0.02–0.03 uncorrected |
+| Alpha gap across ages 10–16 | ✅ per window (after bug fix) | ✅ −5.3 dB age-adjusted, constant (group × age interaction, p = 0.86) |
 | CP has lower alpha coherence | ✅ | ✅ (g ≈ −1.1, cluster 9–11 Hz) |
 | Coherence differs at 2–10 and 30–40 Hz | ✅ | alpha range only at the population level |
 

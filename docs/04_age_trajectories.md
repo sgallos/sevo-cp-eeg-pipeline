@@ -7,7 +7,7 @@ and how big is the CP − Control gap at each age?
 
 > [!IMPORTANT]
 > **CP alpha power (8–13 Hz) is lower than controls in every age window from 10 to 16.**
-> One regression over all 24 children gives CP − Control = −5.3 dB [−8.5, −2.1], p = 0.002, and the gap does not change with age (p = 0.86).
+> One regression over all 24 children gives CP − Control = −5.3 dB [−8.5, −2.1] (linear regression, p = 0.002), and the gap does not change with age (group × age interaction, p = 0.86).
 > The figures show two-stage bootstrap CIs, which include child-to-child spread. The published MFDB-only CIs (≈ ±0.04 dB) are still computed but not shown, because they are too narrow to see.
 > These figures are now additional (A1–A2), and the main paper shows age effects through the state-space model (Figs 3–4).
 
@@ -40,6 +40,15 @@ The error bars come from each child's own bootstrap spectra (stage 01), so they 
 | Fig A2 bins | 1 yr, centres 10.5–15.5 yr | each child in one bin; 1–5 children per group per bin |
 | MFDB-only CI | 95%, 2,000 draws of each child's bootstrap | conditional on these children |
 | Two-stage CI | 95%, 2,000 draws: children resampled, then each child's bootstrap | ≥ 3 children per group |
+
+## Statistical tests on this page
+A p-value is the probability of a difference at least as large as the one observed, if there were no real group difference. Each p-value on this page names its test, which is explained here.
+
+| Test | What it shows |
+|---|---|
+| Group MFDB bootstrap 95% CI | Rebuilds the group statistic 2,000 times, each time giving every child one of their own bootstrap spectra. The CI shows how precisely these recordings pin down the statistic for these children. A frequency or window counts as significant when the CI of CP − Control excludes 0. |
+| Two-stage bootstrap 95% CI | Resamples the children in each window, then takes one bootstrap value from each resampled child. It covers both child-to-child spread and each child's measurement uncertainty. |
+| Linear regression t-test | Fits $y = \beta_0 + \beta_1 \text{CP} + \beta_2 \text{age}$ to one value per child. The p-value for CP tests whether the groups differ after adjusting for age. Adding a group × age term tests whether the gap changes with age. |
 
 ## 🐞 Bug found and fixed: CIs were built from the wrong children
 Line 167 of the original script (the fix is at [line 179](../analyses/primary/04_age_trajectories/plot_mfdb_alpha_power_vs_age.m#L179) here) re-sorted the subject table by group, but **not** the list of bootstrap values.
@@ -79,7 +88,7 @@ The bootstrap assumes the 2 minutes are stationary, whereas real alpha drifts ab
 The two-stage CI adds child-to-child spread, which is far larger still (≈ ±2–4 dB per window).
 
 **Complementary population-level view** (see [additional_subject_level_inference.md](additional_subject_level_inference.md)):
-one regression over all 24 children gives CP − Control = −5.3 dB [−8.5, −2.1], p = 0.002, with no change across ages (interaction p = 0.86).
+one regression over all 24 children gives CP − Control = −5.3 dB [−8.5, −2.1] (linear regression, p = 0.002), with no change across ages (group × age interaction, p = 0.86).
 Some one-year bins hold only 1–3 children per group, so the age-adjusted model is a useful companion to the per-bin figure.
 
 ## Code and files

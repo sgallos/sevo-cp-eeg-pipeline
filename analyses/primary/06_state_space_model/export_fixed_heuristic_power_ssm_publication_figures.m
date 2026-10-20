@@ -94,6 +94,8 @@ title(ax, {sprintf('%s-band CP-Control group difference', title_case(bandName)),
     result.versionName, result.qF0, result.qGroupDifference, result.r)}, ...
     'FontWeight', 'normal');
 style_axis(ax);
+subtitle(ax, 'Shaded: 95% credible band from the state-space model (Kalman smoother). Where it excludes 0, the groups differ at that age.', ...
+    'FontSize', 9, 'Color', [0.35 0.35 0.35]);
 
 outputFiles = strings(0, 1);
 if settings.writeSvg

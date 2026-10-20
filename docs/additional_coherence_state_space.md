@@ -49,9 +49,20 @@ power code with the measure `"coherence"` ([ssm_measure.m](../analyses/additiona
   panel shows each child's z adjusted to the mean age, $z_i - \hat\beta_2(\text{age}_i - \overline{\text{age}})$,
   displayed as $\tanh(\cdot)$.
 
+## Statistical tests on this page
+A p-value is the probability of a difference at least as large as the one observed, if there were no real group difference. Each p-value on this page names its test, which is explained here.
+
+| Test | What it shows |
+|---|---|
+| 95% credible band | Comes from the state-space model's posterior distribution, not from a hypothesis test, so it has no p-value. Where the band for the gap excludes 0, the model is at least 95% certain of the gap's sign at that age. |
+| Linear regression t-test | Fits $y = \beta_0 + \beta_1 \text{CP} + \beta_2 \text{age}$ to one value per child. The p-value for CP tests whether the groups differ after adjusting for age. Adding a group × age term tests whether the gap changes with age. |
+| Subject bootstrap 95% CI | Resamples the children themselves, with replacement within each group, and recomputes the statistic. The CI shows how much the result would change with a different sample of children. |
+| Bayes factor | The ratio of how well two models predict the data. A Bayes factor of 16 means the data are 16 times more likely under a constant gap than under no gap. Its value depends on the prior on the gap. |
+| Profile-likelihood region | A smoothness setting counts as supported when its log-likelihood is within 3 units of the best, which is approximately a 95% likelihood-ratio region for two parameters. |
+
 ## Results (23 children: 11 Control, 12 CP)
 **State-space model.** The FixedHeuristicQ fit is shown, and all four versions agree.
-| Band | CP − Control | Credible band below 0 | Regression (age-adj.) | group × age |
+| Band | CP − Control | 95% credible band below 0 | Group difference, p (linear regression) | Group × age, p (linear regression) |
 |---|---|---|---|---|
 | Delta | −0.05 z | nowhere | p = 0.14 | p = 0.85 |
 | Theta | −0.10 z | nowhere | p = 0.07 | p = 0.97 |
@@ -70,7 +81,7 @@ favoured about 7 : 1, and adding 12–13 Hz makes the gap slightly smaller (−0
 by the youngest one or two children. Delta and theta remain non-significant.
 
 **Alpha coherence vs age (8–13 Hz).** CP − Control is −0.13 z [−0.25, −0.02] (linear regression, p = 0.023), with no
-evidence that the gap changes with age (group × age p = 0.31).
+evidence that the gap changes with age (group × age interaction, p = 0.31).
 
 **Coherograms.** Controls show a strong 9–12 Hz band that strengthens with age, and this band is much weaker in CP.
 The edge windows hold few children (the CP window at 16 yr contains **one child**), so the edge columns should be
@@ -81,7 +92,7 @@ treated as anecdotal.
 2. **The effect is specific to alpha.** Delta and theta show no reliable difference, unlike power, where they were
    also lower but less strongly.
 3. **The gap is best described as constant with age.** The default-smoothness curve suggests a widening gap, but
-   neither the regression (p = 0.31) nor the gap-shape comparison (constant preferred about 5 : 1) supports it.
+   neither the regression (group × age interaction, p = 0.31) nor the gap-shape comparison (constant preferred about 5 : 1) supports it.
 4. Power and coherence tell the same story, a focused and age-stable alpha deficit, now seen in both power and
    left–right coupling.
 

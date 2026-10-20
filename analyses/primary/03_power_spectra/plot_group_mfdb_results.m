@@ -68,6 +68,7 @@ xlabel(ax1, 'Frequency (Hz)');
 ylabel(ax1, 'Median MFDB Power (dB)');
 title(ax1, sprintf('Group Median MFDB Spectra with 95%% CI at %s', upper(char(metadata.electrodeLabel))), ...
     'FontSize', 14, 'FontWeight', 'bold');
+method_note(ax1, sprintf('95%% CI: group MFDB bootstrap (each draw takes one bootstrap spectrum per child and recomputes the medians).'));
 legend(ax1, [hCPCI, hCP, hControlCI, hControl], ...
     {'CP 95% confidence interval', 'CP median', ...
      'Control 95% confidence interval', 'Control median'}, ...
@@ -89,6 +90,7 @@ xlabel(ax2, 'Frequency (Hz)');
 ylabel(ax2, 'CP - Control (dB)');
 title(ax2, sprintf('Group MFDB Difference with 95%% CI at %s', upper(char(metadata.electrodeLabel))), ...
     'FontSize', 14, 'FontWeight', 'bold');
+method_note(ax2, sprintf('95%% CI: group MFDB bootstrap (each draw takes one bootstrap spectrum per child and recomputes the medians).'));
 legend(ax2, [hCI, hDiff, hZero], ...
     {'95% confidence interval', 'Bootstrap median difference', 'Zero line'}, ...
     'Location', 'best');
@@ -116,6 +118,7 @@ xlabel(ax3, 'Frequency (Hz)');
 ylabel(ax3, 'Significant');
 title(ax3, 'Pointwise Significance Mask (95% CI Excludes Zero)', ...
     'FontSize', 14, 'FontWeight', 'bold');
+method_note(ax3, 'Test: group MFDB bootstrap. A frequency is significant when the 95% CI of CP - Control excludes 0.');
 if ~isempty(sigFreq)
     legend(ax3, hSig, {'Pointwise significant bins'}, 'Location', 'best');
 end
@@ -135,6 +138,8 @@ style_axes(ax4a, metadata.fpass);
 ylabel(ax4a, 'CP - Control (dB)');
 title(ax4a, sprintf('Group MFDB Difference and Significance at %s', upper(char(metadata.electrodeLabel))), ...
     'FontSize', 14, 'FontWeight', 'bold');
+method_note(ax4a, ['Test: group MFDB bootstrap. Bottom row: frequencies where the 95% CI of CP - Control ' ...
+    'excludes 0, kept only in runs at least 1 Hz wide.']);
 legend(ax4a, [hCI2, hDiff2, hZero2], ...
     {'95% confidence interval', 'Bootstrap median difference', 'Zero line'}, ...
     'Location', 'best');
@@ -233,4 +238,9 @@ function filteredMask = contiguous_width_mask(freq, mask, minWidthHz)
             filteredMask(runIdx) = true;
         end
     end
+end
+
+function method_note(ax, txt)
+%METHOD_NOTE Small grey line under the title naming the statistical method.
+    subtitle(ax, txt, 'FontSize', 9, 'Color', [0.35 0.35 0.35]);
 end
