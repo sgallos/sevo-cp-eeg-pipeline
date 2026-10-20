@@ -1,6 +1,6 @@
 [All pages](README.md) · [Figure gallery](figures.md)
 
-# Stage 06: state-space model of the age trajectory (Figs 5–6)
+# Stage 06: state-space model of the age trajectory (Figs 3–4)
 
 **Question this stage answers:** how does band power change smoothly with age in each
 group, and how big is the CP − Control gap at each age, using all 24 children at once?
@@ -10,7 +10,7 @@ group, and how big is the CP − Control gap at each age, using all 24 children 
 > The 95% credible band for the gap excludes zero from 11.5 to 14.9 yr.
 > All four ways of setting the smoothness agree (−4.9 to −5.1 dB).
 
-| Fig 5: Control and CP trajectories (alpha) | Fig 6: CP − Control gap, 95% credible band |
+| Fig 3: Control and CP trajectories (alpha) | Fig 4: CP − Control gap, 95% credible band |
 |---|---|
 | ![Alpha power vs age, Control and CP, with credible bands](figures/pipeline/figures/power_ssm_24_subjects/figures/power_ssm_24_subjects_fixed_heuristic_alpha_control_vs_cp.png) | ![CP minus Control alpha gap vs age, with credible band](figures/pipeline/figures/power_ssm_24_subjects/figures/power_ssm_24_subjects_fixed_heuristic_alpha_group_difference.png) |
 
@@ -94,13 +94,13 @@ Children closer in age (small $h$) constrain each other more.
   the published version, so it doesn't matter for the figures.
 
 ## Questions to revisit
-- Colours: Figs 5–6 use blue = Control, red = CP; Figs 3–4 use orange = Control, blue = CP. Unify.
+- Colours: Figs 3–4 use blue = Control, red = CP; Figs A1–A2 use orange = Control, blue = CP. Unify.
 - The x-axis runs to 16 but data stop at 15.2 (oldest child).
 
 ## Code and files
 - **Code:** [run_power_ssm_scalar_r.m](../analyses/primary/06_state_space_model/run_power_ssm_scalar_r.m)
   (runs the fits, writes tables) → [SS_age_diff_em.m](../analyses/primary/06_state_space_model/SS_age_diff_em.m)
-  (Kalman filter, smoother, EM) → [export_fixed_heuristic_power_ssm_publication_figures.m](../analyses/primary/06_state_space_model/export_fixed_heuristic_power_ssm_publication_figures.m) (Figs 5–6).
+  (Kalman filter, smoother, EM) → [export_fixed_heuristic_power_ssm_publication_figures.m](../analyses/primary/06_state_space_model/export_fixed_heuristic_power_ssm_publication_figures.m) (Figs 3–4).
   Bands: [state_space_bands.m](../analyses/primary/06_state_space_model/state_space_bands.m).
 - **Input:** stage 02 table (one row per child: age, group, delta/theta/alpha dB).
 - **Output:** `outputs/state_space_model/power_ssm_publication_<band>_{summary,trajectories}.csv`;

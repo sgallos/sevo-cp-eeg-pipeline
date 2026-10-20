@@ -10,7 +10,7 @@ signals move together at each frequency, and is that coupling different in CP?
 > Alpha is significant under every test, including ones with each child as one observation (p ≈ 0.015).
 > The published Bokil test also flags 2–10.5 Hz and 30–40 Hz.
 
-| Fig 9: coherence per group and two-group test | Alpha coherence (8–13 Hz), one value per child |
+| Fig 7: coherence per group and two-group test | Alpha coherence (8–13 Hz), one value per child |
 |---|---|
 | ![F3-F4 coherence per group with the two-group test](figures/pipeline/coherence_group_level/02_group_f3f4_coherence_combined.png) | ![Alpha coherence per child by group](figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png) |
 
@@ -81,8 +81,8 @@ The pooled-vs-Welch t-test question doesn't matter here (both p = 0.015).
 - **Code:** [run_subject_f3f4_coherence_for_id.m](../analyses/primary/05_coherence/run_subject_f3f4_coherence_for_id.m)
   → [validate_group_coherence_inputs.m](../analyses/primary/05_coherence/validate_group_coherence_inputs.m)
   → [run_group_f3f4_coherence_analysis.m](../analyses/primary/05_coherence/run_group_f3f4_coherence_analysis.m)
-  → plots / [write_…](../analyses/primary/05_coherence/write_group_f3f4_coherence_results.m) (console report) / publication SVG (Fig 9).
-- **Output:** `outputs/coherence_group_level/`; Fig 9 SVG in `outputs/figures/requested_svg_only/`.
+  → plots / [write_…](../analyses/primary/05_coherence/write_group_f3f4_coherence_results.m) (console report) / publication SVG (Fig 7).
+- **Output:** `outputs/coherence_group_level/`; Fig 7 SVG in `outputs/figures/requested_svg_only/`.
 
 ---
 [← 04_age_trajectories](04_age_trajectories.md) · [06_state_space_model →](06_state_space_model.md)

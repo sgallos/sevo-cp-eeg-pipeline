@@ -3,7 +3,7 @@
 **Question:** how straight or wobbly can the stage 06 state-space curves be, which
 settings do the data support, and does the CP − Control gap depend on that choice?
 
-Same model, same data as stage 06 (Figs 5–6); only the smoothness settings vary.
+Same model, same data as stage 06 (Figs 3–4); only the smoothness settings vary.
 
 ## What it runs (per band: delta, theta, alpha)
 1. **Grid** of baseline smoothness `q_f0` × gap smoothness `q_δ`, each at the default

@@ -6,16 +6,16 @@
 > **CP has lower left–right alpha coherence (≈ −0.13 z, about 0.49 vs 0.59–0.61) by every method, and the gap is stable with age.**
 > Delta and theta coherence show no reliable difference, so the coherence effect is alpha-specific.
 
-| Fig 10: coherence state-space trajectories (alpha) | Fig 11: CP − Control coherence gap |
+| Fig 8: coherence state-space trajectories (alpha) | Fig 9: CP − Control coherence gap |
 |---|---|
 | ![Alpha coherence vs age per group, state-space model](figures/additional/coherence/coherence_ssm_alpha_control_vs_cp.png) | ![CP minus Control alpha coherence gap vs age](figures/additional/coherence/coherence_ssm_alpha_gap.png) |
 
-| Fig 12: coherogram, Control | Fig 13: coherogram, CP |
+| Fig 10: coherogram, Control | Fig 11: coherogram, CP |
 |---|---|
 | ![Median coherence by age window, Control](figures/additional/coherence/coherogram_control.png) | ![Median coherence by age window, CP](figures/additional/coherence/coherogram_cp.png) |
 
 **Why:** a collaborator's request: for every power figure, within reason, a coherence figure. MFDB-based power
-figures (Figs 1–4) are excluded. Started with her suggestion that the state-space analysis
+figures (Figs 1–2 and A1–A2) are excluded. Started with her suggestion that the state-space analysis
 done for power can be done for coherence.
 **Code:** [analyses/additional/coherence_state_space/](../analyses/additional/coherence_state_space);
 run everything with `run_coherence_figures.m` (after `run_all.m`). The smoothness grid and gallery are the
@@ -24,10 +24,10 @@ power versions, run with `"coherence"` ([ssm_measure.m](../analyses/additional/s
 ## Power figure → coherence counterpart
 | Power figure | Coherence counterpart | Figure |
 |---|---|---|
-| Figs 1–2, 3–4 (MFDB) | excluded; Fig 9 already shows group coherence curves | — |
-| Figs 7–8 age-varying spectrograms | **age-varying coherograms** (**Figs 12–13**) | [coherograms](figures/additional/coherence/coherograms.png) |
+| Figs 1–2, 3–4 (MFDB) | excluded; Fig 7 already shows group coherence curves | — |
+| Figs 5–6 age-varying spectrograms | **age-varying coherograms** (**Figs 10–11**) | [coherograms](figures/additional/coherence/coherograms.png) |
 | Alpha power vs age, every child + age-adjusted | **alpha coherence vs age** (8–13 Hz) | [alpha vs age](figures/additional/coherence/alpha_coherence_vs_age.png) |
-| Figs 5–6 state-space trajectories and gap | **coherence state-space** (**Figs 10–11**, alpha); delta/theta/alpha together in additional | [all bands](figures/additional/coherence/coherence_state_space_all_bands.png) |
+| Figs 3–4 state-space trajectories and gap | **coherence state-space** (**Figs 8–9**, alpha); delta/theta/alpha together in additional | [all bands](figures/additional/coherence/coherence_state_space_all_bands.png) |
 | Smoothness grid + published-vs-wobbliest gallery | same, for coherence | [alpha gallery](figures/additional/coherence/gallery_alpha.png), [alpha grid](figures/additional/coherence/smoothness_grid_alpha.png) |
 | Population-level spectra with clusters | already exists (`subject_level_inference/coherence`) | — |
 

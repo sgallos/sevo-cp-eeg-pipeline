@@ -49,6 +49,8 @@ function setupOnce(testCase)
     td.defWin3 = readtable(fullfile(d3.outDir, [d3.plotFileBase '_window_support.csv']));
     td.defWin4 = readtable(fullfile(d4.outDir, [d4.plotFileBase '_window_difference_summary.csv']));
     td.defSubj3 = readtable(fullfile(d3.outDir, [d3.plotFileBase '_results.csv']), 'TextType', 'string');
+    td.defTwoStage3 = readtable(fullfile(d3.outDir, [d3.plotFileBase '_window_two_stage_ci.csv']));
+    td.defTwoStage4 = readtable(fullfile(d4.outDir, [d4.plotFileBase '_sliding_difference_two_stage_ci.csv']));
     testCase.TestData = td;
 end
 
@@ -100,4 +102,26 @@ function d = make_temp(testCase)
     d = tempname;
     mkdir(d);
     testCase.addTeardown(@() rmdir(d, 's'));
+end
+
+function testTwoStageCIs(testCase)
+    % Two-stage CIs (children resampled, then each child's MFDB draw): present only where a
+    % group has >= 3 children, contain the window estimate, and are wider than MFDB-only CIs.
+    td = testCase.TestData;
+    T = td.defTwoStage3;  W = td.defWin3;
+    for g = ["Control", "Patient"]
+        n = T.(g + "SubjectCount");
+        lo = T.(g + "TwoStageCILow_dB");  hi = T.(g + "TwoStageCIHigh_dB");  est = T.(g + "Summary_dB");
+        verifyTrue(testCase, all(isnan(lo(n < 3))), g + ": no CI with < 3 children");
+        ok = n >= 3;
+        verifyTrue(testCase, all(lo(ok) <= est(ok) & est(ok) <= hi(ok)), g + ": CI contains estimate");
+        mfdbWidth = W.(g + "CIHigh_dB") - W.(g + "CILow_dB");
+        verifyTrue(testCase, all(hi(ok) - lo(ok) > 5 * mfdbWidth(ok)), g + ": wider than MFDB-only");
+    end
+    D = td.defTwoStage4;   % Fig 4 two-stage version: 4-year sliding windows
+    ok = isfinite(D.DifferenceTwoStageCILow_dB);
+    verifyTrue(testCase, all(ok == (D.ControlSubjectCount >= 3 & D.PatientSubjectCount >= 3)));
+    verifyTrue(testCase, any(ok));
+    verifyTrue(testCase, all(D.DifferenceTwoStageCILow_dB(ok) <= D.DifferenceSummary_dB(ok) & ...
+        D.DifferenceSummary_dB(ok) <= D.DifferenceTwoStageCIHigh_dB(ok)));
 end

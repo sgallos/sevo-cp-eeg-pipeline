@@ -51,7 +51,7 @@ Cluster test in one line: *"is this run of frequencies bigger than any run that 
 lower too (all g ≈ −1) but only at uncorrected p ≈ 0.02–0.03: **suggestive** of a broadband
 reduction, with alpha standing out.
 
-### Alpha vs age (Figs 3–4): one model with all 24 children
+### Alpha vs age (Figs A1–A2): one model with all 24 children
 $\text{alpha}_i = \beta_0 + \beta_1\,\text{CP}_i + \beta_2\,\text{age}_i + \varepsilon_i$
 | | Estimate | 95% CI | p |
 |---|---|---|---|
@@ -68,7 +68,7 @@ child's alpha **adjusted to the average age (13.0 yr)**, CP vs Control, one dot 
 Age adjustment: $\text{alpha}^{adj}_i = \text{alpha}_i - \hat\beta_2(\text{age}_i - \overline{\text{age}})$,
 which removes the shared age trend so children of different ages can sit side by side.
 
-### Coherence (Fig 9): 12 CP vs 11 Control
+### Coherence (Fig 7): 12 CP vs 11 Control
 | Test | Result |
 |---|---|
 | **Alpha coherence per child (8–13 Hz)** | median 0.49 vs 0.59, difference −0.10 [−0.19, −0.02], **g = −1.07** |

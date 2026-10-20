@@ -42,10 +42,10 @@ Each stage's method, parameters and equations, with figures and test results, is
 | 01 | `analyses/primary/01_subject_spectra` | per-subject F3 spectrum + bootstrap | ✅ tested | [notes](docs/01_subject_spectra.md) |
 | 02 | `02_cohort` | power tables, final cohort | ✅ tested | [notes](docs/02_cohort.md) |
 | 03 | `03_power_spectra` | group spectra (Figs 1–2) | ✅ tested | [notes](docs/03_power_spectra.md) |
-| 04 | `04_age_trajectories` | alpha power vs age (Figs 3–4) | ✅ tested (CI bug fixed) | [notes](docs/04_age_trajectories.md) |
-| 05 | `05_coherence` | F3–F4 coherence (Fig 9) | ✅ tested | [notes](docs/05_coherence.md) |
-| 06 | `06_state_space_model` | SSM age trajectories (Figs 5–6) | ✅ tested | [notes](docs/06_state_space_model.md) |
-| 07 | `07_age_varying_spectrogram` | age-varying spectrograms (Figs 7–8) | ✅ tested | [notes](docs/07_age_varying_spectrogram.md) |
+| 04 | `04_age_trajectories` | alpha power vs age (Figs A1–A2) | ✅ tested (CI bug fixed) | [notes](docs/04_age_trajectories.md) |
+| 05 | `05_coherence` | F3–F4 coherence (Fig 7) | ✅ tested | [notes](docs/05_coherence.md) |
+| 06 | `06_state_space_model` | SSM age trajectories (Figs 3–4) | ✅ tested | [notes](docs/06_state_space_model.md) |
+| 07 | `07_age_varying_spectrogram` | age-varying spectrograms (Figs 5–6) | ✅ tested | [notes](docs/07_age_varying_spectrogram.md) |
 
 ## Additional analyses
 Analyses beyond the published figures live in [`analyses/additional/`](analyses/additional/).
@@ -54,7 +54,7 @@ They read the outputs of the primary stages and never change them.
 <!-- publication-figures:start -->
 ## Figures for publication
 
-Power Figs 1–8 and coherence Figs 9–13 in reading order, then the additional analyses. Click any
+Power Figs 1–6 and coherence Figs 7–11 in reading order, then the additional analyses. Click any
 figure for full size; how each was made is in [`docs/`](docs/README.md).
 
 ### Power spectra (Figs 1–2)
@@ -67,60 +67,50 @@ CP has lower F3 power than controls, most strongly in alpha.
 ![Fig 2. CP − Control: Difference spectrum, 95% CI.](docs/figures/pipeline/mfdb_group_level/02_group_mfdb_difference_with_ci.png)
 **Fig 2.** CP − Control: Difference spectrum, 95% CI.
 
-### Alpha power vs age (Figs 3–4)
-
-CP alpha power (8–13 Hz) is lower than controls in every age window from 10 to 16.
-
-![Fig 3. Alpha power vs age: Alpha (8–13 Hz), 4-year sliding windows.](docs/figures/pipeline/mfdb_alpha_power_vs_age/mfdb_alpha_f3_10.0_to_16.0_sevo_mean_sliding_hw2.00_step0.50_plot_6B_age_window_with_ci.png)
-**Fig 3.** Alpha power vs age: Alpha (8–13 Hz), 4-year sliding windows.
-
-![Fig 4. Alpha gap by age: CP − Control in 1-year bins.](docs/figures/pipeline/mfdb_alpha_power_difference_vs_age/mfdb_alpha_difference_f3_10.0_to_16.0_sevo_mean_stationary_hw0.50_step0.50_plot_age_window_difference_with_ci.png)
-**Fig 4.** Alpha gap by age: CP − Control in 1-year bins.
-
-### State-space model of alpha power vs age (Figs 5–6)
+### State-space model of alpha power vs age (Figs 3–4)
 
 Smooth age curves fitted to all 24 children at once. CP alpha is ≈ 4.9 dB lower; the 95% credible band excludes zero from 11.5 to 14.9 yr.
 
-![Fig 5. State-space trajectories: Alpha power vs age per group, 95% credible bands.](docs/figures/pipeline/figures/power_ssm_24_subjects/figures/power_ssm_24_subjects_fixed_heuristic_alpha_control_vs_cp.png)
-**Fig 5.** State-space trajectories: Alpha power vs age per group, 95% credible bands.
+![Fig 3. State-space trajectories: Alpha power vs age per group, 95% credible bands.](docs/figures/pipeline/figures/power_ssm_24_subjects/figures/power_ssm_24_subjects_fixed_heuristic_alpha_control_vs_cp.png)
+**Fig 3.** State-space trajectories: Alpha power vs age per group, 95% credible bands.
 
-![Fig 6. State-space gap: CP − Control vs age, 95% credible band.](docs/figures/pipeline/figures/power_ssm_24_subjects/figures/power_ssm_24_subjects_fixed_heuristic_alpha_group_difference.png)
-**Fig 6.** State-space gap: CP − Control vs age, 95% credible band.
+![Fig 4. State-space gap: CP − Control vs age, 95% credible band.](docs/figures/pipeline/figures/power_ssm_24_subjects/figures/power_ssm_24_subjects_fixed_heuristic_alpha_group_difference.png)
+**Fig 4.** State-space gap: CP − Control vs age, 95% credible band.
 
-### Spectrum at each age (Figs 7–8)
+### Spectrum at each age (Figs 5–6)
 
 Descriptive: median spectrum in sliding age windows. CP is lower at almost every age, most in alpha and beta.
 
 | | |
 |---|---|
-| ![Fig 7. Spectrogram, Control: Median spectrum in sliding age windows.](docs/figures/pipeline/age_varying_spectrogram/age_varying_f3_timeavg_spec_10.0_to_16.0_sevo_primary_control.png) | ![Fig 8. Spectrogram, CP: Median spectrum in sliding age windows.](docs/figures/pipeline/age_varying_spectrogram/age_varying_f3_timeavg_spec_10.0_to_16.0_sevo_primary_cp.png) |
-| **Fig 7.** Spectrogram, Control: Median spectrum in sliding age windows. | **Fig 8.** Spectrogram, CP: Median spectrum in sliding age windows. |
+| ![Fig 5. Spectrogram, Control: Median spectrum in sliding age windows.](docs/figures/pipeline/age_varying_spectrogram/age_varying_f3_timeavg_spec_10.0_to_16.0_sevo_primary_control.png) | ![Fig 6. Spectrogram, CP: Median spectrum in sliding age windows.](docs/figures/pipeline/age_varying_spectrogram/age_varying_f3_timeavg_spec_10.0_to_16.0_sevo_primary_cp.png) |
+| **Fig 5.** Spectrogram, Control: Median spectrum in sliding age windows. | **Fig 6.** Spectrogram, CP: Median spectrum in sliding age windows. |
 
-### F3–F4 coherence (Fig 9)
+### F3–F4 coherence (Fig 7)
 
 CP has lower left–right alpha coherence (median 0.49 vs 0.59); alpha is significant under every test.
 
-![Fig 9. F3–F4 coherence: Coherence per group and two-group test.](docs/figures/pipeline/coherence_group_level/02_group_f3f4_coherence_combined.png)
-**Fig 9.** F3–F4 coherence: Coherence per group and two-group test.
+![Fig 7. F3–F4 coherence: Coherence per group; Bokil two-group test.](docs/figures/pipeline/coherence_group_level/02_group_f3f4_coherence_combined.png)
+**Fig 7.** F3–F4 coherence: Coherence per group; Bokil two-group test.
 
-### State-space model of alpha coherence vs age (Figs 10–11)
+### State-space model of alpha coherence vs age (Figs 8–9)
 
-The coherence version of Figs 5–6. CP alpha coherence is ≈ 0.13 z lower; the credible band excludes zero from 12.3 to 14.9 yr.
+The coherence version of Figs 3–4. CP alpha coherence is ≈ 0.13 z lower; the credible band excludes zero from 12.3 to 14.9 yr.
 
-![Fig 10. Coherence state-space trajectories: Alpha coherence vs age per group, 95% credible bands.](docs/figures/additional/coherence/coherence_ssm_alpha_control_vs_cp.png)
-**Fig 10.** Coherence state-space trajectories: Alpha coherence vs age per group, 95% credible bands.
+![Fig 8. Coherence state-space trajectories: Alpha coherence vs age per group, 95% credible bands.](docs/figures/additional/coherence/coherence_ssm_alpha_control_vs_cp.png)
+**Fig 8.** Coherence state-space trajectories: Alpha coherence vs age per group, 95% credible bands.
 
-![Fig 11. Coherence state-space gap: CP − Control (Fisher z) vs age, 95% credible band.](docs/figures/additional/coherence/coherence_ssm_alpha_gap.png)
-**Fig 11.** Coherence state-space gap: CP − Control (Fisher z) vs age, 95% credible band.
+![Fig 9. Coherence state-space gap: CP − Control (Fisher z) vs age, 95% credible band.](docs/figures/additional/coherence/coherence_ssm_alpha_gap.png)
+**Fig 9.** Coherence state-space gap: CP − Control (Fisher z) vs age, 95% credible band.
 
-### Coherence at each age (Figs 12–13)
+### Coherence at each age (Figs 10–11)
 
-The coherence version of Figs 7–8.
+The coherence version of Figs 5–6.
 
 | | |
 |---|---|
-| ![Fig 12. Coherogram, Control: Median coherence in sliding age windows.](docs/figures/additional/coherence/coherogram_control.png) | ![Fig 13. Coherogram, CP: Median coherence in sliding age windows.](docs/figures/additional/coherence/coherogram_cp.png) |
-| **Fig 12.** Coherogram, Control: Median coherence in sliding age windows. | **Fig 13.** Coherogram, CP: Median coherence in sliding age windows. |
+| ![Fig 10. Coherogram, Control: Median coherence in sliding age windows.](docs/figures/additional/coherence/coherogram_control.png) | ![Fig 11. Coherogram, CP: Median coherence in sliding age windows.](docs/figures/additional/coherence/coherogram_cp.png) |
+| **Fig 10.** Coherogram, Control: Median coherence in sliding age windows. | **Fig 11.** Coherogram, CP: Median coherence in sliding age windows. |
 
 ---
 
@@ -129,7 +119,7 @@ The coherence version of Figs 7–8.
 Every other figure, in the order of the main figures they extend. Methods for each are linked in the
 [figure gallery](docs/figures.md).
 
-#### 1. Do the differences generalize to new children? (extends Figs 1–2, 9)
+#### 1. Do the differences generalize to new children? (extends Figs 1–2, 7)
 
 ![Population-level: power. CP − Control, CI resampling children, cluster permutation test.](docs/figures/additional/power_difference_subject_level.png)
 **Population-level: power.** CP − Control, CI resampling children, cluster permutation test.
@@ -140,7 +130,19 @@ Every other figure, in the order of the main figures they extend. Methods for ea
 ![Alpha coherence per child. One value per child; Wilcoxon rank-sum and t-test.](docs/figures/pipeline/coherence_group_level/03_alpha_coherence_scalar_comparison.png)
 **Alpha coherence per child.** One value per child; Wilcoxon rank-sum and t-test.
 
-#### 2. Every child vs age (extends Figs 3–4)
+#### 2. Alpha power and coherence vs age, by age window and by child
+
+![Fig A1 · Alpha power vs age, two-stage CI. 4-year sliding windows; CI resamples children, then each child's MFDB draw.](docs/figures/pipeline/mfdb_alpha_power_vs_age/mfdb_alpha_f3_10.0_to_16.0_sevo_mean_sliding_hw2.00_step0.50_plot_6C_age_window_two_stage_ci.png)
+**Fig A1 · Alpha power vs age, two-stage CI.** 4-year sliding windows; CI resamples children, then each child's MFDB draw.
+
+![Fig A2 · Alpha gap by age, two-stage CI. CP − Control, 4-year sliding windows; same two-stage CI.](docs/figures/pipeline/mfdb_alpha_power_difference_vs_age/mfdb_alpha_difference_f3_10.0_to_16.0_sevo_mean_stationary_hw0.50_step0.50_plot_age_window_difference_two_stage_ci.png)
+**Fig A2 · Alpha gap by age, two-stage CI.** CP − Control, 4-year sliding windows; same two-stage CI.
+
+![Fig A1 · Alpha power vs age, MFDB-only CI (as published). Measurement uncertainty given these children (≈ ±0.04 dB).](docs/figures/pipeline/mfdb_alpha_power_vs_age/mfdb_alpha_f3_10.0_to_16.0_sevo_mean_sliding_hw2.00_step0.50_plot_6B_age_window_with_ci.png)
+**Fig A1 · Alpha power vs age, MFDB-only CI (as published).** Measurement uncertainty given these children (≈ ±0.04 dB).
+
+![Fig A2 · Alpha gap by 1-year bin, MFDB-only CI (as published). CP − Control in 1-year bins; measurement uncertainty only.](docs/figures/pipeline/mfdb_alpha_power_difference_vs_age/mfdb_alpha_difference_f3_10.0_to_16.0_sevo_mean_stationary_hw0.50_step0.50_plot_age_window_difference_with_ci.png)
+**Fig A2 · Alpha gap by 1-year bin, MFDB-only CI (as published).** CP − Control in 1-year bins; measurement uncertainty only.
 
 ![Alpha power vs age, every child. Every child, and age-adjusted by group; linear regression.](docs/figures/additional/alpha_vs_age_subject_level.png)
 **Alpha power vs age, every child.** Every child, and age-adjusted by group; linear regression.
@@ -148,7 +150,7 @@ Every other figure, in the order of the main figures they extend. Methods for ea
 ![Alpha coherence vs age, every child. Every child, and age-adjusted by group; linear regression.](docs/figures/additional/coherence/alpha_coherence_vs_age.png)
 **Alpha coherence vs age, every child.** Every child, and age-adjusted by group; linear regression.
 
-#### 3. Delta and theta state-space models (extends Figs 5–6, 10–11)
+#### 3. Delta and theta state-space models (extends Figs 3–4, 8–9)
 
 ![Power: Delta (1–4 Hz) trajectories. Control and CP, 95% credible bands.](docs/figures/additional/power_ssm_delta_control_vs_cp.png)
 **Power: Delta (1–4 Hz) trajectories.** Control and CP, 95% credible bands.
@@ -174,7 +176,7 @@ Every other figure, in the order of the main figures they extend. Methods for ea
 ![Coherence: Theta (4–8 Hz) gap. CP − Control (Fisher z), 95% credible band.](docs/figures/additional/coherence/coherence_ssm_theta_gap.png)
 **Coherence: Theta (4–8 Hz) gap.** CP − Control (Fisher z), 95% credible band.
 
-#### 4. How much do the state-space results depend on smoothness? (extends Figs 5–6, 10–11)
+#### 4. How much do the state-space results depend on smoothness? (extends Figs 3–4, 8–9)
 
 ![Power: Delta (1–4 Hz) smoothness grid. Likelihood and gap across smoothness settings.](docs/figures/additional/ssm_smoothness_grid_delta.png)
 **Power: Delta (1–4 Hz) smoothness grid.** Likelihood and gap across smoothness settings.
