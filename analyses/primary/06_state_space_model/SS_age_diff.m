@@ -24,6 +24,9 @@ function results = SS_age_diff(subjectTable, varargin)
     addParameter(parser, 'processNoiseQF0', [], @(x) isempty(x) || (isnumeric(x) && isscalar(x) && isfinite(x) && x > 0));
     addParameter(parser, 'processNoiseQDelta', [], @(x) isempty(x) || (isnumeric(x) && isscalar(x) && isfinite(x) && x > 0));
     addParameter(parser, 'initialCovarianceScale', 100, @(x) isnumeric(x) && isscalar(x) && isfinite(x) && x > 0);
+    % Optional per-state starting variances [f0 level, f0 slope, gap level, gap slope].
+    % Empty (default) = initialCovarianceScale for all four, i.e. unchanged behaviour.
+    addParameter(parser, 'initialCovarianceDiag', [], @(x) isempty(x) || (isnumeric(x) && numel(x) == 4 && all(isfinite(x)) && all(x > 0)));
     addParameter(parser, 'minObservationVariance', 1e-6, @(x) isnumeric(x) && isscalar(x) && isfinite(x) && x > 0);
     addParameter(parser, 'minAgeGapYears', 0.05, ...
         @(x) isnumeric(x) && isscalar(x) && isfinite(x) && x >= 0);
@@ -107,7 +110,11 @@ function results = SS_age_diff(subjectTable, varargin)
     logLikContribution = nan(nSubjects, 1);
 
     initialState = [median(alphaDB, 'omitnan'); 0; 0; 0];
-    initialCovariance = opts.initialCovarianceScale * eye(stateDimension);
+    if isempty(opts.initialCovarianceDiag)
+        initialCovariance = opts.initialCovarianceScale * eye(stateDimension);
+    else
+        initialCovariance = diag(opts.initialCovarianceDiag(:));
+    end
 
     for k = 1:nSubjects
         if k == 1

@@ -8,3 +8,4 @@ Analyses beyond the published figures. Each folder:
 | Folder | What it does | Status |
 |---|---|---|
 | [subject_level_inference](subject_level_inference/) | Complementary population-level inference for Figs 1–4 and 07 (resampling children) | ✅ tested |
+| [ssm_smoothness_grid](ssm_smoothness_grid/) | Profile-likelihood grid over state-space smoothness, gap shapes, prior and age-gap robustness | ✅ tested |
