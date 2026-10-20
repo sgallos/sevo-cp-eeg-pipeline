@@ -62,6 +62,16 @@ All figures are in the **[figure gallery](docs/figures.md)**. The main figures i
 figure are in [`docs/`](docs/README.md).
 <!-- publication-figures:end -->
 
+## Contributions
+
+| Contribution | Contributors |
+|---|---|
+| Clinical data collection | Juan Jose Navarrete Pérez |
+| Scientific direction | Emily Stephen, Emery Brown and Sebastian Gallo |
+| Clinical interpretation | Juan Jose Navarrete Pérez and Emery Brown |
+| Analysis | Sebastian Gallo |
+| Original analysis code | Sebastian Gallo, in collaboration with Emily Stephen (Stephen Lab, Boston University) |
+
 ## Augmented, not automated
 
 This project used Claude (Anthropic), an AI model, through Claude Code. Following the principles of
@@ -70,13 +80,10 @@ MIT's [report on AI use in teaching, learning and research training](https://aia
 using AI in research to read the report, especially its principle of augmentation rather than
 automation.
 
-**Human-led.** The study question, the EEG data and their preprocessing, and the interpretation of the
-results come from the authors. Sebastian Gallo wrote the original analysis code (multitaper spectra
-with the frequency-domain bootstrap, F3–F4 coherence and the state-space model) in collaboration with
-Emily Stephen of the Stephen Lab at Boston University. Throughout this project, Sebastian Gallo
-directed the work and made every scientific decision. These include the cohort definition, the framing
-of the statistical inference, the choice of alpha band, which results to report, the selection and
-numbering of figures, and what to raise with collaborators.
+**Human-led.** The clinical data, the scientific direction, the analysis and the interpretation of the
+results come from the authors, whose individual contributions are listed under [Contributions](#contributions).
+Every scientific decision was made by the authors, including the cohort definition, the framing of the
+statistical inference, the choice of alpha band, which results to report and the selection of figures.
 
 **What Claude did, and why.**
 - Reorganised the original scripts into this pipeline, with a single cohort definition, a
