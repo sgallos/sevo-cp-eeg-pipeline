@@ -22,8 +22,8 @@ Results: `outputs/additional/ssm_smoothness_grid/<band>/` (`grid.csv`, `gap_shap
 `robustness.csv`, `summary.csv`, `smoothness_grid.png`).
 
 ## Candidate gallery
-`make_candidate_gallery.m` refits three versions per band (published FixedHeuristicQ, best-fit constant
-gap, wobbliest still-supported) and draws them side by side with their settings:
+`make_candidate_gallery.m` refits two versions per band (published FixedHeuristicQ and the wobbliest
+still-supported setting) and draws them side by side with their settings:
 `outputs/additional/ssm_smoothness_grid/gallery_<band>.png`.
 
 ## Check

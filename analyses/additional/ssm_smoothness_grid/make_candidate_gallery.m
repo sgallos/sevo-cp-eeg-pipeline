@@ -1,15 +1,13 @@
 function out = make_candidate_gallery()
-%MAKE_CANDIDATE_GALLERY Three state-space versions per band, side by side.
+%MAKE_CANDIDATE_GALLERY Published and wobbliest state-space fits, side by side.
 %   For each band (delta, theta, alpha), refits the stage 06 model at:
 %     1. Published   - FixedHeuristicQ, q_f0 = q_delta = default (Figs 05-06)
-%     2. Best fit    - constant CP - Control gap (best marginal likelihood)
-%     3. Wobbliest   - the most wobbly gap still inside the supported region
+%     2. Wobbliest   - the most wobbly gap still inside the supported region
 %                      (within 3 log-lik units of the best grid cell)
 %   Each panel title states the settings and how well it fits.
 %   Needs run_all_bands.m (reads each band's grid.csv).
 %   Writes outputs/additional/ssm_smoothness_grid/gallery_<band>.png.
 
-    tiny = 1e-10;
     gridDir = fullfile(project_paths().outputsDir, 'additional', 'ssm_smoothness_grid');
     raw = readtable(fullfile(state_space_outputs_dir(), 'power_table_for_ssm_subepochs_collapsed.csv'), ...
         'TextType', 'string');
@@ -24,19 +22,17 @@ function out = make_candidate_gallery()
         G = readtable(fullfile(gridDir, band.name, 'grid.csv'));
         qInit = G.qF0(1) / G.qF0_multiplier(1);
         bestLogLik = max(G.logLik);
-        best = G(G.logLik == bestLogLik, :);
         supported = G(G.supported == 1, :);
         [~, k] = max(supported.wobble_dB);
         wobbly = supported(k, :);
 
         versions = {
             'Published (FixedHeuristicQ)', qInit, qInit, struct()
-            'Best fit: constant gap', best.qF0(1), tiny, struct('initialCovarianceDiag', [100 100 100 tiny])
             'Wobbliest still supported', wobbly.qF0, wobbly.qDelta, struct()};
 
-        fig = figure('Color', 'w', 'Position', [60 60 1650 900]);
-        tl = tiledlayout(fig, 2, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
-        title(tl, sprintf('%s band (%g-%g Hz): three versions of the state-space fit, %d children', ...
+        fig = figure('Color', 'w', 'Position', [60 60 1200 900]);
+        tl = tiledlayout(fig, 2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+        title(tl, sprintf('%s band (%g-%g Hz): published vs wobbliest supported state-space fit, %d children', ...
             title_case(band.name), band.lowHz, band.highHz, height(T)), 'FontWeight', 'bold', 'FontSize', 15);
         rows = table();
         for v = 1:size(versions, 1)
@@ -54,7 +50,7 @@ function out = make_candidate_gallery()
             ax = nexttile(tl, v);
             plot_trajectories(ax, T, traj);
             title(ax, {versions{v, 1}, settingsText}, 'FontSize', 11);
-            ax = nexttile(tl, v + 3);
+            ax = nexttile(tl, v + 2);
             plot_gap(ax, traj);
             title(ax, {sprintf('CP - Control: %.1f to %.1f dB; band below 0: %s', ...
                 min(traj.deltaMean_dB), max(traj.deltaMean_dB), ageText), fitText}, 'FontSize', 11);
@@ -67,8 +63,8 @@ function out = make_candidate_gallery()
         end
         axs = findobj(fig, 'Type', 'axes');
         linkaxes(axs, 'x');
-        % Same y-range within each row, so the three versions compare directly
-        tiles = flipud(axs);   % creation order: top1, bottom1, top2, bottom2, top3, bottom3
+        % Same y-range within each row, so the two versions compare directly
+        tiles = flipud(axs);   % creation order: top1, bottom1, top2, bottom2
         linkaxes(tiles(1:2:end), 'y');
         linkaxes(tiles(2:2:end), 'y');
         file = fullfile(gridDir, sprintf('gallery_%s.png', band.name));
