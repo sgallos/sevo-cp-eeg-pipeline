@@ -64,10 +64,11 @@ figure are in [`docs/`](docs/README.md).
 
 ## Contributions
 
-Juan Jose Navarrete Pérez collected the clinical data. Emily Stephen, Emery Brown
-guided the overall direction of the project. Juan Jose Navarrete Pérez and Emery Brown provided the
-clinical interpretation of the results. The scientific direction of the analysis was led in collaboration with Emily Stephen and Sebastian Gallo
-Sebastian Gallo performed all of the analyses, including the validation and original extension of methods.
+Juan Jose Navarrete Pérez collected the clinical data. Emily Stephen and Emery Brown guided the overall
+direction of the project, and Juan Jose Navarrete Pérez and Emery Brown provided the clinical
+interpretation of the results. Emily Stephen and Sebastian Gallo jointly directed the analysis. Sebastian
+Gallo performed all of the analyses, including their validation and the extension of the original
+methods.
 
 ## A note on the use of AI: A goal for augmentation, not automation
 
