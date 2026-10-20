@@ -3,8 +3,7 @@
 Each page describes one stage of the pipeline: what it computes, its parameters and equations,
 and its results. Code links point to the exact files and lines in this repository.
 
-The **[figures for publication](publication_figures.md)** page shows every figure at full width in reading order,
-and the **[figure gallery](figures.md)** shows them as thumbnails.
+Every figure is in the **[figure gallery](figures.md)**, where the figures intended for publication are tagged.
 
 | Page | Question addressed |
 |---|---|

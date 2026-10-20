@@ -55,9 +55,9 @@ Analyses beyond the main figures are in [`analyses/additional/`](analyses/additi
 They read the outputs of the primary stages and never modify them.
 
 <!-- publication-figures:start -->
-## Figures for publication
+## Figures
 
-The main figures (power, Figs 1–6, and coherence, Figs 7–11) are shown in reading order, followed by
-the additional analyses, in **[Figures for publication](docs/publication_figures.md)**. Thumbnails of all
-figures are in the [figure gallery](docs/figures.md), and the methods for each are in [`docs/`](docs/README.md).
+All figures are in the **[figure gallery](docs/figures.md)**. The main figures intended for publication
+(power, Figs 1–6, and coherence, Figs 7–11) are tagged <kbd>For publication</kbd>, and the methods for each
+figure are in [`docs/`](docs/README.md).
 <!-- publication-figures:end -->
