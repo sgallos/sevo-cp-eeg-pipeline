@@ -1,39 +1,42 @@
 # State-space smoothness grid
 
-**Question:** how straight or wobbly can the stage 06 state-space curves be, which
-settings do the data support, and does the CP − Control gap depend on that choice?
+**Aim.** To determine which smoothness settings of the stage 06 state-space model the data support,
+and whether the CP − Control difference depends on that choice.
 
-Same model, same data as stage 06 (Figs 3–4); only the smoothness settings vary.
+The model and data are those of stage 06 (Figs 3–4). Only the smoothness settings vary.
 
-## What it runs (per band: delta, theta, alpha)
-1. **Grid** of baseline smoothness `q_f0` × gap smoothness `q_δ`, each at the default
-   `qInit = (power range)² / (age span)³` times {10⁻⁶, 10⁻⁴, 10⁻², 0.1, 0.3, 1, 3, 10, 10², 10⁴}:
-   extremes plus a fine grid near the default. In every cell the noise variance `r` is
-   re-fitted by maximum likelihood, so the surface is a **profile likelihood**.
-   "Supported" = within 3 log-likelihood units of the best (≈ 95% region for 2 parameters).
-2. **Gap shapes:** flexible, straight line, constant, and no gap, compared by marginal
-   likelihood (log Bayes factors), at prior SD 3, 10 and 30 dB on the gap.
-3. **Robustness** of the published setting to the prior SD (3 / 10 / 30 dB) and the
-   minimum age-gap floor (0.01 / 0.05 / 0.2 yr).
+## Method (for each band: delta, theta and alpha)
+1. **Grid.** The baseline smoothness `q_f0` and the gap smoothness `q_δ` each take the default value
+   `qInit = (power range)² / (age span)³` multiplied by 10⁻⁶, 10⁻⁴, 10⁻², 0.1, 0.3, 1, 3, 10, 10² and
+   10⁴. This covers the extremes and a finer grid near the default. In every cell the noise
+   variance `r` is re-estimated by maximum likelihood, so the surface is a **profile likelihood**.
+   Settings within 3 log-likelihood units of the best are considered supported (approximately the
+   95% region for two parameters).
+2. **Gap shapes.** A flexible, a straight-line, a constant and a zero gap are compared by marginal
+   likelihood (log Bayes factors), with prior standard deviations of 3, 10 and 30 dB on the gap.
+3. **Robustness.** The published setting is refitted with prior standard deviations of 3, 10 and
+   30 dB and with minimum age gaps of 0.01, 0.05 and 0.2 years.
 
-## Run
-After `run_all.m` sections 1–6: `run('analyses/additional/ssm_smoothness_grid/run_all_bands.m')` (about 1 min).
-Results: `outputs/additional/ssm_smoothness_grid/<band>/` (`grid.csv`, `gap_shapes.csv`,
-`robustness.csv`, `summary.csv`, `smoothness_grid.png`).
+## Usage
+After sections 1–6 of `run_all.m`, run
+`run('analyses/additional/ssm_smoothness_grid/run_all_bands.m')` (about 1 min).
+Results are written to `outputs/additional/ssm_smoothness_grid/<band>/` (`grid.csv`, `gap_shapes.csv`,
+`robustness.csv`, `summary.csv` and `smoothness_grid.png`).
 
-## Power or coherence
-Both functions take a measure: `run_ssm_smoothness_grid("alpha", "coherence")` and
+## Power and coherence
+Both functions take the measure as an argument. `run_ssm_smoothness_grid("alpha", "coherence")` and
 `make_candidate_gallery("coherence")` run on F3–F4 coherence (Fisher z) instead of power.
-Settings per measure live in `ssm_measure.m`: data table, units, display transform (tanh for
-coherence), and the prior SDs for the gap-shape comparison (power 3/10/30 dB; coherence
-0.3/10/30 z, with Bayes factors reported at 0.3 z because 10 z is unrealistically wide).
-Coherence outputs go to `outputs/additional/coherence_state_space/smoothness_grid/`.
+`ssm_measure.m` holds the settings for each measure: the data table, units, display transform
+(`tanh` for coherence) and the prior standard deviations for the gap-shape comparison (3, 10 and
+30 dB for power; 0.3, 10 and 30 z for coherence). Coherence Bayes factors are reported at 0.3 z,
+because a prior standard deviation of 10 z is unrealistically wide.
+Coherence outputs are written to `outputs/additional/coherence_state_space/smoothness_grid/`.
 
-## Candidate gallery
-`make_candidate_gallery.m` refits two versions per band (published FixedHeuristicQ and the wobbliest
-still-supported setting) and draws them side by side with their settings:
-`outputs/additional/ssm_smoothness_grid/gallery_<band>.png`.
+## Published and least-smooth fits
+`make_candidate_gallery.m` refits two versions per band, the published setting (FixedHeuristicQ) and
+the least-smooth ("wobbliest") setting still supported by the data, and draws them side by side with
+their settings in `outputs/additional/ssm_smoothness_grid/gallery_<band>.png`.
 
-## Check
-At the published setting the re-fitted `r` and log-likelihood equal stage 06's EM fit
+## Verification
+At the published setting, the re-estimated `r` and log-likelihood equal those of the stage 06 EM fit
 (`tests/test_ssm_smoothness_grid.m`).

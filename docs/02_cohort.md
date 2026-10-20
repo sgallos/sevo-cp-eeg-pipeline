@@ -1,9 +1,9 @@
 [All pages](README.md) · [Figure gallery](figures.md)
 
-# Stage 02: band power per subject, and who is in the cohort
+# Stage 02: band power per subject and cohort definition
 
-**Question this stage answers:** turn each child's spectrum into three numbers
-(delta, theta, alpha power), and decide which children are in the analysis.
+**Question this stage answers:** how is each child's spectrum reduced to delta, theta and
+alpha band power, and which children meet the inclusion criteria?
 
 > [!IMPORTANT]
 > **24 children are analysed: 12 Control and 12 CP, aged 10–16, all under sevoflurane.**

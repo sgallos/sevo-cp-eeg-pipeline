@@ -2,8 +2,9 @@
 
 # Figures for publication
 
-Power Figs 1–6 and coherence Figs 7–11 in reading order, then the additional analyses.
-Click any figure for full size; how each was made is in the [methods pages](README.md).
+The main figures (power, Figs 1–6, and coherence, Figs 7–11) in reading order, followed by the additional
+analyses. Select a figure to view it at full size. The methods for each figure are described in the
+[methods pages](README.md).
 
 ## Power spectra (Figs 1–2)
 
@@ -64,8 +65,8 @@ The coherence version of Figs 5–6.
 
 ## Additional analyses
 
-Every other figure, in the order of the main figures they extend. Methods for each are linked in the
-[figure gallery](figures.md).
+All remaining figures, ordered by the main figures they extend. The methods for each are linked from
+the [figure gallery](figures.md).
 
 ### 1. Do the differences generalize to new children? (extends Figs 1–2, 7)
 

@@ -1,9 +1,9 @@
 [All pages](README.md) · [Figure gallery](figures.md)
 
-# Stage 01: one subject's spectrum, plus how sure we are about it
+# Stage 01: single-subject spectrum and its uncertainty
 
-**Question this stage answers:** for one child, what does the power spectrum at F3
-look like, and how much would it wobble if we could record the same 2 minutes again?
+**Question this stage answers:** for each child, what is the F3 power spectrum, and how
+precisely is it estimated from a 2-minute recording?
 
 > [!IMPORTANT]
 > **Each child gets one smooth spectrum (multitaper) and 2,000 plausible "alternate" spectra (frequency-domain bootstrap).**

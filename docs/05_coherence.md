@@ -1,6 +1,6 @@
 [All pages](README.md) · [Figure gallery](figures.md)
 
-# Stage 05: F3–F4 coherence (left–right frontal coupling)
+# Stage 05: F3–F4 coherence (interhemispheric frontal coupling)
 
 **Question this stage answers:** how strongly do the left (F3) and right (F4) frontal
 signals move together at each frequency, and is that coupling different in CP?
