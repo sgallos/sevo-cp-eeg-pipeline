@@ -21,6 +21,11 @@ After `run_all.m` sections 1–6: `run('analyses/additional/ssm_smoothness_grid/
 Results: `outputs/additional/ssm_smoothness_grid/<band>/` (`grid.csv`, `gap_shapes.csv`,
 `robustness.csv`, `summary.csv`, `smoothness_grid.png`).
 
+## Candidate gallery
+`make_candidate_gallery.m` refits three versions per band (published FixedHeuristicQ, best-fit constant
+gap, wobbliest still-supported) and draws them side by side with their settings:
+`outputs/additional/ssm_smoothness_grid/gallery_<band>.png`.
+
 ## Check
 At the published setting the re-fitted `r` and log-likelihood equal stage 06's EM fit
 (`tests/test_ssm_smoothness_grid.m`).
