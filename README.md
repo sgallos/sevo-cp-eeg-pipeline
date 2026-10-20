@@ -64,13 +64,9 @@ figure are in [`docs/`](docs/README.md).
 
 ## Contributions
 
-| Contribution | Contributors |
-|---|---|
-| Clinical data collection | Juan Jose Navarrete Pérez |
-| Scientific direction | Emily Stephen, Emery Brown and Sebastian Gallo |
-| Clinical interpretation | Juan Jose Navarrete Pérez and Emery Brown |
-| Analysis | Sebastian Gallo |
-| Original analysis code | Sebastian Gallo, in collaboration with Emily Stephen (Stephen Lab, Boston University) |
+Juan Jose Navarrete Pérez collected the clinical data. Emily Stephen, Emery Brown and Sebastian Gallo
+shared the scientific direction of the project. Juan Jose Navarrete Pérez and Emery Brown provided the
+clinical interpretation of the results. Sebastian Gallo performed all of the analyses.
 
 ## Augmented, not automated
 
