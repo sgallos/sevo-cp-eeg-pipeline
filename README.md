@@ -61,3 +61,32 @@ All figures are in the **[figure gallery](docs/figures.md)**. The main figures i
 (power, Figs 1–6, and coherence, Figs 7–11) are tagged <kbd>For publication</kbd>, and the methods for each
 figure are in [`docs/`](docs/README.md).
 <!-- publication-figures:end -->
+
+## Use of AI assistance
+
+This repository was developed with the help of Claude (Anthropic), an AI model, used through
+Claude Code. Its role is described here for transparency.
+
+**The scientific work is the authors'.** The study question, the EEG data and their preprocessing,
+and the interpretation of the results come from the authors. Sebastian Gallo wrote the original
+analysis code (multitaper spectra with the frequency-domain bootstrap, F3–F4 coherence and the
+state-space model) in collaboration with Emily Stephen of the Stephen Lab at Boston University.
+Throughout this project, Sebastian Gallo directed the work and made every scientific decision. These
+include the cohort definition, the framing of the statistical inference, the choice of alpha band,
+which results to report, the selection and numbering of figures, and what to raise with
+collaborators. He reviewed each change and checked the results at every stage.
+
+**What Claude was used for.**
+- Reorganising the original scripts into this reproducible pipeline, with a single cohort
+  definition, a configuration file and `run_all.m`.
+- Writing the test suite in `tests/`, which checks every stage against the original outputs. The
+  reproduction identified an error in the confidence intervals of the original alpha-vs-age
+  figures, which was then corrected.
+- Implementing additional analyses specified by the authors, namely the population-level
+  inference, the state-space smoothness grid, the coherence counterparts of the power figures and
+  the two-stage bootstrap.
+- Drafting the documentation (this README, the methods pages in `docs/` and the figure gallery) and
+  formatting figures.
+
+Every result can be regenerated from the code with `run_all.m` and is checked by the tests. The
+instructions Claude followed while working in this repository are in [CLAUDE.md](CLAUDE.md).
