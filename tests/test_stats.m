@@ -76,6 +76,25 @@ function testSpatialClusterTestFalsePositiveRate(testCase)
     verifyLessThan(testCase, rate, 0.10);
 end
 
+function testMedianPermutationTest(testCase)
+    % No difference: about 5% of datasets give p < 0.05. A 1.5 SD shift is found, and its
+    % CI contains the true difference.
+    hits = 0;  nSims = 200;
+    for s = 1:nSims
+        rng(4000 + s);
+        r = median_permutation_test(randn(12, 1), randn(12, 1), struct('nPermutations', 500, 'B', 200, 'seed', s));
+        hits = hits + (r.p < 0.05);
+    end
+    rate = hits / nSims;
+    fprintf('Median permutation test false-positive rate under the null: %.3f (target 0.05)\n', rate);
+    verifyLessThan(testCase, rate, 0.10);
+    rng(5);
+    r = median_permutation_test(randn(12, 1) - 1.5, randn(12, 1), struct('nPermutations', 2000, 'B', 2000, 'seed', 1));
+    verifyLessThan(testCase, r.p, 0.05);
+    verifyLessThan(testCase, r.ci(1), -1.5);
+    verifyGreaterThan(testCase, r.ci(2), -1.5);
+end
+
 function nb = grid_neighbours(n)
     % Electrodes on an n x n grid; neighbours share a side.
     [r, c] = ndgrid(1:n);

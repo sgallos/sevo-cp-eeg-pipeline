@@ -19,3 +19,4 @@ notes/
 
 # Personal Claude Code settings (session-start cohort check)
 .claude/settings.local.json
+.venv/

@@ -1,8 +1,8 @@
 function outFile = run_group_topoplots()
 %RUN_GROUP_TOPOPLOTS Scalp maps of alpha, delta and theta power, one row per band.
 %   Columns: Control and CP group medians (dB re 1 uV^2/Hz, one colour scale per band),
-%   then CP - Control as Hedges' g with the spatial cluster test. The band edges are those
-%   of the state-space model. Saves the figure and group_map_statistics.csv; see README.md.
+%   then CP - Control as Hedges' g with the spatial cluster test. Band edges as in the
+%   published F3 analyses (state_space_bands.m); the state-space model itself is not used. Saves the figure and group_map_statistics.csv; see README.md.
     edges = state_space_bands();
     [~, order] = ismember(["alpha" "delta" "theta"], string({edges.name}));
     edges = edges(order);

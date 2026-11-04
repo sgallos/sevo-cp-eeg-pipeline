@@ -71,6 +71,15 @@ function testMapsKeepThePrimaryElectrodes(testCase)
     verifyEmpty(testCase, intersect(lower(M.channel), lower(excluded_channels())));
 end
 
+function testAreaPowerUsesOnlyEnoughCleanElectrodes(testCase)
+    T = table(["a";"a";"b"], ["CP";"CP";"Control"], ["F3";"F1";"F3"], logical([1;1;1]), [1;3;9], [1;3;9], [1;3;9], ...
+        'VariableNames', {'subjectID', 'groupLabel', 'channel', 'isUsable', 'delta', 'theta', 'alpha'});
+    A = area_band_power(T, 2);
+    verifyEqual(testCase, height(A), 1);      % b has one electrode there, so it is left out
+    verifyEqual(testCase, A.subjectID, "a");
+    verifyEqual(testCase, A.alpha, 2);
+end
+
 function testPeakVs7HzIgnoresGain(testCase)
     freq = (0:0.1:45)';
     dB = [20 - 0.5 * freq, 18 - 0.4 * freq] + 6 * exp(-(freq - 10) .^ 2);
@@ -120,6 +129,29 @@ function g = group_effect_map_values(T, opts)
     % One electrode only, so the cluster test has nothing to join; g is what is checked.
     M = group_effect_map(T, 'v', opts);
     g = M.g;
+end
+
+function testAreaValuesUseTheMedianOfEnoughElectrodes(testCase)
+    T = table(["a";"a";"a";"b";"b"], ["CP";"CP";"CP";"Control";"Control"], ["F3";"F1";"O1";"F3";"F1"], ...
+        logical([1;1;1;1;0]), [1;5;100;2;9], 'VariableNames', {'subjectID', 'groupLabel', 'channel', 'isUsable', 'v'});
+    A = area_values(T, "v", struct('channels', ["F3" "F1"], 'minElectrodes', 2));
+    verifyEqual(testCase, A.subjectID, "a");   % b has only one usable frontal electrode
+    verifyEqual(testCase, A.value, 3);         % median of 1 and 5; O1 is not frontal
+end
+
+function testStateSpaceFitReproducesStage06(testCase)
+    % Given stage 06's own input table, the wrapper gives the published F3 alpha result.
+    file = fullfile(project_paths().outputsDir, 'state_space_model', 'power_table_for_ssm_subepochs_collapsed.csv');
+    summary = fullfile(project_paths().outputsDir, 'state_space_model', 'power_ssm_publication_alpha_summary.csv');
+    assumeTrue(testCase, isfile(file) && isfile(summary), 'Run stage 06 first.');
+    T = readtable(file, 'TextType', 'string');
+    S = readtable(summary, 'TextType', 'string');
+    S = S(S.versionName == "FixedHeuristicQ", :);
+    tr = state_space_fit(T.subjectID, T.groupLabel, T.ageYears, T.alpha_dB);
+    verifyEqual(testCase, mean(tr.deltaMean_dB), S.groupDifferenceMean_dB, 'AbsTol', 1e-6);
+    below = tr.deltaCIHigh_dB < 0;
+    verifyEqual(testCase, [min(tr.ageYears(below)) max(tr.ageYears(below))], ...
+        [S.negativeExclusionAgeLow S.negativeExclusionAgeHigh], 'AbsTol', 1e-9);
 end
 
 function testGroupMapMedianAndMissingChannels(testCase)

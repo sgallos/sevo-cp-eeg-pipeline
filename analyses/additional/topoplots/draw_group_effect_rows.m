@@ -1,10 +1,16 @@
-function S = draw_group_effect_rows(T, rows, labels, units, figTitle, outFile)
+function S = draw_group_effect_rows(T, rows, labels, units, figTitle, outFile, scale)
 %DRAW_GROUP_EFFECT_ROWS One row per measure: Control and CP group medians, then CP - Control
 %   as Hedges' g with the spatial cluster test. Control and CP share each row's colour scale;
 %   g is always drawn from -1.5 to 1.5, so the same colour means the same effect size in
 %   every row. Electrodes in a cluster with p < 0.05 are ringed. Returns one table row per
-%   electrode and measure (S) and writes the figure to outFile.
+%   electrode and measure (S) and writes the figure to outFile. scale "shared" gives all rows
+%   one Control/CP colour scale (for the same measure computed several ways).
+    if nargin < 7, scale = "row"; end
     opts = topoplot_channel_rules();
+    shared = [];
+    if scale == "shared"
+        for i = 1:numel(rows), M = group_channel_map(T, char(rows(i)), opts); shared = [shared; M.Control; M.CP]; end %#ok<AGROW>
+    end
     fig = figure('Color', 'w', 'Position', [50 50 1250 380 * numel(rows)], 'Visible', 'off');
     tl = tiledlayout(fig, numel(rows), 3, 'TileSpacing', 'compact');
     maps = gobjects(0);  cmaps = {};  S = table();
@@ -12,6 +18,7 @@ function S = draw_group_effect_rows(T, rows, labels, units, figTitle, outFile)
         [M, clusters] = group_effect_map(T, char(rows(i)), opts);
         chanlocs = channel_locations(M.channel);
         limits = [min([M.Control; M.CP]), max([M.Control; M.CP])];
+        if ~isempty(shared), limits = [min(shared), max(shared)]; end
         maps(end + 1) = draw_map(nexttile(tl), M.Control, chanlocs, limits, "Control: " + labels(i), units(i), []); %#ok<AGROW>
         maps(end + 1) = draw_map(nexttile(tl), M.CP, chanlocs, limits, "CP: " + labels(i), units(i), []); %#ok<AGROW>
         maps(end + 1) = draw_map(nexttile(tl), M.g, chanlocs, [-1.5 1.5], ...

@@ -1,7 +1,8 @@
 function outFile = plot_band_by_age(band, groupLabel)
-%PLOT_BAND_BY_AGE One power map per child, youngest to oldest, on one colour scale.
-%   PLOT_BAND_BY_AGE('alpha', 'Control'); band is 'alpha', 'theta' or 'delta' and groupLabel
-%   'Control' or 'CP'. Maps read left to right, then down, and use the electrodes of the
+%PLOT_BAND_BY_AGE One map per child, youngest to oldest, on one colour scale.
+%   PLOT_BAND_BY_AGE('alpha', 'Control'); band is 'alpha', 'theta', 'delta' or 'peakVs7'
+%   (alpha peak vs 7 Hz) and groupLabel 'Control' or 'CP'. Maps read left to right, then
+%   down, and use the electrodes of the
 %   group maps; a child needs at least minElectrodes of them (topoplot_channel_rules.m).
 %   The colour scale covers the 2nd to 98th percentile of that band in both groups, so the
 %   two groups' figures compare and one extreme channel does not set it. Titles give age
@@ -10,13 +11,19 @@ function outFile = plot_band_by_age(band, groupLabel)
     outDir = fullfile(project_paths().outputsDir, 'additional', 'topoplots');
     if ~exist(outDir, 'dir'), mkdir(outDir); end
 
-    edges = state_space_bands();
-    edge = edges(string({edges.name}) == string(band));
     cohort = get_cohort();
-    T = load_channel_band_power(cohort);
+    T = load_map_values(cohort);
+    if string(band) == "peakVs7"
+        label = 'Alpha peak vs 7 Hz (dB)';  name = 'alpha peak vs 7 Hz';
+    else
+        edges = state_space_bands();
+        edge = edges(string({edges.name}) == string(band));
+        label = sprintf('%s%s power, %g-%g Hz (dB re 1 \\muV^2/Hz)', upper(band(1)), band(2:end), edge.lowHz, edge.highHz);
+        name = sprintf('%s power', band);
+    end
     opts = topoplot_channel_rules();
     channels = group_channel_map(T, char(band), opts).channel;
-    T = T(T.isUsable & ismember(T.channel, channels), :);
+    T = T(T.isUsable & ismember(T.channel, channels) & ~isnan(T.(band)), :);
     [children, ~, which] = unique(T.subjectID);
     children = children(accumarray(which, 1) >= opts.minElectrodes);
     T = T(ismember(T.subjectID, children), :);
@@ -43,8 +50,8 @@ function outFile = plot_band_by_age(band, groupLabel)
     for s = 1:nChildren, colormap(maps(s), jet(256)); end   % last: topoplot resets the colormap
     cb = colorbar(maps(end));
     cb.Layout.Tile = 'east';
-    cb.Label.String = sprintf('%s%s power, %g-%g Hz (dB re 1 \\muV^2/Hz)', upper(band(1)), band(2:end), edge.lowHz, edge.highHz);
-    title(tl, sprintf('%s children: %s power by age, youngest to oldest', groupLabel, band), 'FontWeight', 'bold');
+    cb.Label.String = label;
+    title(tl, sprintf('%s children: %s by age, youngest to oldest', groupLabel, name), 'FontWeight', 'bold');
     outFile = fullfile(outDir, sprintf('%s_by_age_%s.png', band, lower(groupLabel)));
     exportgraphics(fig, outFile, 'Resolution', 200);
     close(fig);
