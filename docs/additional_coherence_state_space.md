@@ -97,4 +97,4 @@ treated as anecdotal.
    left–right coupling.
 
 ---
-[← additional_ssm_smoothness_grid](additional_ssm_smoothness_grid.md)
+[← additional_ssm_smoothness_grid](additional_ssm_smoothness_grid.md) · [topoplots →](topoplots.md)

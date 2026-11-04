@@ -3,6 +3,7 @@ function tests = test_stats
 %   Synthetic "subjects" where the right answer is known:
 %   - no true difference  -> the cluster test rarely finds one (about 5% of the time)
 %   - a planted difference -> it finds it, in the right place
+%   - the same for the spatial (electrode) cluster test
 %   - the subject bootstrap 95% CI covers the true difference about 95% of the time
     tests = functiontests(localfunctions);
 end
@@ -42,6 +43,44 @@ function testClusterTestFalsePositiveRate(testCase)
     rate = hits / nSims;
     fprintf('Cluster test false-positive rate under the null: %.3f (target 0.05)\n', rate);
     verifyLessThan(testCase, rate, 0.10);
+end
+
+function testSpatialClusterTestFindsPlantedEffect(testCase)
+    % 36 electrodes on a 6 x 6 grid; CP is planted 1.5 SD lower on a 3 x 3 patch.
+    rng(21);
+    nb = grid_neighbours(6);
+    A = randn(12, 36);  B = randn(12, 36);
+    patch = reshape(false(6), 1, []);  patch(sub2ind([6 6], [2 2 2 3 3 3 4 4 4], [2 3 4 2 3 4 2 3 4])) = true;
+    A(:, patch) = A(:, patch) - 1.5;
+    A(3, 5) = NaN;                       % one unusable electrode in one child
+    r = spatial_cluster_test(A, B, nb, struct('nPermutations', 1000, 'seed', 1));
+    top = r.clusters(1, :);
+    verifyLessThan(testCase, top.p, 0.05);
+    verifyEqual(testCase, top.sign, -1);
+    verifyTrue(testCase, all(patch(top.electrodes{1})));
+end
+
+function testSpatialClusterTestFalsePositiveRate(testCase)
+    % 200 datasets with NO true difference: about 5% should show any cluster p < 0.05.
+    nb = grid_neighbours(6);
+    hits = 0;  nSims = 200;
+    for s = 1:nSims
+        rng(3000 + s);
+        A = randn(12, 36) + movmean(randn(12, 36), 3, 2);
+        B = randn(12, 36) + movmean(randn(12, 36), 3, 2);
+        r = spatial_cluster_test(A, B, nb, struct('nPermutations', 300, 'seed', s));
+        hits = hits + any(r.clusters.p < 0.05);
+    end
+    rate = hits / nSims;
+    fprintf('Spatial cluster test false-positive rate under the null: %.3f (target 0.05)\n', rate);
+    verifyLessThan(testCase, rate, 0.10);
+end
+
+function nb = grid_neighbours(n)
+    % Electrodes on an n x n grid; neighbours share a side.
+    [r, c] = ndgrid(1:n);
+    d = abs(r(:) - r(:)') + abs(c(:) - c(:)');
+    nb = d == 1;
 end
 
 function testSubjectBootstrapCoverage(testCase)

@@ -11,7 +11,7 @@ function setupOnce(testCase)
     testCase.TestData.cfg = mfdb_config();
     testCase.TestData.cohort = get_cohort();
     testCase.TestData.T = compute_channel_band_power(testCase.TestData.cohort, ...
-        struct('alpha', [8 13]), testCase.TestData.cfg);
+        struct('delta', [1 4], 'theta', [4 8], 'alpha', [8 13]), testCase.TestData.cfg);
 end
 
 function testF3MatchesStage01(testCase)
@@ -21,8 +21,12 @@ function testF3MatchesStage01(testCase)
     for s = 1:numel(ids)
         d = dir(fullfile(cfg.outputDir, char(ids(s)), '*_mfdb.mat'));
         R = load(fullfile(d(1).folder, d(1).name), 'freq', 'S_subject_original_dB');
-        expected = mean(R.S_subject_original_dB(R.freq >= 8 & R.freq <= 13));
-        verifyEqual(testCase, T.alpha(T.subjectID == ids(s) & T.channel == "F3"), expected, ...
+        here = T.subjectID == ids(s) & T.channel == "F3";
+        verifyEqual(testCase, T.delta(here), mean(R.S_subject_original_dB(R.freq >= 1 & R.freq <= 4)), ...
+            'AbsTol', 1e-8, char(ids(s)));
+        verifyEqual(testCase, T.theta(here), mean(R.S_subject_original_dB(R.freq >= 4 & R.freq <= 8)), ...
+            'AbsTol', 1e-8, char(ids(s)));
+        verifyEqual(testCase, T.alpha(here), mean(R.S_subject_original_dB(R.freq >= 8 & R.freq <= 13)), ...
             'AbsTol', 1e-8, char(ids(s)));
     end
 end
@@ -59,6 +63,63 @@ function testKnownPatternSurvivesInterpolation(testCase)
     left = mean(grid(X < -0.2 & abs(Y) < 0.3), 'omitnan');
     right = mean(grid(X > 0.2 & abs(Y) < 0.3), 'omitnan');
     verifyLessThan(testCase, abs(left - right), 0.1 * range(values));
+end
+
+function testMapsKeepThePrimaryElectrodes(testCase)
+    M = group_channel_map(testCase.TestData.T, 'alpha', topoplot_channel_rules());
+    verifyTrue(testCase, all(ismember(["F3" "F4"], M.channel)));
+    verifyEmpty(testCase, intersect(lower(M.channel), lower(excluded_channels())));
+end
+
+function testPeakVs7HzIgnoresGain(testCase)
+    freq = (0:0.1:45)';
+    dB = [20 - 0.5 * freq, 18 - 0.4 * freq] + 6 * exp(-(freq - 10) .^ 2);
+    height = peak_vs_7hz(freq, dB, 10);
+    verifyEqual(testCase, peak_vs_7hz(freq, dB + [12 -7], 10), height, 'AbsTol', 1e-10);
+    verifyGreaterThan(testCase, height(1), 3);
+end
+
+function testAlphaPeakMovesWithTheChild(testCase)
+    freq = (0:0.1:45)';
+    for peakHz = [8.5 10 12]
+        [found, hasPeak] = find_alpha_peak(freq, 20 - 0.5 * freq + 6 * exp(-(freq - peakHz) .^ 2));
+        verifyTrue(testCase, hasPeak);
+        verifyEqual(testCase, found, peakHz, 'AbsTol', 0.3);
+    end
+    [~, hasPeak] = find_alpha_peak(freq, 20 - 0.5 * freq);
+    verifyFalse(testCase, hasPeak);
+end
+
+function testNeighboursAreLocalAndConnected(testCase)
+    % Every drawn electrode has a neighbour; F3 neighbours its ring, not the back of the head.
+    M = group_channel_map(testCase.TestData.T, 'alpha', topoplot_channel_rules());
+    nb = electrode_neighbours(channel_locations(M.channel));
+    verifyEqual(testCase, nb, nb');
+    verifyTrue(testCase, all(sum(nb) >= 1));
+    f3 = M.channel(nb(:, M.channel == "F3"));
+    verifyTrue(testCase, all(ismember(["F1" "F5" "FC3"], f3)));
+    verifyFalse(testCase, any(ismember(["O1" "O2" "P3"], f3)));
+end
+
+function testHedgesG(testCase)
+    % Two groups 1 SD apart give g just under 1 (small-sample correction), and a gain
+    % added to every child does not change it.
+    rng(3);
+    a = randn(12, 1);  b = randn(12, 1);
+    a = (a - mean(a)) / std(a) + 1;  b = (b - mean(b)) / std(b);
+    T = table(["c" + (1:12)'; "k" + (1:12)'], [repmat("CP", 12, 1); repmat("Control", 12, 1)], ...
+        repmat("F3", 24, 1), true(24, 1), [a; b], 'VariableNames', {'subjectID', 'groupLabel', 'channel', 'isUsable', 'v'});
+    opts = struct('minChildren', 9, 'excludeChannels', {{}});
+    M = group_effect_map_values(T, opts);
+    verifyEqual(testCase, M, 1 - 3 / (4 * 24 - 9), 'AbsTol', 1e-12);
+    T.v = T.v + 7;
+    verifyEqual(testCase, group_effect_map_values(T, opts), M, 'AbsTol', 1e-12);
+end
+
+function g = group_effect_map_values(T, opts)
+    % One electrode only, so the cluster test has nothing to join; g is what is checked.
+    M = group_effect_map(T, 'v', opts);
+    g = M.g;
 end
 
 function testGroupMapMedianAndMissingChannels(testCase)

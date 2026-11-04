@@ -65,6 +65,9 @@ The method, parameters, equations, results and verification of each stage are de
 Analyses beyond the main figures are in [`analyses/additional/`](analyses/additional/).
 They read the outputs of the primary stages and never modify them.
 
+- **[Topoplots](docs/topoplots.md):** delta, theta and alpha power across the scalp, for each group and each
+  child, with the CP − Control effect size and a spatial cluster test.
+
 ## Contributions
 
 Emily Stephen and Emery Brown guided the overall
