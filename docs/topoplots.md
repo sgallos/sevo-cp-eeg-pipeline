@@ -118,22 +118,28 @@ Testing 35 electrodes separately would find about 2 "significant" ones by chance
 the test used for the frequency clusters in the population-level analysis, with neighbouring electrodes in
 place of neighbouring frequencies.
 
-1. **A t statistic at each electrode** (Welch's t, which does not assume equal spread in the two groups):
-   ```math
-   t_e = \frac{\bar x_{\text{CP},e} - \bar x_{\text{Control},e}}{\sqrt{s_{\text{CP},e}^2 / n_{\text{CP},e} + s_{\text{Control},e}^2 / n_{\text{Control},e}}}
-   ```
-2. **Clusters.** Electrodes with $|t_e|$ above a threshold ($t$ for $p < 0.05$ with $\min(n_{\text{CP}}, n_{\text{Control}}) - 1 = 11$
-   degrees of freedom, $|t| > 2.20$) that are neighbours and have the same sign form a cluster. Two electrodes
-   are neighbours if they share an edge of a triangulation of the cap seen from above, so each electrode has about
-   4 neighbours (`electrode_neighbours.m`).
-3. **Cluster mass.** Each cluster gets $\text{mass} = \sum_{e \in \text{cluster}} |t_e|$. A large mass means several
-   neighbouring electrodes, each well above threshold.
-4. **What chance produces.** The CP and Control labels are shuffled 5,000 times. Each shuffle keeps every child's
-   whole map together and gives the largest cluster mass that random labels produce.
-5. **p-value.** For a real cluster, the p-value is the share of shuffles whose largest cluster is at least as big:
-   ```math
-   p = \frac{1 + (\text{number of shuffles whose largest mass} \ge \text{this cluster's mass})}{5000 + 1}
-   ```
+**Step 1. A t statistic at each electrode.** Welch's t, which does not assume equal spread in the two groups:
+
+```math
+t_e = \frac{\bar x_{\text{CP},e} - \bar x_{\text{Control},e}}{\sqrt{s_{\text{CP},e}^2 / n_{\text{CP},e} + s_{\text{Control},e}^2 / n_{\text{Control},e}}}
+```
+
+**Step 2. Clusters.** Electrodes with $|t_e|$ above a threshold that are neighbours and have the same sign form a
+cluster. The threshold is the $t$ for $p < 0.05$ with $\min(n_{\text{CP}}, n_{\text{Control}}) - 1 = 11$ degrees of
+freedom, $|t| > 2.20$. Two electrodes are neighbours if they share an edge of a triangulation of the cap seen from
+above, so each electrode has about 4 neighbours (`electrode_neighbours.m`).
+
+**Step 3. Cluster mass.** Each cluster gets $\text{mass} = \sum_{e \in \text{cluster}} |t_e|$. A large mass means
+several neighbouring electrodes, each well above threshold.
+
+**Step 4. What chance produces.** The CP and Control labels are shuffled 5,000 times. Each shuffle keeps every
+child's whole map together and gives the largest cluster mass that random labels produce.
+
+**Step 5. p-value.** For a real cluster, the p-value is the share of shuffles whose largest cluster is at least as big:
+
+```math
+p = \frac{1 + (\text{number of shuffles whose largest mass} \ge \text{this cluster's mass})}{5000 + 1}
+```
 
 Because each shuffle keeps only its largest cluster, the test controls false positives over all electrodes at
 once: with no true difference, a cluster with p < 0.05 appears in about 5% of datasets. On simulated data with no
