@@ -47,6 +47,10 @@ function outFile = run_electrode_tests(rows)
             'Color', 'k', 'MarkerSize', 9, 'LineWidth', 1.4);
         plot3(ax, e(1).XData(q < 0.05), e(1).YData(q < 0.05), z * ones(1, sum(q < 0.05)), 'o', ...
             'Color', 'k', 'MarkerFaceColor', 'k', 'MarkerSize', 9);
+        for c = find(p < 0.05)'                            % name every circled electrode
+            text(ax, e(1).XData(c) + 0.025, e(1).YData(c) + 0.025, z, M.channel(c), 'FontSize', 11, ...
+                'FontWeight', 'bold', 'Color', 'k', 'BackgroundColor', [1 1 1 0.7], 'Margin', 1);
+        end
         cb = colorbar(ax);  cb.Label.String = 'CP - Control, medians (dB)';
         title(ax, {sprintf('CP - Control: %s', names.(rows(i))), ...
             sprintf('p < 0.05 at %d of %d electrodes (circled); q < 0.05 at %d (filled)', sum(p < 0.05), n, sum(q < 0.05))}, ...
@@ -69,7 +73,11 @@ function outFile = run_electrode_tests(rows)
             end
         end
         xline(ax, 0, '--', 'Color', [0.4 0.4 0.4]);
-        set(ax, 'YDir', 'reverse', 'YTick', y, 'YTickLabel', M.channel(order), 'FontSize', 10);
+        tickLabels = M.channel(order);                     % significant electrodes in bold, with their p
+        for k = find(p(order) < 0.05)'
+            tickLabels(k) = sprintf('\\bf%s  p = %.3f', M.channel(order(k)), p(order(k)));
+        end
+        set(ax, 'YDir', 'reverse', 'YTick', y, 'YTickLabel', tickLabels, 'FontSize', 10, 'TickLabelInterpreter', 'tex');
         ylim(ax, [0 n + 1]);  grid(ax, 'on');
         xlabel(ax, sprintf('CP - Control, difference of medians (%s), 95%% CI', unit));
         title(ax, 'Each electrode, front of the head at the top', 'FontWeight', 'normal');

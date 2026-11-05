@@ -22,7 +22,8 @@ function S = draw_group_effect_rows(T, rows, labels, units, figTitle, outFile, s
         maps(end + 1) = draw_map(nexttile(tl), M.Control, chanlocs, limits, "Control: " + labels(i), units(i), []); %#ok<AGROW>
         maps(end + 1) = draw_map(nexttile(tl), M.CP, chanlocs, limits, "CP: " + labels(i), units(i), []); %#ok<AGROW>
         maps(end + 1) = draw_map(nexttile(tl), M.g, chanlocs, [-1.5 1.5], ...
-            ["CP - Control: " + labels(i), cluster_note(clusters)], 'Hedges'' g', M.inCluster); %#ok<AGROW>
+            ["CP - Control: " + labels(i), "blue = lower in CP, in between-child SDs", cluster_note(clusters)], ...
+            'Hedges'' g (effect size)', M.inCluster); %#ok<AGROW>
         cmaps = [cmaps, {jet(256), jet(256), blue_white_red()}]; %#ok<AGROW>
         M.measure = repmat(rows(i), height(M), 1);
         best = NaN;  if ~isempty(clusters), best = clusters.p(1); end
