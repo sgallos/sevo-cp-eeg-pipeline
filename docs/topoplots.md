@@ -358,6 +358,81 @@ stage 06's own input, this wrapper reproduces the published F3 result exactly (t
 
 </details>
 
+### 7. Alpha maps by age, from the state-space model
+`run_state_space_maps.m`
+
+![Alpha by age from the state-space model at each electrode](figures/pipeline/additional/topoplots/state_space_alpha_maps.png)
+
+**What this figure is.** It shows how the alpha map of each group changes between ages 11 and 15, and where on the
+scalp CP differs from Control at each age. It is not an average of the children of each age: there are too few
+children per year for that (one to four per group). Instead, the paper's state-space model (stage 06) is fitted at
+every electrode. The model uses all children at once, ordered by age, and estimates a smooth Control curve and a
+smooth CP − Control gap across age. The maps show those estimates read off at exactly 11, 12, 13, 14 and 15 years.
+
+**How to read it.**
+- **Rows** are ages, youngest at the top.
+- **Left, Control:** the model's estimate of control alpha at that age, at each electrode (dB re 1 µV²/Hz).
+- **Middle, CP:** the same for CP, on the same colour scale as Control, so the two can be compared by eye.
+- **Right, CP − Control:** the estimated gap in dB. Blue is lower in CP, red higher, on a fixed −6 to +6 dB scale.
+- **Rings:** at a ringed electrode, the 95% credible band for the gap at that age lies entirely below 0. The model is
+  then at least 95% certain that CP is lower there at that age.
+
+**What it shows.**
+- Both groups have their strongest alpha at the front of the head at every age, and it weakens a little with age.
+- CP is lower than Control over most of the scalp at every age, most clearly frontal and central.
+- Rings: 2 electrodes at age 11, 6 at 12, 11 at 13, 10 at 14 and 7 at 15. They are frontal and central (F3, F2, FC6,
+  FC4, Cz, C2 among them) and never occipital, which matches the frontal vs occipital test (Figure 4) and the
+  frontal and occipital curves (Figure 6).
+- There are fewer rings at 11 because few children are at the young end, so the bands there are wide.
+
+**What it does not show.**
+- **It is not a test corrected for 35 electrodes.** Each ring is that electrode's own band. With 35 electrodes, a few
+  rings could appear by chance, so the rings show where the gap is consistent, not that each one is a finding.
+  The statistical results are Figures 4 to 6.
+- **It does not show the gap growing with age.** The gap looks larger at older ages (median over electrodes −1.6 dB
+  at 11, −3.4 dB at 15). But at F3 the model prefers a gap that barely changes with age, and the regression finds no
+  change (group × age interaction, p = 0.86). The smaller gap at 11 more likely reflects the few young children.
+
+<details>
+<summary><b>How the state-space model works</b></summary>
+
+This is the stage 06 model, unchanged, run once per electrode with each child's alpha at that electrode
+(`state_space_fit.m`). It lines the children up by age a. Each child's value y is their group's curve at their
+age plus noise:
+
+```math
+y_i = f_0(a_i) + g_i\,\delta(a_i) + \varepsilon_i, \qquad \varepsilon_i \sim \mathcal{N}(0, r), \qquad g_i = 1 \text{ for CP, } 0 \text{ for Control}
+```
+
+f₀ is the Control curve and δ the CP − Control gap. Both are assumed to change smoothly with age: between two
+children whose ages differ by h years, each curve's level and slope may change, but only by a random amount that
+grows with h (an integrated random walk, the model of stage 06). How smooth the curves are is set by q, with the
+published "fixed heuristic" setting
+
+```math
+q = \frac{(\text{range of } y)^2}{(\text{age span})^3}
+```
+
+and the noise variance r is estimated from the data (EM). A Kalman smoother then gives, at each child's age, the
+posterior mean of f₀, of the CP curve f₀ + δ and of the gap δ, each with a 95% credible band (mean ± 1.96 posterior
+standard deviations). Given stage 06's own input table, this code reproduces the published F3 result exactly (tests).
+
+</details>
+
+<details>
+<summary><b>How the maps are made from the model</b></summary>
+
+- **Children:** at each drawn electrode, every child with a usable alpha value there (9 to 12 per group).
+- **Ages 11 to 15:** the model gives estimates at the children's own ages; the values at 11, 12, 13, 14 and 15 are
+  read off by linear interpolation between the two nearest children, and not beyond the youngest or oldest child.
+- **Drawing:** like Figure 1, with Control and CP on one shared colour scale and the gap on a fixed −6 to +6 dB scale.
+- **Rings:** the upper end of the gap's 95% band is below 0 (or the lower end above 0; that never happens here).
+- **F3 compared with stage 06:** at F3 the gap here averages −4.2 dB over ages 11 to 15, against −4.9 dB in stage 06.
+  These maps use the full 120 s spectrum and leave out one control child's F3, which had too few Laplacian
+  neighbours; stage 06 averages four 30 s sub-epochs and keeps every child.
+
+</details>
+
 ## Additional analyses
 
 Descriptive figures and results that are not significant. They support the results above but are not claims.
@@ -377,30 +452,7 @@ Delta (1–4 Hz) does not differ between the groups. Median effect size −0.23 
 −1.8 dB (95% CI −5.0 to +3.0, p = 0.42); occipital +1.3 dB (−3.6 to +4.9, p = 0.44); no electrode at p < 0.05. The
 methods are those of Figures 1, 3, 4 and 5.
 
-### A2. State-space alpha maps at ages 11 to 15
-`run_state_space_maps.m`
-
-![Alpha by age from the state-space model at each electrode](figures/pipeline/additional/topoplots/state_space_alpha_maps.png)
-
-The stage 06 model fitted at every electrode, read off at ages 11 to 15. Ringed electrodes have a 95% credible band
-for the gap that excludes 0: 2 at age 11, 6 at 12, 11 at 13, 10 at 14 and 7 at 15, mostly frontal and central, never
-occipital. Each ring is that electrode's own band, with **no correction across the 35 electrodes**, so a few rings
-could be chance. The gap looks larger at older ages (median −1.6 dB at 11 to −3.4 dB at 15), but at F3 and in the
-regression the gap does not change with age, so this is more likely wider uncertainty at the young end than a trend.
-
-<details>
-<summary><b>How the maps are made</b></summary>
-
-At each drawn electrode, `state_space_fit.m` fits the children with a usable alpha value there (the model of
-Figure 6). The posterior means and bands are read off at each age by linear interpolation between neighbouring
-children's ages, and not beyond the youngest or oldest child. The maps are drawn like Figure 1, with the gap on a
-fixed −6 to 6 dB scale. At F3 the gap here averages −4.2 dB over ages 11 to 15, compared with −4.9 dB in stage 06: these maps use the full
-120 s spectrum and leave out one control child's F3, which had too few Laplacian neighbours, while stage 06 averages
-four 30 s sub-epochs and keeps every child.
-
-</details>
-
-### A3. Alpha peak vs 7 Hz, each child by age
+### A2. Alpha peak vs 7 Hz, each child by age
 `plot_band_by_age.m`
 
 | Control | CP |
@@ -411,7 +463,7 @@ The height of the alpha peak varies a lot between children within each group: so
 some almost none. This is why the group difference in peak height is not significant (Figures 2 and 4). Made as in
 Figure 3.
 
-### A4. Sensitivity: specparam alpha height
+### A3. Sensitivity: specparam alpha height
 `run_specparam_topoplots.m`
 
 ![Specparam alpha height for three fit ranges](figures/pipeline/additional/topoplots/specparam_alpha_height_topoplots.png)
@@ -442,7 +494,7 @@ scale shared by the three rows.
 
 </details>
 
-### A5. Specparam background: offset and exponent
+### A4. Specparam background: offset and exponent
 `run_specparam_topoplots.m`
 
 ![Specparam offset and exponent](figures/pipeline/additional/topoplots/specparam_background_topoplots.png)
@@ -450,9 +502,9 @@ scale shared by the three rows.
 The background is not clearly different. The offset is about the same (median effect size −0.05). The exponent tends
 to be higher in CP, meaning a steeper background, over most of the scalp (median effect size +0.29), but no
 cluster reaches the threshold. Offset and exponent move together across children (a steeper line is usually fitted
-with a higher start), so they are read together. Methods as in A4 and Figure 1.
+with a higher start), so they are read together. Methods as in A3 and Figure 1.
 
-### A6. Six scalp areas
+### A5. Six scalp areas
 `run_area_comparison.m`
 
 ![CP vs Control in six scalp areas](figures/pipeline/additional/topoplots/area_comparison.png)
