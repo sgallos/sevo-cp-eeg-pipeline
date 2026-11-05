@@ -11,12 +11,13 @@ Cohort from `get_cohort()`.
 
 | File | Content |
 |---|---|
-| `run_group_topoplots.m` | Control, CP and CP − Control (Hedges' g, spatial cluster test) for alpha, delta and theta |
-| `run_peak_vs_7hz_topoplots.m` | The same for alpha peak vs 7 Hz, beside delta and theta |
+| `run_group_topoplots.m` | Control, CP and CP − Control (Hedges' g, spatial cluster test) for alpha and theta; `run_group_topoplots("delta", …)` for delta |
+| `run_peak_vs_7hz_topoplots.m` | The same for alpha peak vs 7 Hz |
 | `draw_group_effect_rows.m`, `group_effect_map.m` | Draw those rows; medians, Hedges' g and the cluster test at each electrode |
 | `electrode_neighbours.m` | Which electrodes are neighbours for the cluster test |
 | `plot_band_by_age.m` | One map per child, youngest to oldest, for alpha, theta, delta or alpha peak vs 7 Hz |
 | `run_area_tests.m` | Frontal vs occipital: difference of group medians, permutation p and 95% CI (`area_median_tests.csv`) |
+| `run_electrode_tests.m` | The same test at every electrode, with false discovery rate correction (`electrode_median_tests.csv`, one figure per measure) |
 | `frontal_occipital_areas.m`, `area_values.m` | The two areas, and each child's median over its electrodes in an area |
 | `run_area_state_space.m` | Frontal and occipital alpha across age with the stage 06 state-space model |
 | `run_state_space_maps.m` | The state-space model fitted at every electrode, maps at chosen ages |

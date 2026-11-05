@@ -1,20 +1,25 @@
-function outFile = run_area_tests()
+function outFile = run_area_tests(rows, fileName)
 %RUN_AREA_TESTS Frontal and occipital CP - Control tests on the group medians.
 %   For alpha, theta, delta and alpha peak vs 7 Hz: each child's value in an area is the
 %   median of its usable electrodes there (area_values.m); the groups are compared by the
 %   difference of their medians, with a permutation p and a 95% CI that resamples children
 %   (median_permutation_test.m). Draws Control and CP group medians and their difference,
-%   with the frontal electrodes circled and the occipital ones squared, and saves
-%   area_median_tests.csv.
+%   with the frontal electrodes circled and the occipital ones squared, and adds the rows to
+%   area_median_tests.csv. RUN_AREA_TESTS() draws alpha, theta and alpha peak vs 7 Hz
+%   (area_median_maps.png); RUN_AREA_TESTS("delta", "delta_area_median_maps.png") draws delta.
     outDir = fullfile(project_paths().outputsDir, 'additional', 'topoplots');
     if ~exist(outDir, 'dir'), mkdir(outDir); end
     cohort = get_cohort();
     T = load_map_values(cohort);
     opts = topoplot_channel_rules();
     areas = frontal_occipital_areas();
-    rows = ["alpha" "theta" "delta" "peakVs7"];
-    labels = ["Alpha, 8-13 Hz" "Theta, 4-8 Hz" "Delta, 1-4 Hz" "Alpha peak vs 7 Hz"];
-    units = ["dB re 1 \muV^2/Hz" "dB re 1 \muV^2/Hz" "dB re 1 \muV^2/Hz" "dB (peak - 7 Hz)"];
+    if nargin < 1, rows = ["alpha" "theta" "peakVs7"]; end
+    if nargin < 2, fileName = 'area_median_maps.png'; end
+    rows = string(rows);
+    names = struct('alpha', "Alpha, 8-13 Hz", 'theta', "Theta, 4-8 Hz", 'delta', "Delta, 1-4 Hz", 'peakVs7', "Alpha peak vs 7 Hz");
+    labels = arrayfun(@(r) names.(r), rows);
+    units = repmat("dB re 1 \muV^2/Hz", size(rows));
+    units(rows == "peakVs7") = "dB (peak - 7 Hz)";
 
     results = table();
     fig = figure('Color', 'w', 'Position', [50 50 1300 380 * numel(rows)], 'Visible', 'off');
@@ -48,10 +53,10 @@ function outFile = run_area_tests()
     title(tl, {sprintf('Group medians, %d Control and %d CP children', sum(cohort.groupLabel == "Control"), ...
         sum(cohort.groupLabel == "CP")), 'Area tests: each child''s median over its electrodes in the area; difference of group medians,', ...
         'permutation p (10,000 shuffles), 95% CI from resampling children'}, 'FontWeight', 'bold', 'FontSize', 11);
-    exportgraphics(fig, fullfile(outDir, 'area_median_maps.png'), 'Resolution', 200);
+    exportgraphics(fig, fullfile(outDir, fileName), 'Resolution', 200);
     close(fig);
     outFile = fullfile(outDir, 'area_median_tests.csv');
-    writetable(results, outFile);
+    save_statistics(results, outFile);
 end
 
 function ax = draw_map(ax, values, chanlocs, limits, name, unit)

@@ -17,6 +17,6 @@ Every figure is in the **[figure gallery](figures.md)**, where the figures inten
 | [Additional analysis: subject-level inference](additional_subject_level_inference.md) | Do the group differences generalize to new children? Confidence intervals that resample children, cluster permutation tests, and an age-adjusted regression over all children. |
 | [Additional analysis: state-space smoothness grid](additional_ssm_smoothness_grid.md) | How sensitive is the state-space result to the smoothness setting? A grid of settings evaluated by profile likelihood. |
 | [Additional analysis: coherence counterparts of the power figures](additional_coherence_state_space.md) | Does F3–F4 coherence show the same group differences as power? The coherence counterpart of each non-MFDB power figure (state-space model, coherograms and alpha coherence vs age). |
-| [Topoplots: delta, theta and alpha across the scalp](topoplots.md) | How are delta, theta and alpha spread over the scalp, and where do CP and Control differ? Group and by-age scalp maps, effect sizes and a spatial cluster test. |
+| [Topoplots: alpha and theta across the scalp](topoplots.md) | How are delta, theta and alpha spread over the scalp, and where do CP and Control differ? Group and by-age scalp maps, effect sizes and a spatial cluster test. |
 
 <sub>These pages are generated from the authors' working notes. Edit the notes, not these files.</sub>

@@ -95,6 +95,14 @@ function testMedianPermutationTest(testCase)
     verifyGreaterThan(testCase, r.ci(2), -1.5);
 end
 
+function testBenjaminiHochberg(testCase)
+    % Worked example: p = 0.01, 0.04, 0.03, 0.20 with m = 4 gives
+    % sorted 0.01, 0.03, 0.04, 0.20 -> x m/k = 0.04, 0.06, 0.0533, 0.20 -> running min from the top.
+    q = benjamini_hochberg([0.01 0.04 0.03 0.20]);
+    verifyEqual(testCase, q, [0.04 0.16/3 0.16/3 0.20], 'AbsTol', 1e-12);
+    verifyEqual(testCase, benjamini_hochberg([0.5 NaN]), [0.5 NaN]);
+end
+
 function nb = grid_neighbours(n)
     % Electrodes on an n x n grid; neighbours share a side.
     [r, c] = ndgrid(1:n);

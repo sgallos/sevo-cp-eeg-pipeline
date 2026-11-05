@@ -1,10 +1,15 @@
-function outFile = run_group_topoplots()
-%RUN_GROUP_TOPOPLOTS Scalp maps of alpha, delta and theta power, one row per band.
+function outFile = run_group_topoplots(bands, fileName)
+%RUN_GROUP_TOPOPLOTS Scalp maps of band power, one row per band.
+%   RUN_GROUP_TOPOPLOTS() draws alpha and theta (band_power_group_topoplots.png);
+%   RUN_GROUP_TOPOPLOTS("delta", "delta_group_topoplots.png") draws delta on its own.
 %   Columns: Control and CP group medians (dB re 1 uV^2/Hz, one colour scale per band),
 %   then CP - Control as Hedges' g with the spatial cluster test. Band edges as in the
-%   published F3 analyses (state_space_bands.m); the state-space model itself is not used. Saves the figure and group_map_statistics.csv; see README.md.
+%   published F3 analyses (state_space_bands.m); the state-space model itself is not used.
+%   Adds the rows to group_map_statistics.csv; see README.md.
+    if nargin < 1, bands = ["alpha" "theta"]; end
+    if nargin < 2, fileName = 'band_power_group_topoplots.png'; end
     edges = state_space_bands();
-    [~, order] = ismember(["alpha" "delta" "theta"], string({edges.name}));
+    [~, order] = ismember(string(bands), string({edges.name}));
     edges = edges(order);
 
     outDir = fullfile(project_paths().outputsDir, 'additional', 'topoplots');
@@ -17,7 +22,7 @@ function outFile = run_group_topoplots()
     S = draw_group_effect_rows(T, string({edges.name}), string(labels), repmat("dB re 1 \muV^2/Hz", 1, numel(edges)), ...
         sprintf('Band power, group medians, %d Control and %d CP children; CP - Control as Hedges'' g', ...
         sum(cohort.groupLabel == "Control"), sum(cohort.groupLabel == "CP")), ...
-        fullfile(outDir, 'band_power_group_topoplots.png'));
+        fullfile(outDir, fileName));
     outFile = fullfile(outDir, 'group_map_statistics.csv');
     save_statistics(S, outFile);
 end

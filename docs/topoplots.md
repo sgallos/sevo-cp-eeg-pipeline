@@ -1,12 +1,12 @@
 [All pages](README.md) · [Figure gallery](figures.md)
 
-# Topoplots: delta, theta and alpha across the scalp
+# Topoplots: alpha and theta across the scalp
 
 **Code:** [analyses/additional/topoplots/](../analyses/additional/topoplots)
 · run after `run_all.m`; the scripts are listed under each figure
 · results in `outputs/additional/topoplots/`
 
-**Question:** the published analyses use one electrode, F3. How are delta, theta and alpha power spread over the
+**Question:** the published analyses use one electrode, F3. How are alpha and theta power spread over the
 whole scalp in each group, and where do CP and Control differ?
 
 > [!IMPORTANT]
@@ -14,22 +14,24 @@ whole scalp in each group, and where do CP and Control differ?
 > 3.6 dB below Control (95% CI −5.1 to −0.9, p = 0.018); over the occipital electrodes the groups do not differ
 > (p = 0.58). Across age, the state-space model puts frontal alpha in CP below Control throughout, with the 95%
 > band for the gap excluding 0 from 11.7 to 14.2 years. Frontal theta points the same way (−2.9 dB, p = 0.068).
-> Tested electrode by electrode, the differences are moderate and no cluster of electrodes reaches p < 0.05, so the
-> electrode-level maps are descriptive.
+> Electrode by electrode, alpha is lower in CP at 5 of 35 electrodes at p < 0.05, but none survives the correction
+> for testing 35 electrodes, and no cluster of electrodes reaches p < 0.05, so the electrode-level maps are descriptive.
 
-Each figure has its method in the dropdowns below it. The [Additional analyses](#additional-analyses) at the end
-hold the results that are descriptive or not significant.
+The results show alpha and theta, and the alpha peak against 7 Hz. Each figure has its method in the dropdowns
+below it. Delta and the other descriptive or non-significant results are in the
+[Additional analyses](#additional-analyses) at the end.
 
 ## Results
 
-### 1. Group maps: alpha, delta and theta
+### 1. Group maps: alpha and theta
 `run_group_topoplots.m`
 
-![Band power, group medians, CP - Control as Hedges' g](figures/pipeline/additional/topoplots/band_power_group_topoplots.png)
+![Alpha and theta power, group medians, CP - Control as Hedges' g](figures/pipeline/additional/topoplots/band_power_group_topoplots.png)
 
 Control and CP show the group median at each electrode; the third column is the CP − Control difference as an
-effect size. CP is lower over most of the scalp, most clearly for alpha (median effect size −0.56; −1.13 at F3).
-No cluster of electrodes reaches p < 0.05 (best: alpha, 3 central electrodes, p = 0.057), so nothing is ringed.
+effect size. CP is lower over most of the scalp, most clearly for alpha (median effect size −0.56; −1.13 at F3) and
+less for theta (−0.33; −1.00 at F3). No cluster of electrodes reaches p < 0.05 (best: alpha, 3 central electrodes,
+p = 0.057), so nothing is ringed.
 
 <details>
 <summary><b>How the maps are made</b></summary>
@@ -43,14 +45,14 @@ spectrum over the band:
 P_{\text{band}} = \frac{1}{N_f}\sum_{f \in \text{band}} 10\log_{10} S(f)
 ```
 
-with delta 1–4 Hz, theta 4–8 Hz and alpha 8–13 Hz, the same band edges as the published F3 analyses (defined once
+with theta 4–8 Hz and alpha 8–13 Hz (delta 1–4 Hz in the additional analyses), the same band edges as the published F3 analyses (defined once
 in `state_space_bands.m`). The maps use these edges only; they do not use the state-space model. At F3 this gives
 exactly the value used in the published analyses (checked for every child by the tests).
 
 **Group maps.** At each electrode, the map shows the **median** over the children of the group. Colours between
 electrodes are interpolated by EEGLAB's `topoplot`, and areas far from any drawn electrode are left blank. Control
-and CP share one colour scale within each row, so the two maps can be compared by eye. Each row has its own scale,
-because delta is about 10 dB stronger than alpha.
+and CP share one colour scale within each row, so the two maps can be compared by eye. Each band has its own scale,
+because bands differ in overall level.
 
 </details>
 
@@ -150,7 +152,6 @@ right place. Electrodes in a cluster with p < 0.05 are ringed on the map.
 | Measure | Median g over electrodes | g at F3 | Largest cluster | p |
 |---|---|---|---|---|
 | Alpha | −0.56 | −1.13 | 3 central electrodes (Cz, C2 and the centro-parietal one right of CPz) | 0.057 |
-| Delta | −0.23 | −0.85 | none above threshold | — |
 | Theta | −0.33 | −1.00 | F3 alone | 0.35 |
 | Alpha peak vs 7 Hz | −0.45 | −0.59 | none above threshold | — |
 
@@ -169,12 +170,12 @@ right place. Electrodes in a cluster with p < 0.05 are ringed on the map.
 
 </details>
 
-### 2. Group maps: alpha peak vs 7 Hz, with delta and theta
+### 2. Group map: alpha peak vs 7 Hz
 `run_peak_vs_7hz_topoplots.m`
 
-![Alpha peak vs 7 Hz with delta and theta](figures/pipeline/additional/topoplots/peak_vs_7hz_group_topoplots.png)
+![Alpha peak vs 7 Hz, group medians, CP - Control as Hedges' g](figures/pipeline/additional/topoplots/peak_vs_7hz_group_topoplots.png)
 
-The same layout, with the height of the alpha peak in the first row. CP is somewhat lower (median effect size
+The same layout, for the height of the alpha peak above 7 Hz. CP is somewhat lower (median effect size
 −0.45), with no cluster above threshold. The effect-size and cluster-test methods are those of Figure 1.
 
 <details>
@@ -202,7 +203,6 @@ One map per child, youngest to oldest. Control and CP share the colour scale of 
 |---|---|---|
 | Alpha | ![Alpha by age, Control](figures/pipeline/additional/topoplots/alpha_by_age_control.png) | ![Alpha by age, CP](figures/pipeline/additional/topoplots/alpha_by_age_cp.png) |
 | Theta | ![Theta by age, Control](figures/pipeline/additional/topoplots/theta_by_age_control.png) | ![Theta by age, CP](figures/pipeline/additional/topoplots/theta_by_age_cp.png) |
-| Delta | ![Delta by age, Control](figures/pipeline/additional/topoplots/delta_by_age_control.png) | ![Delta by age, CP](figures/pipeline/additional/topoplots/delta_by_age_cp.png) |
 
 <details>
 <summary><b>How the by-age maps are made</b></summary>
@@ -225,14 +225,12 @@ and the number of electrodes only.
 | Alpha | Occipital | −1.1 dB | 0.5 dB | −1.6 dB | −4.8 to +3.2 | 0.58 |
 | Theta | Frontal | 0.8 dB | 3.7 dB | −2.9 dB | −4.5 to +0.1 | 0.068 |
 | Theta | Occipital | 1.4 dB | 1.2 dB | +0.3 dB | −4.3 to +3.6 | 0.78 |
-| Delta | Frontal | 7.1 dB | 8.9 dB | −1.8 dB | −5.0 to +3.0 | 0.42 |
-| Delta | Occipital | 8.9 dB | 7.6 dB | +1.3 dB | −3.6 to +4.9 | 0.44 |
 | Alpha peak vs 7 Hz | Frontal | 3.6 dB | 4.5 dB | −1.0 dB | −4.6 to +1.5 | 0.43 |
 | Alpha peak vs 7 Hz | Occipital | 3.4 dB | 3.0 dB | +0.4 dB | −3.5 to +2.6 | 0.98 |
 
 **Frontal alpha is lower in CP; occipital alpha is not.** This is the test of the group medians the maps show. The
 frontal alpha difference stays significant after correcting for the two areas (Holm, p = 0.036). Frontal theta
-points the same way, with a 95% CI that just reaches 0. Delta and alpha peak vs 7 Hz do not differ in either area.
+points the same way, with a 95% CI that just reaches 0. Alpha peak vs 7 Hz does not differ in either area.
 Occipital estimates rest on only three electrodes and 10 to 12 children per group, so their CIs are wide: they show
 no difference was detected, not that the groups are the same there.
 
@@ -277,7 +275,56 @@ found a planted difference (`tests/test_stats.m`).
 
 </details>
 
-### 5. Frontal and occipital alpha across age
+### 5. Electrode by electrode
+`run_electrode_tests.m`
+
+![Alpha, electrode by electrode](figures/pipeline/additional/topoplots/electrode_tests_alpha.png)
+![Theta, electrode by electrode](figures/pipeline/additional/topoplots/electrode_tests_theta.png)
+![Alpha peak vs 7 Hz, electrode by electrode](figures/pipeline/additional/topoplots/electrode_tests_peakVs7.png)
+
+The same comparison as Figure 4, made at every electrode on its own. Left: the CP − Control difference of medians,
+with electrodes at p < 0.05 circled and those that survive the correction for 35 electrodes filled. Right: every
+electrode's difference and 95% CI, front of the head at the top.
+
+| Measure | Electrodes lower in CP | p < 0.05 | Survive the correction (q < 0.05) |
+|---|---|---|---|
+| Alpha | 32 of 35 | 5: F2 (p = 0.011), Cz (0.014), F3 (0.030), FC6 (0.027) and the centro-parietal electrode right of CPz (0.024) | none (smallest q = 0.21) |
+| Theta | 30 of 35 | 1: F3 (p = 0.014) | none (q = 0.48) |
+| Alpha peak vs 7 Hz | 29 of 35 | none | none |
+
+**Alpha is lower in CP at almost every electrode, but no single electrode is clearly different once all 35 are
+counted.** About 2 of 35 electrodes would pass p < 0.05 by chance, so 5 is more than chance would usually give,
+but the correction does not let any one of them stand alone. This is why the area tests (Figure 4) are the
+statistical result: one frontal value per child asks one question instead of 35. The F3 result of the published
+analyses does not need this correction, because F3 was chosen before any map was made.
+
+<details>
+<summary><b>How the electrode tests and the correction work</b></summary>
+
+**One test per electrode.** At each drawn electrode, every child with a usable value there counts (9 to 12 per
+group). The test is the one of Figure 4, the difference of group medians, with its p-value from 10,000 label
+shuffles and its 95% CI from resampling children (`median_permutation_test.m`).
+
+**Why a correction is needed.** With 35 electrodes and no true difference anywhere, about 5% of them, roughly 2,
+would still reach p < 0.05. So a few electrodes at p < 0.05 do not by themselves show a difference.
+
+**The false discovery rate (Benjamini & Hochberg, 1995).** Sort the 35 p-values from smallest to largest,
+p₍₁₎ ≤ p₍₂₎ ≤ … ≤ p₍₃₅₎. Each is scaled by how many tests there are over its rank, and then made no larger than the
+values ranked above it:
+
+```math
+q_{(k)} = \min_{j \ge k} \; \min\left(1,\; p_{(j)} \frac{m}{j}
+ight), \qquad m = 35
+```
+
+Calling every electrode with q < 0.05 a difference keeps the expected share of false differences among them at
+5% or less (`benjamini_hochberg.m`, checked against a worked example in the tests). It is less strict than
+controlling the chance of any single false electrode, which suits a scalp map where many electrodes may truly
+differ a little.
+
+</details>
+
+### 6. Frontal and occipital alpha across age
 `run_area_state_space.m`
 
 ![Frontal and occipital alpha across age, state-space model](figures/pipeline/additional/topoplots/area_state_space_alpha.png)
@@ -315,7 +362,22 @@ stage 06's own input, this wrapper reproduces the published F3 result exactly (t
 
 Descriptive figures and results that are not significant. They support the results above but are not claims.
 
-### A1. State-space alpha maps at ages 11 to 15
+### A1. Delta
+`run_group_topoplots("delta", …)`, `run_area_tests("delta", …)`, `run_electrode_tests("delta")`, `plot_band_by_age`
+
+![Delta power, group medians, CP - Control as Hedges' g](figures/pipeline/additional/topoplots/delta_group_topoplots.png)
+![Delta, frontal and occipital area tests](figures/pipeline/additional/topoplots/delta_area_median_maps.png)
+![Delta, electrode by electrode](figures/pipeline/additional/topoplots/electrode_tests_delta.png)
+
+| Control | CP |
+|---|---|
+| ![Delta by age, Control](figures/pipeline/additional/topoplots/delta_by_age_control.png) | ![Delta by age, CP](figures/pipeline/additional/topoplots/delta_by_age_cp.png) |
+
+Delta (1–4 Hz) does not differ between the groups. Median effect size −0.23 (−0.85 at F3), no cluster; frontal
+−1.8 dB (95% CI −5.0 to +3.0, p = 0.42); occipital +1.3 dB (−3.6 to +4.9, p = 0.44); no electrode at p < 0.05. The
+methods are those of Figures 1, 3, 4 and 5.
+
+### A2. State-space alpha maps at ages 11 to 15
 `run_state_space_maps.m`
 
 ![Alpha by age from the state-space model at each electrode](figures/pipeline/additional/topoplots/state_space_alpha_maps.png)
@@ -330,7 +392,7 @@ regression the gap does not change with age, so this is more likely wider uncert
 <summary><b>How the maps are made</b></summary>
 
 At each drawn electrode, `state_space_fit.m` fits the children with a usable alpha value there (the model of
-Figure 5). The posterior means and bands are read off at each age by linear interpolation between neighbouring
+Figure 6). The posterior means and bands are read off at each age by linear interpolation between neighbouring
 children's ages, and not beyond the youngest or oldest child. The maps are drawn like Figure 1, with the gap on a
 fixed −6 to 6 dB scale. At F3 the gap here averages −4.2 dB over ages 11 to 15, compared with −4.9 dB in stage 06: these maps use the full
 120 s spectrum and leave out one control child's F3, which had too few Laplacian neighbours, while stage 06 averages
@@ -338,7 +400,7 @@ four 30 s sub-epochs and keeps every child.
 
 </details>
 
-### A2. Alpha peak vs 7 Hz, each child by age
+### A3. Alpha peak vs 7 Hz, each child by age
 `plot_band_by_age.m`
 
 | Control | CP |
@@ -349,7 +411,7 @@ The height of the alpha peak varies a lot between children within each group: so
 some almost none. This is why the group difference in peak height is not significant (Figures 2 and 4). Made as in
 Figure 3.
 
-### A3. Sensitivity: specparam alpha height
+### A4. Sensitivity: specparam alpha height
 `run_specparam_topoplots.m`
 
 ![Specparam alpha height for three fit ranges](figures/pipeline/additional/topoplots/specparam_alpha_height_topoplots.png)
@@ -380,7 +442,7 @@ scale shared by the three rows.
 
 </details>
 
-### A4. Specparam background: offset and exponent
+### A5. Specparam background: offset and exponent
 `run_specparam_topoplots.m`
 
 ![Specparam offset and exponent](figures/pipeline/additional/topoplots/specparam_background_topoplots.png)
@@ -388,9 +450,9 @@ scale shared by the three rows.
 The background is not clearly different. The offset is about the same (median effect size −0.05). The exponent tends
 to be higher in CP, meaning a steeper background, over most of the scalp (median effect size +0.29), but no
 cluster reaches the threshold. Offset and exponent move together across children (a steeper line is usually fitted
-with a higher start), so they are read together. Methods as in A3 and Figure 1.
+with a higher start), so they are read together. Methods as in A4 and Figure 1.
 
-### A5. Six scalp areas
+### A6. Six scalp areas
 `run_area_comparison.m`
 
 ![CP vs Control in six scalp areas](figures/pipeline/additional/topoplots/area_comparison.png)
