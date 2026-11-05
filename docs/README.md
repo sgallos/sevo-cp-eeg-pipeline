@@ -18,5 +18,6 @@ Every figure is in the **[figure gallery](figures.md)**, where the figures inten
 | [Additional analysis: state-space smoothness grid](additional_ssm_smoothness_grid.md) | How sensitive is the state-space result to the smoothness setting? A grid of settings evaluated by profile likelihood. |
 | [Additional analysis: coherence counterparts of the power figures](additional_coherence_state_space.md) | Does F3–F4 coherence show the same group differences as power? The coherence counterpart of each non-MFDB power figure (state-space model, coherograms and alpha coherence vs age). |
 | [Topoplots: alpha and theta across the scalp](topoplots.md) | How are alpha and theta spread over the scalp, and where do CP and Control differ? Group and by-age scalp maps, frontal vs occipital and electrode-by-electrode tests, and alpha across age. |
+| [Global coherence: how coordinated is the whole scalp?](global_coherence.md) | How much of the activity moves together across all electrodes, where on the scalp is that shared activity, and do CP and Control differ? Global coherence and spatial coherence maps following Cornelissen et al. 2018, by group, by child and across age. |
 
 <sub>These pages are generated from the authors' working notes. Edit the notes, not these files.</sub>

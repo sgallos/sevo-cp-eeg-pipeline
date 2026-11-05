@@ -525,4 +525,4 @@ one frontal and one occipital comparison.
 - 12 children per group give wide confidence intervals; areas with few electrodes (occipital) even more so.
 
 ---
-[← additional_coherence_state_space](additional_coherence_state_space.md)
+[← additional_coherence_state_space](additional_coherence_state_space.md) · [global_coherence →](global_coherence.md)
